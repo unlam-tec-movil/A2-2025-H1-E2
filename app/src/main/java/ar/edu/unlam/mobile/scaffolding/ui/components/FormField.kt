@@ -14,7 +14,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -26,19 +25,22 @@ fun FormField(
     text: String,
     onTextChange: (String) -> Unit,
     placeholder: String,
-    showError: Boolean,
-    isSingleLin: Boolean = true,
+    errorMessage: String?,
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    isSingleLine: Boolean = true,
 ) {
+    val showError = errorMessage != null
+
     TextField(
         value = text,
         onValueChange = onTextChange,
         label = { Text(text = label) },
         placeholder = { Text(placeholder) },
+        keyboardOptions = keyboardOptions,
         isError = showError,
-        singleLine = isSingleLin,
+        singleLine = isSingleLine,
+        supportingText = { ErrorText(showError = showError, message = errorMessage) },
     )
-
-    ErrorText(showError = showError)
 }
 
 @Composable
@@ -47,10 +49,11 @@ fun PasswordFormField(
     password: String,
     onPasswordChange: (String) -> Unit,
     placeholder: String,
-    showError: Boolean,
+    errorMessage: String?,
     isSingleLin: Boolean = true,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
+    val showError = errorMessage != null
 
     TextField(
         value = password,
@@ -59,6 +62,7 @@ fun PasswordFormField(
         placeholder = { Text(placeholder) },
         isError = showError,
         singleLine = isSingleLin,
+        supportingText = { ErrorText(showError = showError, message = errorMessage) },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
         trailingIcon = {
@@ -71,15 +75,19 @@ fun PasswordFormField(
             )
         },
     )
-
-    ErrorText(showError = showError)
 }
 
 @Composable
 fun ErrorText(
     showError: Boolean,
-    message: String = stringResource(R.string.empty_field),
+    message: String?,
     color: Color = Color.Red,
 ) {
-    if (showError) Text(text = message, color = color, style = MaterialTheme.typography.bodySmall)
+    if (showError) {
+        Text(
+            text = message ?: "",
+            color = color,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
 }

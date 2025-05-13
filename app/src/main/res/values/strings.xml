@@ -2,7 +2,13 @@
     <string name="app_name">ScaffoldingV2</string>
 
 
-
-    <!-- Error Text -->
+    <!-- Error messages for form validation -->
     <string name="empty_field">El campo no puede estar vacío</string>
+    <string name="text_tooShort">El campo debe tener al menos %1$d caracteres</string>
+    <string name="text_tooLong">El campo no puede supererar los %1$d caracteres</string>
+    <string name="invalid_characters">El campo no puede contener caracteres especiales</string>
+    <string name="fields_not_match">los campos no coinciden</string>
+    <string name="invalid_email">El email no es valido</string>
+
+
 </resources>
