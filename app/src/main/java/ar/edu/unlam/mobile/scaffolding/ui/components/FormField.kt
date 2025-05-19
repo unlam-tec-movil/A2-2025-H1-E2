@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -12,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -19,15 +21,24 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import ar.edu.unlam.mobile.scaffolding.R
 
+/*Usar este codigo donde se vaya usar el formulario
+ para mostrar los errores cuando se quita el foco del formulario
+  onFocusLost = {
+     if (username.isNotBlank()){
+       usernameError = isValidText(username) }
+   },
+*/
+
 @Composable
 fun FormField(
-    label: String,
-    text: String,
-    onTextChange: (String) -> Unit,
-    placeholder: String,
-    errorMessage: String?,
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    label: String, // etiqueta del formulario
+    text: String, // valor dado por el usario
+    onTextChange: (String) -> Unit, // actualiza el valor cuando el usario escribe
+    placeholder: String, // texto que se muestra cuando el campo esta vacio
+    errorMessage: String?, // mensaje de error que se mostrara debajo del campo
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text), // opciones para el teclado
     isSingleLine: Boolean = true,
+    onFocusLost: () -> Unit, // esto se ejecuta cuando el formulario no esta en foco
 ) {
     val showError = errorMessage != null
 
@@ -40,6 +51,14 @@ fun FormField(
         isError = showError,
         singleLine = isSingleLine,
         supportingText = { ErrorText(showError = showError, message = errorMessage) },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        onFocusLost()
+                    }
+                },
     )
 }
 
@@ -51,6 +70,7 @@ fun PasswordFormField(
     placeholder: String,
     errorMessage: String?,
     isSingleLin: Boolean = true,
+    onFocusLost: () -> Unit,
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     val showError = errorMessage != null
@@ -74,9 +94,18 @@ fun PasswordFormField(
                 modifier = Modifier.clickable { passwordVisible = !passwordVisible },
             )
         },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        onFocusLost()
+                    }
+                },
     )
 }
 
+// esta funcion muestra el error el cual es recibido por parametro por el formulario y lo muestra
 @Composable
 fun ErrorText(
     showError: Boolean,

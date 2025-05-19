@@ -17,7 +17,7 @@ object FormValidator {
     private fun hasInvalidCharacters(text: String) = !text.all { it.isLetterOrDigit() }
 
     @Composable
-    fun errorText(
+    fun isValidText(
         text: String,
         minLength: Int = MIN_LENGTH,
         maxLength: Int = MAX_LENGTH,
