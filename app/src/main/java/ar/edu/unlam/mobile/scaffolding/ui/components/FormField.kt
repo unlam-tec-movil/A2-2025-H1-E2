@@ -1,12 +1,13 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 
 /*Usar este codigo donde se vaya usar el formulario
@@ -43,7 +45,20 @@ fun FormField(
     val showError = errorMessage != null
 
     TextField(
+        modifier =
+            Modifier
+                .padding(24.dp)
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        onFocusLost()
+                    }
+                },
         value = text,
+        colors =
+            TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent, // fondo cuando el formulario está enfocado
+                unfocusedContainerColor = Color.Transparent, // fondo cuando el formulario no está enfocado
+            ),
         onValueChange = onTextChange,
         label = { Text(text = label) },
         placeholder = { Text(placeholder) },
@@ -51,14 +66,6 @@ fun FormField(
         isError = showError,
         singleLine = isSingleLine,
         supportingText = { ErrorText(showError = showError, message = errorMessage) },
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused) {
-                        onFocusLost()
-                    }
-                },
     )
 }
 
@@ -76,7 +83,20 @@ fun PasswordFormField(
     val showError = errorMessage != null
 
     TextField(
+        modifier =
+            Modifier
+                .padding(24.dp)
+                .onFocusChanged { focusState ->
+                    if (!focusState.isFocused) {
+                        onFocusLost()
+                    }
+                },
         value = password,
+        colors =
+            TextFieldDefaults.colors(
+                focusedContainerColor = Color.Transparent, // fondo cuando el formulario está enfocado
+                unfocusedContainerColor = Color.Transparent, // fondo cuando el formulario no está enfocado
+            ),
         onValueChange = onPasswordChange,
         label = { Text(text = label) },
         placeholder = { Text(placeholder) },
@@ -94,14 +114,6 @@ fun PasswordFormField(
                 modifier = Modifier.clickable { passwordVisible = !passwordVisible },
             )
         },
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .onFocusChanged { focusState ->
-                    if (!focusState.isFocused) {
-                        onFocusLost()
-                    }
-                },
     )
 }
 
@@ -110,12 +122,11 @@ fun PasswordFormField(
 fun ErrorText(
     showError: Boolean,
     message: String?,
-    color: Color = Color.Red,
 ) {
     if (showError) {
         Text(
             text = message ?: "",
-            color = color,
+            color = Color.Red,
             style = MaterialTheme.typography.bodySmall,
         )
     }

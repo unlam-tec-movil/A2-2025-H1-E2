@@ -1,12 +1,19 @@
 package ar.edu.unlam.mobile.scaffolding.domain
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import ar.edu.unlam.mobile.scaffolding.R
+// <!-- Error messages for form validation -->
+// <string name="emptyField">El campo no puede estar vacío</string>
+// <string name="textTooShort">El campo debe tener al menos %1$d caracteres</string>
+// <string name="textTooLong">El campo no puede supererar los %1$d caracteres</string>
+// <string name="invalidCharacters">El campo no puede contener caracteres especiales</string>
+// <string name="fieldsNotMatch">los campos no coinciden</string>
+// <string name="invalidEmail">El email no es valido</string>
 
 object FormValidator {
     private const val MIN_LENGTH = 4
     private const val MAX_LENGTH = 16
+    private const val EMPTY_FIELD = "El campo no puede estar vacío"
+    private const val INVALID_CHARACTERS = "El campo no puede contener caracteres especiales"
+    private const val INVALID_EMAIL = "El email no es valido"
 
     private fun isBlank(text: String) = text.isBlank()
 
@@ -16,27 +23,41 @@ object FormValidator {
 
     private fun hasInvalidCharacters(text: String) = !text.all { it.isLetterOrDigit() }
 
-    @Composable
     fun isValidText(
         text: String,
         minLength: Int = MIN_LENGTH,
         maxLength: Int = MAX_LENGTH,
+        specialCharacters: Boolean = false,
     ): String? =
         when {
-            isBlank(text) -> stringResource(R.string.empty_field)
-            minLength(text) -> stringResource(R.string.text_tooShort, minLength)
-            maxLength(text) -> stringResource(R.string.text_tooShort, maxLength)
-            hasInvalidCharacters(text) -> stringResource(R.string.invalid_characters)
+            isBlank(text) -> EMPTY_FIELD
+            minLength(text) -> "El campo debe tener al menos $minLength caracteres"
+            maxLength(text) -> "El campo no puede superar los $maxLength caracteres"
+            !specialCharacters && hasInvalidCharacters(text) -> INVALID_CHARACTERS
             else -> null
         }
 
-    @Composable
-    fun errorEmail(email: String): String? {
+    fun isValidPassword(
+        password: String,
+        confirmPassword: String,
+    ): String? {
+        if (confirmPassword.isBlank()) {
+            return EMPTY_FIELD
+        } else if (password ==
+            confirmPassword
+        ) {
+            return "Las contraseñas no coinsiden"
+        }
+        return null
+    }
+
+    fun isValidEmail(email: String): String? {
         val emailValid =
             android.util.Patterns.EMAIL_ADDRESS
                 .matcher(email)
                 .matches()
 
-        return if (emailValid) null else stringResource(R.string.invalid_email)
+        if (email.isBlank()) return EMPTY_FIELD
+        return if (emailValid) null else INVALID_EMAIL
     }
 }
