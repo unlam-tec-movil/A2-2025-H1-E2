@@ -1,5 +1,4 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
-
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -15,8 +14,7 @@ fun CustomIcon(drawable: Int, colorResource: Color = colorResource(R.color.BlueS
     Icon(
         painter = painterResource(drawable),
         tint = colorResource,
-        contentDescription = "",
-        modifier = Modifier.padding(10.dp),
-
+        contentDescription = null,
+        modifier = Modifier.padding(10.dp)
     )
 }
