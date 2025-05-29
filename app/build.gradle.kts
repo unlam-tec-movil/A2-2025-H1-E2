@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -81,4 +83,10 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+
+    //coil
+    implementation("com.google.accompanist:accompanist-coil:0.12.0")
+
+    //Extended Material icons
+    implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 }
