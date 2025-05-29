@@ -11,10 +11,7 @@ import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
 fun CustomIcon(drawable: Int, colorResource: Color = colorResource(R.color.BlueSky)) {
-    Icon(
-        painter = painterResource(drawable),
+    Icon(painter = painterResource(drawable),
         tint = colorResource,
         contentDescription = null,
-        modifier = Modifier.padding(10.dp)
-    )
-}
+        modifier = Modifier.padding(10.dp))}
