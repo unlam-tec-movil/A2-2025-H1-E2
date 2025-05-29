@@ -72,7 +72,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Dagger + Hilt
+  
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
     implementation(libs.google.dagger.hilt.android.testing)
@@ -84,9 +84,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
 
-    //coil
+
     implementation("com.google.accompanist:accompanist-coil:0.12.0")
 
-    //Extended Material icons
+
     implementation("androidx.compose.material:material-icons-extended-android:1.7.8")
 }
