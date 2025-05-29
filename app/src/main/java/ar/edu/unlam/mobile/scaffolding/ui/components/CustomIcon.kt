@@ -14,4 +14,4 @@ fun CustomIcon(drawable: Int, colorResource: Color = colorResource(R.color.BlueS
     Icon(painter = painterResource(drawable),
         tint = colorResource,
         contentDescription = null,
-        modifier = Modifier.padding(10.dp))}
+        modifier = Modifier.padding(10.dp),)}

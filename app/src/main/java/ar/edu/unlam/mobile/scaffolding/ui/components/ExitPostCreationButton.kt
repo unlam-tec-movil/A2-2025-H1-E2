@@ -1,5 +1,4 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
-
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -19,10 +18,8 @@ fun ExitPostCreationButton(
     @DrawableRes icon: Int,
     onTap: () -> Unit = {}
 ) {
-
     Icon(
         modifier = modifier
-
             .padding(5.dp)
             .clickable { onTap() },
         imageVector = ImageVector.vectorResource(id = icon),
