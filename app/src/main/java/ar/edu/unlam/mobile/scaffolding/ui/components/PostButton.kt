@@ -1,8 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -20,10 +17,8 @@ fun PostButton(
     text: String,
     textColor: Color,
     buttonColor: Color,
-    onTap: () -> Unit = {}
-
+    onTap: () -> Unit = {},
 ) {
-
     Button(
         modifier = Modifier,
         shape = RoundedCornerShape(45),
@@ -31,11 +26,10 @@ fun PostButton(
             containerColor = colorResource(R.color.BlueSky.toInt())
         ),
         onClick = { onTap() },
-        ) {
+    ) {
         Text(
             text = text,
             modifier = Modifier
-
                 .align(Alignment.CenterVertically),
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
