@@ -30,17 +30,16 @@ fun PostButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(R.color.BlueSky.toInt())
         ),
-        onClick = { onTap() }) {
-
+        onClick = { onTap() },
+        ) {
         Text(
             text = text,
             modifier = Modifier
 
                 .align(Alignment.CenterVertically),
             style = MaterialTheme.typography.bodyLarge,
-            color = textColor
+            color = textColor,
         )
     }
-
 }
 
