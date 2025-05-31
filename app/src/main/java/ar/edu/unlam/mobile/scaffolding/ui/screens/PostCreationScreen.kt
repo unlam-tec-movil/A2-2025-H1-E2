@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,31 +23,29 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
 import ar.edu.unlam.mobile.scaffolding.ui.components.UserAvatar
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCreationScreen() {
+
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.Top
         ) {
-            CustomIcon(
-                R.drawable.ic_close,
-                colorResource(R.color.black),
-            )
+            CustomIcon(R.drawable.ic_close,colorResource(R.color.black))
             PostButton(
-                text = "Publicar",
-                textColor = Color.White,
-                buttonColor = MaterialTheme.colorScheme.primary,
+                "Publicar", Color.White, MaterialTheme.colorScheme.primary
             )
+
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(10.dp),
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.Top
         ) {
             UserAvatar()
             PostTextField()
@@ -56,7 +55,7 @@ fun PostCreationScreen() {
                 .fillMaxSize()
                 .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.Bottom
         ) {
 
             CustomIcon(R.drawable.ic_image, colorResource(R.color.BlueSky))
@@ -64,6 +63,7 @@ fun PostCreationScreen() {
             CustomIcon(R.drawable.ic_qa, colorResource(R.color.BlueSky))
             CustomIcon(R.drawable.ic_addlocation, colorResource(R.color.BlueSky))
         }
+
     }
 }
 
