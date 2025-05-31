@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
-fun UserAvatar() {
+fun UserAvatar(){
     Box {
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
@@ -21,8 +21,7 @@ fun UserAvatar() {
             modifier = Modifier
                 .size(55.dp)
                 .clip(RoundedCornerShape(50)),
-            alignment = Alignment.TopStart
+            alignment = Alignment.TopStart,
         )
-
     }
 }

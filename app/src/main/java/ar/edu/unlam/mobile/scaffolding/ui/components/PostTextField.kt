@@ -1,5 +1,4 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
-
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -28,6 +27,6 @@ fun PostTextField() {
         ),
         value = text,
         onValueChange = { text = it },
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     )
 }
