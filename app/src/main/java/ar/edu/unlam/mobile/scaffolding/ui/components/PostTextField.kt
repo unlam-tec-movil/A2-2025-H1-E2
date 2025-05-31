@@ -14,6 +14,7 @@ import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
 fun PostTextField() {
+
     var text by remember { mutableStateOf("you mamma...") }
     TextField(
         colors = TextFieldDefaults.colors(
@@ -23,10 +24,11 @@ fun PostTextField() {
             unfocusedIndicatorColor = Color.Transparent,
             disabledContainerColor = Color.Transparent,
             errorContainerColor = Color.Red,
-            cursorColor = colorResource(R.color.BlueSky)
+            cursorColor = colorResource(R.color.BlueSky),
         ),
         value = text,
         onValueChange = { text = it },
         modifier = Modifier.fillMaxWidth(),
     )
+
 }

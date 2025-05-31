@@ -13,7 +13,8 @@ import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
-fun UserAvatar(){
+fun UserAvatar() {
+
     Box {
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),

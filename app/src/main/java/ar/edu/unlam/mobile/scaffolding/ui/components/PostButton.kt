@@ -23,7 +23,7 @@ fun PostButton(
         modifier = Modifier,
         shape = RoundedCornerShape(45),
         colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.BlueSky.toInt())
+            containerColor = colorResource(R.color.BlueSky.toInt()),
         ),
         onClick = { onTap() },
     ) {
@@ -34,6 +34,7 @@ fun PostButton(
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
         )
-    }
-}
 
+    }
+
+}
