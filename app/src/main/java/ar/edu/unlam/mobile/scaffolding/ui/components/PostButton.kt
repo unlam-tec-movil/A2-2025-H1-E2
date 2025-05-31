@@ -22,19 +22,19 @@ fun PostButton(
     Button(
         modifier = Modifier,
         shape = RoundedCornerShape(45),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(R.color.BlueSky.toInt()),
-        ),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = colorResource(R.color.BlueSky.toInt()),
+            ),
         onClick = { onTap() },
     ) {
         Text(
             text = text,
-            modifier = Modifier
-                .align(Alignment.CenterVertically),
+            modifier =
+                Modifier
+                    .align(Alignment.CenterVertically),
             style = MaterialTheme.typography.bodyLarge,
             color = textColor,
         )
-
     }
-
 }

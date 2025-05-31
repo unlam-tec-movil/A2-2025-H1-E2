@@ -14,14 +14,14 @@ import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
 fun UserAvatar() {
-
     Box {
         Image(
             painter = painterResource(R.drawable.ic_launcher_background),
             contentDescription = "",
-            modifier = Modifier
-                .size(55.dp)
-                .clip(RoundedCornerShape(50)),
+            modifier =
+                Modifier
+                    .size(55.dp)
+                    .clip(RoundedCornerShape(50)),
             alignment = Alignment.TopStart,
         )
     }

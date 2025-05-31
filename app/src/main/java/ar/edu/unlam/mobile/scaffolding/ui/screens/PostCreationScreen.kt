@@ -26,51 +26,51 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCreationScreen() {
-
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp, end = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
-            CustomIcon(R.drawable.ic_close,colorResource(R.color.black))
+            CustomIcon(R.drawable.ic_close, colorResource(R.color.black))
             PostButton(
-                "Publicar", Color.White, MaterialTheme.colorScheme.primary
+                "Publicar",
+                Color.White,
+                MaterialTheme.colorScheme.primary,
             )
-
         }
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            verticalAlignment = Alignment.Top
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+            verticalAlignment = Alignment.Top,
         ) {
             UserAvatar()
             PostTextField()
         }
         Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(15.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(15.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom
+            verticalAlignment = Alignment.Bottom,
         ) {
-
             CustomIcon(R.drawable.ic_image, colorResource(R.color.BlueSky))
             CustomIcon(R.drawable.ic_gif, colorResource(R.color.BlueSky))
             CustomIcon(R.drawable.ic_qa, colorResource(R.color.BlueSky))
             CustomIcon(R.drawable.ic_addlocation, colorResource(R.color.BlueSky))
         }
-
     }
 }
 
-
 @Preview(
     name = "PostCreationPreview",
-    showBackground = true
+    showBackground = true,
 )
 @Composable
 fun PostCreationPreview() {
