@@ -23,23 +23,20 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
 import ar.edu.unlam.mobile.scaffolding.ui.components.UserAvatar
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostCreationScreen() {
-
     Column(modifier = Modifier.fillMaxHeight()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 10.dp, end = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top
+            verticalAlignment = Alignment.Top,
         ) {
-            CustomIcon(R.drawable.ic_close,colorResource(R.color.black))
+            CustomIcon(R.drawable.ic_close,colorResource(R.color.black),)
             PostButton(
                 "Publicar", Color.White, MaterialTheme.colorScheme.primary
             )
-
         }
         Row(
             modifier = Modifier
