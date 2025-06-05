@@ -77,6 +77,5 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
-    implementation(libs.accompanist.coil)
-    implementation(libs.androidx.material.icons.extended.android)
+
 }
