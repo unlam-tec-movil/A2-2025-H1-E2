@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.model.User
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,6 +19,7 @@ class UserViewModel
     constructor(
         private val userRepository: UserRepository,
     ) : ViewModel() {
+
         val currentUser: MutableLiveData<User> by lazy {
             MutableLiveData<User>()
         }
@@ -24,9 +28,17 @@ class UserViewModel
 
         fun signUpUser() {
             viewModelScope.launch {
+                userJob?.cancel()
+                userJob = userRepository.signUpUser(currentUser.value!!)
+                    .launchIn(CoroutineScope(Dispatchers.IO))
             }
         }
 
         fun editUser() {
+            viewModelScope.launch {
+                userJob?.cancel()
+                userJob = userRepository.editUser(currentUser.value!!)
+                    .launchIn(CoroutineScope(Dispatchers.IO))
+            }
         }
     }
