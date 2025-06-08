@@ -109,7 +109,7 @@ fun HomeScreen(modifier: Modifier = Modifier, viewModel: HomeViewModel = hiltVie
 > gusto de los desarrolladores: Los ViewModels pueden estar en el mismo package que los screens, o
 > en un package separado.
 
-## Main Activity
+## Main Activitygi
 
 Este es el activity principal de nuestra aplicación. Aquí definiremos el theme, la navegación y el
 scaffold principal.
