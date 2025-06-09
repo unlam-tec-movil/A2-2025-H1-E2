@@ -9,7 +9,7 @@ class UserRepositoryImpl : UserRepository {
         TODO("Not yet implemented")
     }
 
-    override fun editUser(editedUser: User): Flow<Boolean> {
+    override fun editUser(newUsername: String): Flow<Boolean> {
         TODO("Not yet implemented")
     }
 }

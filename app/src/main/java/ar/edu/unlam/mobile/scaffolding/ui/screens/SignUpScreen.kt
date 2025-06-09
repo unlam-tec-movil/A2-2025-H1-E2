@@ -23,17 +23,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.data.model.User
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
-@Preview(showBackground = true)
 @Composable
-fun SingUpScreen() {
+fun SignUpScreen(userViewModel: UserViewModel = hiltViewModel()) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -158,6 +158,14 @@ fun SingUpScreen() {
                     )
                 if (usernameError == null && emailError == null && passwordError == null && confirmPasswordError == null) {
                     Log.d("AppEstado", "La app pasó por aquí correctamente.")
+                    userViewModel.signUpUser(
+                        User(
+                            id = 0,
+                            name = username,
+                            email = email,
+                            password = password,
+                        ),
+                    )
                 }
             },
         ) {

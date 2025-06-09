@@ -1,7 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.model.User
@@ -20,31 +19,29 @@ class UserViewModel
     constructor(
         private val userRepository: UserRepository,
     ) : ViewModel() {
-        private val _currentUserState = mutableStateOf(User())
-        val currentUserState: State<User> = _currentUserState
+        val currentUser: MutableLiveData<User> by lazy {
+            MutableLiveData<User>()
+        }
 
         private var userJob: Job? = null
 
-        fun signUpUser() {
-            _currentUserState.value
+        fun signUpUser(user: User) {
             viewModelScope.launch {
                 userJob?.cancel()
                 userJob =
                     userRepository
-                        .signUpUser(
-                            _currentUserState.value,
-                        ).launchIn(CoroutineScope(Dispatchers.IO))
+                        .signUpUser(user)
+                        .launchIn(CoroutineScope(Dispatchers.IO))
             }
         }
 
-        fun editUser() {
+        fun editUser(newUsername: String) {
             viewModelScope.launch {
                 userJob?.cancel()
                 userJob =
                     userRepository
-                        .editUser(
-                            _currentUserState.value,
-                        ).launchIn(CoroutineScope(Dispatchers.IO))
+                        .editUser(newUsername)
+                        .launchIn(CoroutineScope(Dispatchers.IO))
             }
         }
     }
