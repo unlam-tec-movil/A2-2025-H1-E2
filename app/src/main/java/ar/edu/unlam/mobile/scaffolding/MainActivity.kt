@@ -68,7 +68,8 @@ fun MainScreen() {
                     tuits =
                         listOf(
                             Tuit(1, "Lalala! Que sale hoy?", 0, "*Ayluh*", "https://picsum.photos/id/237/200/300", 10, false, "2023-10-01"),
-                            Tuit(2,
+                            Tuit(
+                                2,
                                 "Aguanten los michis y el helado de limon",
                                 0,
                                 "Andy~.",
