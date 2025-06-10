@@ -29,7 +29,7 @@ import models.Tuit
 @Composable
 fun TuitView(tuit: Tuit) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier =
             Modifier
                 .background(Color.White)
@@ -42,7 +42,7 @@ fun TuitView(tuit: Tuit) {
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .size(20.dp)
+                        .size(36.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
             )
@@ -57,22 +57,24 @@ fun TuitView(tuit: Tuit) {
             ) {
                 Text(
                     text = tuit.author,
-                    fontSize = 10.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
+                    color = Color.Black,
                     modifier = Modifier.alignByBaseline(),
                 )
 
                 Text(
                     text = tuit.date,
-                    fontSize = 6.sp,
-                    color = Color.Gray,
+                    fontSize = 12.sp,
+                    color = Color.DarkGray,
                     modifier = Modifier.alignByBaseline(),
                 )
             }
 
             Text(
                 text = tuit.message,
-                fontSize = 10.sp,
+                color = Color.Black,
+                fontSize = 16.sp,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -80,11 +82,12 @@ fun TuitView(tuit: Tuit) {
                     imageVector = if (tuit.liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                     contentDescription = "Likes",
                     tint = if (tuit.liked) Color.Red else Color.Black,
-                    modifier = Modifier.size(12.dp),
+                    modifier = Modifier.size(24.dp),
                 )
                 Text(
                     text = tuit.likes.toString(),
-                    fontSize = 10.sp,
+                    fontSize = 16.sp,
+                    color = Color.Black,
                 )
             }
         }
