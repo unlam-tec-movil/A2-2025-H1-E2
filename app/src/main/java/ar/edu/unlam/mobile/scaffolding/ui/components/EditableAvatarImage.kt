@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
 @Composable
-fun EditableCircularImage(
+fun EditableAvatarImage(
     modifier: Modifier = Modifier,
     imageUrl: String,
     contentDescription: String?,

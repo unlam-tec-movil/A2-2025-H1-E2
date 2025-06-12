@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
-import ar.edu.unlam.mobile.scaffolding.ui.components.EditableCircularImage
+import ar.edu.unlam.mobile.scaffolding.ui.components.EditableAvatarImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
@@ -50,7 +50,7 @@ fun UserEditScreen(userEditViewModel: UserEditViewModel = hiltViewModel()) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
-            EditableCircularImage(
+            EditableAvatarImage(
                 imageUrl = userEditViewModel.currentUser.value.avatarURL,
                 contentDescription = null,
                 onEditClick = {
