@@ -37,7 +37,7 @@ class UserEditViewModel
                                 currentUser.value =
                                     currentUser.value.copy(
                                         name = result.data?.name ?: "",
-                                        avatar_url = result.data?.avatar_url ?: "",
+                                        avatarURL = result.data?.avatarURL ?: "",
                                     )
                             }
                             is Resource.Error -> Log.e("API call", result.message ?: "Error 400 - Bad Request")
