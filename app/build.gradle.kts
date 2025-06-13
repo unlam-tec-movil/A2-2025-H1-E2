@@ -78,5 +78,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
     implementation(libs.coil.compose)
-    implementation("androidx.compose.runtime:runtime-livedata:1.8.1")
+    implementation(libs.livedata)
+    implementation(libs.lifecycle.livedata.ktx)
 }
