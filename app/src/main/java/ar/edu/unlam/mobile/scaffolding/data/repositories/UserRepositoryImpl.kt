@@ -15,6 +15,8 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
     ) : UserRepository {
+        private val networkErrorMsg = "Error 400: Bad Request"
+
         override fun signUpUser(
             name: String,
             email: String,
@@ -28,7 +30,7 @@ class UserRepositoryImpl
                         )
                     emit(Resource.Success(data = response.token))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = "Error"))
+                    emit(Resource.Error(message = networkErrorMsg))
                 }
             }
 
@@ -44,7 +46,7 @@ class UserRepositoryImpl
                         )
                     emit(Resource.Success(data = response.token))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = "Error"))
+                    emit(Resource.Error(message = networkErrorMsg))
                 }
             }
 
@@ -58,7 +60,7 @@ class UserRepositoryImpl
                         )
                     emit(Resource.Success(data = response))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = "Error"))
+                    emit(Resource.Error(message = networkErrorMsg))
                 }
             }
 
@@ -69,13 +71,12 @@ class UserRepositoryImpl
         ): Flow<Resource<Boolean>> =
             flow {
                 try {
-                    val response =
-                        api.signUpUser(
-                            request = SignUpRequest(name, avatarURL, email),
-                        )
+                    api.signUpUser(
+                        request = SignUpRequest(name, avatarURL, email),
+                    )
                     emit(Resource.Success(data = true))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = "Error"))
+                    emit(Resource.Error(message = networkErrorMsg))
                 }
             }
     }
