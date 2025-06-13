@@ -3,9 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.EditProfileResponse
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.LoginResponse
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.SignUpResponse
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.TokenResponse
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -18,13 +16,13 @@ interface UNLaMSocialApi {
     suspend fun loginUser(
         @Header("Application-Token") appToken: String = API_KEY,
         @Body request: LoginRequest,
-    ): LoginResponse
+    ): TokenResponse
 
     @POST("/users")
     suspend fun signUpUser(
         @Header("Application-Token") appToken: String = API_KEY,
         @Body request: SignUpRequest,
-    ): SignUpResponse
+    ): TokenResponse
 
     @GET("/me/profile")
     suspend fun getProfile(
@@ -37,7 +35,7 @@ interface UNLaMSocialApi {
         @Header("Authorization") userToken: String,
         @Header("Application-Token") appToken: String = API_KEY,
         @Body request: EditUserRequest,
-    ): EditProfileResponse
+    ): TokenResponse
 
     companion object {
         const val BASE_URL = "https://tuiter.fragua.com.ar/api/v1"
