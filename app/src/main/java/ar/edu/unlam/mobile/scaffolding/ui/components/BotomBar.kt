@@ -19,11 +19,11 @@ fun BottomBar(controller: NavHostController) {
     NavigationBar {
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "home" } == true,
-            onClick = { controller.navigate("home") },
+            onClick = { controller.navigate("feed") },
             icon = {
                 Icon(
                     imageVector = Icons.Default.Home,
-                    contentDescription = "Home",
+                    contentDescription = "Feed",
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
