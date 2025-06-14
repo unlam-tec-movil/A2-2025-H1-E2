@@ -20,8 +20,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,19 +52,18 @@ fun MainScreen() {
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-            IconButton(onClick = { controller.navigate("home") }) {
-                Icon(Icons.Filled.Home, contentDescription = "Home")
+            IconButton(onClick = { controller.navigate("feed") }) {
+                Icon(Icons.Filled.Home, contentDescription = "Feed")
             }
         },
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = "home") {
+        NavHost(navController = controller, startDestination = "feed", modifier = Modifier.padding(paddingValue)) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
-            composable("home") {
-                // Home es el componente en sí que es el destino de navegación.
-                HomeScreen(modifier = Modifier.padding(paddingValue))
+            composable("feed") {
+                FeedScreen()
             }
             composable(
                 route = "user/{id}",
