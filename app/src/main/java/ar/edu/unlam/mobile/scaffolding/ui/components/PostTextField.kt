@@ -1,22 +1,21 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.TextField
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
-fun PostTextField() {
-    var text by remember { mutableStateOf("you mamma...") }
-    TextField(
+fun PostTextField(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    OutlinedTextField(
         colors =
             TextFieldDefaults.colors(
                 focusedContainerColor = Color.Transparent,
@@ -26,9 +25,15 @@ fun PostTextField() {
                 disabledContainerColor = Color.Transparent,
                 errorContainerColor = Color.Red,
                 cursorColor = colorResource(R.color.BlueSky),
+                focusedTextColor = Color.Black,
+                unfocusedTextColor = Color.Black,
+                focusedPlaceholderColor = Color.Gray,
+                unfocusedPlaceholderColor = Color.Gray,
             ),
-        value = text,
-        onValueChange = { text = it },
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = false,
+        placeholder = { Text("Escribe algo...") },
         modifier = Modifier.fillMaxWidth(),
     )
 }

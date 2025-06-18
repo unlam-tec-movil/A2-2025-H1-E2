@@ -1,32 +1,48 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.components.CustomIcon
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
-import ar.edu.unlam.mobile.scaffolding.ui.components.UserAvatar
-import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostCreationScreen() {
-    Column(modifier = Modifier.fillMaxHeight()) {
+fun PostCreationScreen(
+    viewModel: PostCreationViewModel = hiltViewModel(),
+    navController: NavController,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.White)
+                .padding(8.dp),
+    ) {
         Row(
             modifier =
                 Modifier
@@ -35,46 +51,48 @@ fun PostCreationScreen() {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.Top,
         ) {
-            CustomIcon(R.drawable.ic_close, colorResource(R.color.black))
+            IconButton(onClick = {
+                navController.popBackStack()
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    tint = Color.Black,
+                    contentDescription = null,
+                    modifier =
+                        Modifier
+                            .size(32.dp),
+                )
+            }
+
             PostButton(
                 "Publicar",
                 Color.White,
                 MaterialTheme.colorScheme.primary,
+                onTap = { viewModel.createTuit() },
             )
         }
-        Row(
+        Image(
+            imageVector = Icons.Default.Person,
+            contentDescription = null,
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            UserAvatar()
-            PostTextField()
-        }
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(15.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            CustomIcon(R.drawable.ic_image, colorResource(R.color.BlueSky))
-            CustomIcon(R.drawable.ic_gif, colorResource(R.color.BlueSky))
-            CustomIcon(R.drawable.ic_qa, colorResource(R.color.BlueSky))
-            CustomIcon(R.drawable.ic_addlocation, colorResource(R.color.BlueSky))
-        }
+                    .padding(start = 10.dp)
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(Color.Gray)
+                    .padding(6.dp),
+        )
+
+        PostTextField(
+            value = viewModel.description,
+            onValueChange = viewModel::onDescriptionChange,
+        )
     }
 }
 
-@Preview(
-    name = "PostCreationPreview",
-    showBackground = true,
-)
+@Preview
 @Composable
 fun PostCreationPreview() {
-    ScaffoldingV2Theme {
-        PostCreationScreen()
-    }
+    val navController = rememberNavController()
+    PostCreationScreen(navController = navController)
 }
