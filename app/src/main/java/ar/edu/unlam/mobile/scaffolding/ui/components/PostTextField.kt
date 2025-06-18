@@ -13,7 +13,7 @@ import ar.edu.unlam.mobile.scaffolding.R
 @Composable
 fun PostTextField(
     value: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
 ) {
     OutlinedTextField(
         colors =
