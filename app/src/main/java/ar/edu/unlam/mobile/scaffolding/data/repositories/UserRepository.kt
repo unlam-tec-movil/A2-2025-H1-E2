@@ -22,5 +22,5 @@ interface UserRepository {
         name: String,
         avatarURL: String,
         email: String,
-    ): Flow<Resource<Boolean>>
+    ): Flow<Resource<String>>
 }

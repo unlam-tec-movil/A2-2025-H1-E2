@@ -4,10 +4,13 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import coil.network.HttpException
+import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import okio.IOException
 import javax.inject.Inject
 
 class UserRepositoryImpl
@@ -15,7 +18,8 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
     ) : UserRepository {
-        private val networkErrorMsg = "Error 400: Bad Request"
+        private val exceptionMsg = "Algo salió mal"
+        private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
 
         override fun signUpUser(
             name: String,
@@ -28,9 +32,22 @@ class UserRepositoryImpl
                         api.signUpUser(
                             request = SignUpRequest(name, email, password),
                         )
-                    emit(Resource.Success(data = response.token))
+                    // ToDo: Almacenar datos en base de datos
+                    emit(Resource.Success(data = response.name))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = networkErrorMsg))
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response.body?.string()
+                            val gson = Gson()
+                            gson.fromJson(errorBody, ErrorResponse::class.java).message
+                        } catch (e: Exception) {
+                            exceptionMsg
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = internetConnectionErrorMsg))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = exceptionMsg))
                 }
             }
 
@@ -44,9 +61,22 @@ class UserRepositoryImpl
                         api.loginUser(
                             request = LoginRequest(email, password),
                         )
-                    emit(Resource.Success(data = response.token))
+                    // ToDo: Almacenar datos en base de datos
+                    emit(Resource.Success(data = response.name))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = networkErrorMsg))
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response.body?.string()
+                            val gson = Gson()
+                            gson.fromJson(errorBody, ErrorResponse::class.java).message
+                        } catch (e: Exception) {
+                            exceptionMsg
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = internetConnectionErrorMsg))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = exceptionMsg))
                 }
             }
 
@@ -60,7 +90,19 @@ class UserRepositoryImpl
                         )
                     emit(Resource.Success(data = response))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = networkErrorMsg))
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response.body?.string()
+                            val gson = Gson()
+                            gson.fromJson(errorBody, ErrorResponse::class.java).message
+                        } catch (e: Exception) {
+                            exceptionMsg
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = internetConnectionErrorMsg))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = exceptionMsg))
                 }
             }
 
@@ -68,15 +110,28 @@ class UserRepositoryImpl
             name: String,
             avatarURL: String,
             email: String,
-        ): Flow<Resource<Boolean>> =
+        ): Flow<Resource<String>> =
             flow {
                 try {
-                    api.signUpUser(
-                        request = SignUpRequest(name, avatarURL, email),
-                    )
-                    emit(Resource.Success(data = true))
+                    val response =
+                        api.signUpUser(
+                            request = SignUpRequest(name, avatarURL, email),
+                        )
+                    emit(Resource.Success(data = response.name))
                 } catch (e: HttpException) {
-                    emit(Resource.Error(message = networkErrorMsg))
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response.body?.string()
+                            val gson = Gson()
+                            gson.fromJson(errorBody, ErrorResponse::class.java).message
+                        } catch (e: Exception) {
+                            exceptionMsg
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = internetConnectionErrorMsg))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = exceptionMsg))
                 }
             }
     }

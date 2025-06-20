@@ -2,10 +2,8 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
@@ -44,18 +42,6 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
     var confirmPasswordError by remember { mutableStateOf<String?>(null) }
     var emailError by remember { mutableStateOf<String?>(null) }
 
-    Box(
-        modifier = Modifier.fillMaxWidth().padding(16.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = stringResource(R.string.createAccount),
-            fontSize = 25.sp,
-            fontStyle = FontStyle.Normal,
-            fontWeight = FontWeight.SemiBold,
-        )
-    }
-
     Column(
         modifier =
             Modifier
@@ -63,6 +49,13 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
+        // Título
+        Text(
+            text = stringResource(R.string.createAccount),
+            fontSize = 25.sp,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.SemiBold,
+        )
 // NAME
         FormField(
             label = stringResource(R.string.labelName),
