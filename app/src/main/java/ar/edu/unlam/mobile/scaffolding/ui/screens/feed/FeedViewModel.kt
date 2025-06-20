@@ -1,16 +1,36 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import models.Tuit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel
     @Inject
-    constructor() : ViewModel() {
-        val tuits: MutableLiveData<List<Tuit>> by lazy {
+    constructor(private val repository: FeedRepository) : ViewModel() {
+        //creo que feedRepository no deberia entrar directamente al viewmodel sin pasar antes por domain pero bueno de momento funciona
+        private val _feedState = MutableStateFlow(emptyList<Post>())
+        val posts: StateFlow<List<Post>>
+            get() = _feedState.asStateFlow()//igual ya estoy viendo como cambiar esto, ya que tampoco hace un callback
+            //ademas por lo que tengo entendido esta screen de Feed deveria estar en la Home
+    init {
+        viewModelScope.launch {
+            _feedState.value = repository.getFeed(
+                "", // <-- token de usuario, que llegara desde el login
+                "",// <-- token de la app, aun nose como llegara
+                1,
+                false)
+        }
+    }
+
+        /*val tuits: MutableLiveData<List<Tuit>> by lazy {
             MutableLiveData<List<Tuit>>()
         }
 
@@ -49,5 +69,5 @@ class FeedViewModel
                         "2023-10-03",
                     ),
                 )
-        }
+        }*/
     }
