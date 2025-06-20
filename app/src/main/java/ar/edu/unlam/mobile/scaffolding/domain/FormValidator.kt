@@ -43,12 +43,11 @@ object FormValidator {
     ): String? {
         if (confirmPassword.isBlank()) {
             return EMPTY_FIELD
-        } else if (password ==
-            confirmPassword
-        ) {
-            return "Las contraseñas no coinsiden"
+        } else if (password == confirmPassword) {
+            return null
+        } else {
+            return "Las contraseñas no coinciden"
         }
-        return null
     }
 
     fun isValidEmail(email: String): String? {
