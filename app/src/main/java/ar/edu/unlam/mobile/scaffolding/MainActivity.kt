@@ -5,10 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -19,7 +15,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreationScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
@@ -52,9 +50,7 @@ fun MainScreen() {
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-            IconButton(onClick = { controller.navigate("feed") }) {
-                Icon(Icons.Filled.Home, contentDescription = "Feed")
-            }
+            AddPostFloatingButton(navController = controller)
         },
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
@@ -65,6 +61,11 @@ fun MainScreen() {
             composable("feed") {
                 FeedScreen()
             }
+
+            composable("postCreation") {
+                PostCreationScreen(navController = controller)
+            }
+
             composable(
                 route = "user/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),

@@ -48,14 +48,13 @@ class UserEditViewModel
 
         fun editUser(
             name: String,
-            avatarURL: String,
             password: String,
         ) {
             viewModelScope.launch {
                 editUserJob?.cancel()
                 editUserJob =
                     userRepository
-                        .editUser(name, avatarURL, password)
+                        .editUser(name, currentUser.value.avatarURL, password)
                         .launchIn(CoroutineScope(Dispatchers.IO))
             }
         }
