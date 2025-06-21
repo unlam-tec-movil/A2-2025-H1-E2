@@ -15,6 +15,8 @@ androidXHilt = "1.2.0"
 kover = "0.7.6"
 ktlint = "12.1.0"
 materialIconsExtendedAndroid = "1.7.8"
+roomCommonJvm = "2.7.2"
+roomRuntimeAndroid = "2.7.2"
 
 [libraries]
 accompanist-coil = { module = "com.google.accompanist:accompanist-coil", version.ref = "accompanistCoil" }
@@ -45,6 +47,8 @@ retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-
 coil-compose = "io.coil-kt:coil-compose:2.6.0"
 livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version = "1.8.1" }
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version = "2.7.0" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
