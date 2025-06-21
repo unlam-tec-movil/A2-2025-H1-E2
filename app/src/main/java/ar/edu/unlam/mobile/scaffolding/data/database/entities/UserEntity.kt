@@ -6,10 +6,13 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "user_table")
 data class UserEntity(
-//    @PrimaryKey(autoGenerate = true)
-    @PrimaryKey val id: Int = 1,
+    @PrimaryKey val id: Int = ID,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "email") val email: String,
-    @ColumnInfo(name = "avatarUrl") val avatarUrl: String,
-    @ColumnInfo(name = "token") val token: String,
-)
+    @ColumnInfo(name = "avatarUrl") val avatarUrl: String?,
+    @ColumnInfo(name = "token") val userToken: String,
+) {
+    private companion object {
+        const val ID = 1
+    }
+}
