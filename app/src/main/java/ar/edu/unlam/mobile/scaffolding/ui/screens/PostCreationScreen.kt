@@ -5,19 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -40,15 +35,13 @@ fun PostCreationScreen(
     viewModel: PostCreationViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-
-    fun back(): () -> Unit = {navController.popBackStack()}
+    fun back(): () -> Unit = { navController.popBackStack() }
 
     Scaffold(
         topBar = { topBar("Nuevo Post", back()) },
         modifier = Modifier.fillMaxWidth(),
-    )
-    {
-        paddingValues ->
+    ) {
+            paddingValues ->
         Column(
             modifier =
                 Modifier
@@ -57,15 +50,16 @@ fun PostCreationScreen(
                     .padding(paddingValues = paddingValues),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
             ) {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ){
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
                     /*IconButton(onClick = {
                         navController.popBackStack()
                     }) {
@@ -91,11 +85,11 @@ fun PostCreationScreen(
                     Text(
                         text = "UserName",
                         style = MaterialTheme.typography.bodyLarge,
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .padding(start = 8.dp)
+                        modifier =
+                            Modifier
+                                .align(alignment = Alignment.CenterVertically)
+                                .padding(start = 8.dp),
                     )
-
                 }
 
                 PostButton(
@@ -103,19 +97,19 @@ fun PostCreationScreen(
                     Color.White,
                     MaterialTheme.colorScheme.primary,
                     onTap = { viewModel.createTuit() },
-                    end = Arrangement.End
+                    end = Arrangement.End,
                 )
             }
 
             HorizontalDivider(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
+                modifier =
+                    Modifier
+                        .padding(horizontal = 8.dp),
             )
 
             PostTextField(
                 value = viewModel.description,
                 onValueChange = viewModel::onDescriptionChange,
-
             )
         }
     }

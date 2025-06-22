@@ -12,11 +12,10 @@ import okio.IOException
 import javax.inject.Inject
 
 class FeedRepositoryImpl
-@Inject
+    @Inject
     constructor(
-    private val api: UNLaMSocialApi,
+        private val api: UNLaMSocialApi,
     ) : FeedRepository {
-
         private val exceptionMsg = "Algo salió mal"
         private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
 
@@ -24,7 +23,7 @@ class FeedRepositoryImpl
             userToken: String,
             appToken: String,
             page: Int,
-            onlyParents: Boolean
+            onlyParents: Boolean,
         ): Flow<Resource<List<Post>>> =
             flow {
                 try {
@@ -33,10 +32,10 @@ class FeedRepositoryImpl
                             userToken,
                             appToken,
                             page,
-                            onlyParents
+                            onlyParents,
                         )
                     emit(Resource.Success(data = response))
-                }catch (e: HttpException) {
+                } catch (e: HttpException) {
                     val errorMessage =
                         try {
                             val errorBody = e.response.body?.string()

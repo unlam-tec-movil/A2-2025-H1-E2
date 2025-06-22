@@ -34,7 +34,7 @@ fun TuitView(tuit: Post) {
         modifier =
             Modifier
                 .padding(3.dp)
-                .fillMaxWidth()
+                .fillMaxWidth(),
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -54,14 +54,15 @@ fun TuitView(tuit: Post) {
                                 .clip(CircleShape)
                                 .background(Color.DarkGray),
                     )
-                }else {
+                } else {
                     Icon(
                         imageVector = Icons.Rounded.AccountCircle,
                         contentDescription = null,
                         tint = Color.DarkGray,
-                        modifier = Modifier
-                            .size(36.dp)
-                            .clip(CircleShape)
+                        modifier =
+                            Modifier
+                                .size(36.dp)
+                                .clip(CircleShape),
                     )
                 }
                 Text(
@@ -69,7 +70,7 @@ fun TuitView(tuit: Post) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    modifier = Modifier.alignByBaseline().padding(top = 8.dp)
+                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
                 )
                 Text(
                     text = tuit.date,
@@ -96,9 +97,9 @@ fun TuitView(tuit: Post) {
                     text = tuit.likes.toString(),
                     fontSize = 16.sp,
                     color = Color.Black,
-                    modifier = Modifier.align(alignment = Alignment.CenterVertically)
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically),
                 )
-                //Icon(imageVector = Icons.Outlined.AddComment, contentDescription = "Comments")
+                // Icon(imageVector = Icons.Outlined.AddComment, contentDescription = "Comments")
             }
         }
     }

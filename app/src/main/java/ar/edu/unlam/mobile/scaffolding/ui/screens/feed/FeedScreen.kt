@@ -15,7 +15,6 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,7 +27,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.topBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
-
     val posts by feedViewModel.feedState.collectAsState()
     Log.d("Cantidad actual de posts:", "${posts.size}")
 
@@ -43,24 +41,26 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
     Scaffold(
         topBar = { topBar("Feed", null) },
     ) {
-        paddingValues ->
+            paddingValues ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             state = refreshState,
-            modifier = Modifier
-                .background(Color.White),
+            modifier =
+                Modifier
+                    .background(Color.White),
             indicator = {
                 Indicator(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .padding(top = 48.dp),
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 48.dp),
                     isRefreshing = isRefreshing,
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
                     state = refreshState,
                 )
-            }
+            },
         ) {
             LazyColumn(
                 modifier =
@@ -71,12 +71,11 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .padding(paddingValues = paddingValues),
             ) {
                 items(posts) { tuit -> TuitView(tuit = tuit) }
-                //el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
+                // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
     }
 }
-
 
 @Preview
 @Composable
