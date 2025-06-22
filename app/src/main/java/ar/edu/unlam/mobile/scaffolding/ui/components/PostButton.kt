@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -16,6 +17,7 @@ fun PostButton(
     textColor: Color,
     buttonColor: Color,
     onTap: () -> Unit = {},
+    end: Arrangement.Horizontal,
 ) {
     Button(
         modifier = Modifier,

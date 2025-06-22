@@ -30,7 +30,7 @@ import coil.compose.AsyncImage
 @Composable
 fun TuitView(tuit: Post) {
     Card(
-        //horizontalArrangement = Arrangement.spacedBy(8.dp),
+        onClick = {},
         modifier =
             Modifier
                 .padding(3.dp)

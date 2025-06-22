@@ -9,41 +9,68 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel
-    @Inject
-    constructor(private val feedRepository: FeedRepository,
+@Inject
+constructor(
+    private val feedRepository: FeedRepository,
     ) : ViewModel() {
 
-        val feedState: MutableLiveData<List<Post>> by lazy {
-            MutableLiveData<List<Post>>()
-        }
-        private var getFeedJob: Job? = null
+    private val _feedState = MutableStateFlow<List<Post>>(emptyList())
+    val feedState: StateFlow<List<Post>> = _feedState.asStateFlow()
+
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+    private var getFeedJob: Job? = null
 
         init {
-            getFeedJob?.cancel()
-            getFeedJob =
-                viewModelScope.launch {
-                    feedRepository.getFeed(
-                        "", // <-- token de usuario, que llegara cuando se logeen
-                        "",// <-- token de la app, aun nose como llegara
-                        1,
-                        false
-                    ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                feedState.value = result.data
-                            }
-                            is Resource.Error -> Log.e(
-                                "API call",
-                                result.message ?: "Error 400 - Bad Request"
-                            )
-                        }
-                    }
-                }
+            fetchPosts()
         }
 
+        fun refreshPosts() {
+            if (getFeedJob?.isActive == true) {
+                return
+            }
+            fetchPosts(isRefreshingIndicator = true)
+        }
+
+        private fun fetchPosts(isRefreshingIndicator: Boolean = false) {
+            getFeedJob?.cancel()
+            getFeedJob = viewModelScope.launch {
+                if (isRefreshingIndicator) {
+                    _isRefreshing.value = true
+                }
+                feedRepository.getFeed(
+                    "", // <-- token de usuario, que llegara cuando se logeen
+                    "",// <-- token de la app, aun nose como llegara
+                    1,
+                    false
+                ).collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            _feedState.value = result.data!!
+                        }
+                        is Resource.Error -> Log.e(
+                            "API call",
+                            result.message ?: "Error 400 - Bad Request"
+                        )
+                    }
+                }
+                if (isRefreshingIndicator) {
+                    _isRefreshing.value = false
+                }
+            }
+        }
+
+        override fun onCleared() {
+            super.onCleared()
+            getFeedJob?.cancel()
+        }
     }
