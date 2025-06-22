@@ -1,50 +1,77 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.TuitView
-import models.Tuit
+import ar.edu.unlam.mobile.scaffolding.ui.components.topBar
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(viewModel: FeedViewModel = hiltViewModel()) {
-    val tuits: List<Tuit> by viewModel.tuits.observeAsState(emptyList())
+fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
+    val posts by feedViewModel.feedState.collectAsState()
+    Log.d("Cantidad actual de posts:", "${posts.size}")
+
+    val isRefreshing by feedViewModel.isRefreshing.collectAsState()
+
+    val refreshState = rememberPullToRefreshState()
+    val onRefresh = {
+        Log.d("FeedScreen", "PullToRefresh: onRefresh triggered")
+        feedViewModel.refreshPosts()
+    }
 
     Scaffold(
-        topBar = {
-            Text(
-                text = "Feed",
-                color = Color.Black,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp,
-                modifier = Modifier.padding(16.dp),
-            )
-        },
-    ) { paddingValues ->
-        LazyColumn(
+        topBar = { topBar("Feed", null) },
+    ) {
+            paddingValues ->
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            state = refreshState,
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-                    .padding(8.dp)
-                    .padding(paddingValues = paddingValues),
+                    .background(Color.White),
+            indicator = {
+                Indicator(
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 48.dp),
+                    isRefreshing = isRefreshing,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    state = refreshState,
+                )
+            },
         ) {
-            items(tuits) { tuit ->
-                TuitView(tuit = tuit)
+            LazyColumn(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.White)
+                        .padding(horizontal = 8.dp)
+                        .padding(paddingValues = paddingValues),
+            ) {
+                items(posts) { tuit -> TuitView(tuit = tuit) }
+                // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
     }
