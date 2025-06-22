@@ -1,13 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.domain
 
-// <!-- Error messages for form validation -->
-// <string name="emptyField">El campo no puede estar vacío</string>
-// <string name="textTooShort">El campo debe tener al menos %1$d caracteres</string>
-// <string name="textTooLong">El campo no puede supererar los %1$d caracteres</string>
-// <string name="invalidCharacters">El campo no puede contener caracteres especiales</string>
-// <string name="fieldsNotMatch">los campos no coinciden</string>
-// <string name="invalidEmail">El email no es valido</string>
-
 object FormValidator {
     private const val MIN_LENGTH = 4
     private const val MAX_LENGTH = 16
