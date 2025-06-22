@@ -9,10 +9,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
@@ -47,10 +49,15 @@ fun MainScreen() {
     // para navegar como naviegate y también la información de en dónde se "encuentra" el usuario
     // a través del back stack
     val controller = rememberNavController()
+    val navBackStackEntry by controller.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
-            AddPostFloatingButton(navController = controller)
+            if (currentRoute == "feed") {
+                AddPostFloatingButton(navController = controller)
+            }
         },
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
