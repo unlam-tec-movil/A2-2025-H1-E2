@@ -3,5 +3,5 @@ package ar.edu.unlam.mobile.scaffolding.data.datasources.network.response
 data class UserResponse(
     val name: String,
     val email: String,
-    val userToken: String,
+    val token: String,
 )

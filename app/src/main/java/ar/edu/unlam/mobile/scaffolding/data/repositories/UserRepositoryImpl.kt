@@ -19,7 +19,7 @@ class UserRepositoryImpl
     @Inject
     constructor(
         private val api: UNLaMSocialApi,
-        private val UserDao: UserDao,
+        private val userDao: UserDao,
     ) : UserRepository {
         private val exceptionMsg = "Algo salió mal"
         private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
@@ -42,10 +42,10 @@ class UserRepositoryImpl
                             name = response.name,
                             email = response.email,
                             avatarUrl = null,
-                            userToken = response.userToken,
+                            userToken = response.token,
                         )
 
-                    UserDao.insertUser(user)
+                    userDao.insertUser(user)
 
                     emit(Resource.Success(data = response.name))
                 } catch (e: HttpException) {
@@ -81,10 +81,10 @@ class UserRepositoryImpl
                             name = response.name,
                             email = response.email,
                             avatarUrl = null,
-                            userToken = response.userToken,
+                            userToken = response.token,
                         )
 
-                    UserDao.insertUser(user)
+                    userDao.insertUser(user)
                     // ToDo: Almacenar datos en base de datos
                     emit(Resource.Success(data = response.name))
                 } catch (e: HttpException) {
@@ -107,7 +107,7 @@ class UserRepositoryImpl
         override fun getCurrentUser(): Flow<Resource<UserProfileModel>> =
             flow {
                 try {
-                    val user = UserDao.getUser()
+                    val user = userDao.getUser()
                     val response =
                         user?.let {
                             api.getProfile(
@@ -116,7 +116,7 @@ class UserRepositoryImpl
                             )
                         }
                     if (response != null) {
-                        UserDao.updateAvatarUser(avatarUrl = response.avatarURL)
+                        userDao.updateAvatarUser(avatarUrl = response.avatarURL)
                     }
                     emit(Resource.Success(data = response))
                 } catch (e: HttpException) {
@@ -164,4 +164,6 @@ class UserRepositoryImpl
                     emit(Resource.Error(message = exceptionMsg))
                 }
             }
+
+        suspend fun getUser(): UserEntity? = userDao.getUser()
     }
