@@ -33,7 +33,7 @@ class LoginViewModel
             viewModelScope.launch {
                 loginUserJob?.cancel()
                 loginUserJob =
-                    CoroutineScope(Dispatchers.IO).launch {
+                    CoroutineScope(Dispatchers.Main).launch {
                         userRepository.loginUser(email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
