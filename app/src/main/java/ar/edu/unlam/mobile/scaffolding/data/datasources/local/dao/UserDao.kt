@@ -1,10 +1,11 @@
-package ar.edu.unlam.mobile.scaffolding.data.database.dao
+package ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import ar.edu.unlam.mobile.scaffolding.data.database.entities.UserEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 
 @Dao
 interface UserDao {
@@ -12,14 +13,14 @@ interface UserDao {
         const val ID = 1
     }
 
-    @Query("SELECT * FROM user_table")
+    @Query("SELECT * FROM user_table WHERE id = ID")
     suspend fun getUser(): UserEntity?
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)
 
-//    @Delete
-//    suspend fun deleteUser(userEntity: UserEntity)
+    @Delete
+    suspend fun deleteUser(userEntity: UserEntity)
 
     @Query("UPDATE user_table SET avatarUrl = :avatar WHERE id = ID")
     suspend fun updateAvatarUser(avatar: String)

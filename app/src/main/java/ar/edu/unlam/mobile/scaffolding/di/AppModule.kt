@@ -1,5 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
+import android.app.Application
+import androidx.room.Room
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
@@ -26,9 +29,22 @@ object AppModule {
             .build()
             .create(UNLaMSocialApi::class.java)
 
+    @Singleton
+    @Provides
+    fun providesAppDatabase(app: Application): AppDatabase =
+        Room
+            .databaseBuilder(
+                app,
+                AppDatabase::class.java,
+                "app.db",
+            ).build()
+
     @Provides
     @Singleton
-    fun provideUserRepository(api: UNLaMSocialApi): UserRepository = UserRepositoryImpl(api)
+    fun provideUserRepository(
+        api: UNLaMSocialApi,
+        db: AppDatabase,
+    ): UserRepository = UserRepositoryImpl(api, db.getUserDao())
 
     @Provides
     @Singleton

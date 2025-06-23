@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
@@ -17,6 +19,7 @@ class UserRepositoryImpl
     @Inject
     constructor(
         private val api: UNLaMSocialApi,
+        private val userDao: UserDao,
     ) : UserRepository {
         override fun signUpUser(
             name: String,
@@ -30,7 +33,15 @@ class UserRepositoryImpl
                             api.signUpUser(
                                 request = SignUpRequest(name, email, password),
                             )
-                        // ToDo: Almacenar datos en base de datos
+                        val user =
+                            UserEntity(
+                                id = 1,
+                                name = data.name,
+                                email = data.email,
+                                avatarUrl = null,
+                                userToken = data.token,
+                            )
+                        userDao.insertUser(user)
                         Resource.Success(data.name)
                     } catch (e: HttpException) {
                         val errorMessage =
@@ -61,7 +72,15 @@ class UserRepositoryImpl
                             api.loginUser(
                                 request = LoginRequest(email, password),
                             )
-                        // ToDo: Almacenar datos en base de datos
+                        val user =
+                            UserEntity(
+                                id = 1,
+                                name = data.name,
+                                email = data.email,
+                                avatarUrl = null,
+                                userToken = data.token,
+                            )
+                        userDao.insertUser(user)
                         Resource.Success(data.name)
                     } catch (e: HttpException) {
                         val errorMessage =
@@ -83,14 +102,18 @@ class UserRepositoryImpl
 
         override fun getCurrentUser(): Flow<Resource<UserProfileModel>> =
             flow {
-                val result =
+                val result: Resource<UserProfileModel> =
                     try {
-                        val data =
-                            api.getProfile(
-                                // ToDo: Obtener token de base de datos
-                                userToken = "",
-                            )
-                        Resource.Success(data)
+                        val currentUserToken = userDao.getUser()?.userToken
+                        if (currentUserToken.isNullOrBlank()) {
+                            Resource.Error(data = null, message = "No se encontró el token de usuario")
+                        } else {
+                            val data =
+                                api.getProfile(
+                                    userToken = currentUserToken,
+                                )
+                            Resource.Success(data)
+                        }
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
