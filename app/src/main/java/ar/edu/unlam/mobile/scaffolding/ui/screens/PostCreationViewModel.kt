@@ -4,22 +4,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class PostCreationViewModel
-    @Inject
-    constructor() : ViewModel() {
-        var description by mutableStateOf("")
-            private set
+@Inject
+constructor(
+    //private val postRepository: PostRepository
+) : ViewModel() {
 
-        fun onDescriptionChange(newDescription: String) {
-            description = newDescription
-        }
+    var description by mutableStateOf("")
+        private set
 
-        fun createTuit() {
-            // Lógica para crear el tuit usando descripcion
-            print("Tuit creado: $description")
-        }
+    fun onDescriptionChange(newDescription: String) {
+        description = newDescription
     }
+
+    fun createTuit() {
+        // Lógica para crear el tuit usando descripcion
+        print("Tuit creado: $description")
+    }
+}

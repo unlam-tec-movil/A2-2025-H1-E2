@@ -60,18 +60,6 @@ fun PostCreationScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    /*IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            tint = Color.Black,
-                            contentDescription = null,
-                            modifier =
-                                Modifier
-                                    .size(32.dp),
-                        )
-                    }*/
                     Image(
                         imageVector = Icons.Default.Person,
                         contentDescription = null,

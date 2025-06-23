@@ -4,8 +4,9 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
-    fun getPosts(
+    fun createPosts(
         userToken: String,
         appToken: String,
+        message: String
     ): Flow<Resource<String>>
 }
