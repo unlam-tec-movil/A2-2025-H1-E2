@@ -116,7 +116,7 @@ class UserRepositoryImpl
                             )
                         }
                     if (response != null) {
-                        userDao.updateAvatarUser(avatarUrl = response.avatarURL)
+                        userDao.updateAvatarUser(avatar = response.avatarURL)
                     }
                     emit(Resource.Success(data = response))
                 } catch (e: HttpException) {
@@ -165,5 +165,5 @@ class UserRepositoryImpl
                 }
             }
 
-        suspend fun getUser(): UserEntity? = userDao.getUser()
+//        suspend fun getUser(): UserEntity? = userDao.getUser()
     }
