@@ -8,12 +8,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,11 +34,13 @@ import coil.compose.AsyncImage
 @Composable
 fun TuitView(tuit: Post) {
     Card(
-        onClick = {},
+        shape = RoundedCornerShape(7.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
         modifier =
             Modifier
                 .padding(3.dp)
                 .fillMaxWidth(),
+        onClick = {},
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -52,13 +58,13 @@ fun TuitView(tuit: Post) {
                             Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(Color.DarkGray),
+                                .background(MaterialTheme.colorScheme.secondary),
                     )
                 } else {
                     Icon(
                         imageVector = Icons.Rounded.AccountCircle,
                         contentDescription = null,
-                        tint = Color.DarkGray,
+                        tint = MaterialTheme.colorScheme.onSurface,
                         modifier =
                             Modifier
                                 .size(36.dp)
@@ -69,34 +75,42 @@ fun TuitView(tuit: Post) {
                     text = tuit.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .alignByBaseline()
+                        .padding(top = 8.dp),
                 )
                 Text(
                     text = tuit.date,
                     fontSize = 12.sp,
-                    color = Color.DarkGray,
-                    modifier = Modifier.alignByBaseline(),
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .alignByBaseline()
+                        .padding(start = 3.dp),
                 )
             }
 
             Text(
                 text = tuit.message,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
             )
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                Icon(
-                    imageVector = if (tuit.liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                    contentDescription = "Likes",
-                    tint = if (tuit.liked) Color.Red else Color.Black,
+                IconButton(
                     modifier = Modifier.size(24.dp),
-                )
+                    onClick = {}
+                ){
+                    Icon(
+                        imageVector = if (tuit.liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                        contentDescription = "Likes",
+                        tint = if (tuit.liked) Color.Red else MaterialTheme.colorScheme.onSurface,
+                    )
+                }
                 Text(
                     text = tuit.likes.toString(),
                     fontSize = 16.sp,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.align(alignment = Alignment.CenterVertically),
                 )
                 // Icon(imageVector = Icons.Outlined.AddComment, contentDescription = "Comments")

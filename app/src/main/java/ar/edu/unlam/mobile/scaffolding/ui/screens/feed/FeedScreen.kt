@@ -17,12 +17,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.TuitView
-import ar.edu.unlam.mobile.scaffolding.ui.components.topBar
+import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,7 +30,6 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
     Log.d("Cantidad actual de posts:", "${posts.size}")
 
     val isRefreshing by feedViewModel.isRefreshing.collectAsState()
-
     val refreshState = rememberPullToRefreshState()
     val onRefresh = {
         Log.d("FeedScreen", "PullToRefresh: onRefresh triggered")
@@ -39,22 +37,22 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
     }
 
     Scaffold(
-        topBar = { topBar("Feed", null) },
+        topBar = { TopBar("Feed", null) },
     ) {
-            paddingValues ->
+        paddingValues ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             state = refreshState,
             modifier =
                 Modifier
-                    .background(Color.White),
+                    .padding(paddingValues)
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background),
+
             indicator = {
                 Indicator(
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(top = 48.dp),
+                    modifier = Modifier.align(Alignment.TopCenter),
                     isRefreshing = isRefreshing,
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                     color = MaterialTheme.colorScheme.onPrimaryContainer,
@@ -66,9 +64,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .background(Color.White)
                         .padding(horizontal = 8.dp)
-                        .padding(paddingValues = paddingValues),
             ) {
                 items(posts) { tuit -> TuitView(tuit = tuit) }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle

@@ -28,7 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
-import ar.edu.unlam.mobile.scaffolding.ui.components.topBar
+import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @Composable
 fun PostCreationScreen(
@@ -38,7 +38,7 @@ fun PostCreationScreen(
     fun back(): () -> Unit = { navController.popBackStack() }
 
     Scaffold(
-        topBar = { topBar("Nuevo Post", back()) },
+        topBar = { TopBar("Nuevo Post", back()) },
         modifier = Modifier.fillMaxWidth(),
     ) {
             paddingValues ->
