@@ -47,7 +47,7 @@ fun TopBar(
                 navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
             ),
     )
-    }
+}
 
 @Preview
 @Composable

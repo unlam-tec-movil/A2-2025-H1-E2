@@ -76,17 +76,19 @@ fun TuitView(tuit: Post) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .alignByBaseline()
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .alignByBaseline()
+                            .padding(top = 8.dp),
                 )
                 Text(
                     text = tuit.date,
                     fontSize = 12.sp,
                     color = Color.Gray,
-                    modifier = Modifier
-                        .alignByBaseline()
-                        .padding(start = 3.dp),
+                    modifier =
+                        Modifier
+                            .alignByBaseline()
+                            .padding(start = 3.dp),
                 )
             }
 
@@ -99,8 +101,8 @@ fun TuitView(tuit: Post) {
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
                     modifier = Modifier.size(24.dp),
-                    onClick = {}
-                ){
+                    onClick = {},
+                ) {
                     Icon(
                         imageVector = if (tuit.liked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Likes",
