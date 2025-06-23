@@ -3,8 +3,8 @@ package ar.edu.unlam.mobile.scaffolding.di
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepositoryImpl
-import ar.edu.unlam.mobile.scaffolding.ui.screens.SignUpViewModel
-import ar.edu.unlam.mobile.scaffolding.ui.screens.UserEditViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,12 +29,4 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserRepository(api: UNLaMSocialApi): UserRepository = UserRepositoryImpl(api)
-
-    @Provides
-    @Singleton
-    fun provideSignUpViewModel(repository: UserRepository): SignUpViewModel = SignUpViewModel(userRepository = repository)
-
-    @Provides
-    @Singleton
-    fun provideUserEditViewModel(repository: UserRepository): UserEditViewModel = UserEditViewModel(userRepository = repository)
 }

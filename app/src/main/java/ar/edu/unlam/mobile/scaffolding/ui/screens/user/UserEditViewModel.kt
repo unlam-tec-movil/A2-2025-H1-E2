@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData

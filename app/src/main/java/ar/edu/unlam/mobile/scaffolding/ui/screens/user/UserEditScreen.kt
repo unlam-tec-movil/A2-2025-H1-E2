@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -27,6 +27,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.EditableAvatarImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditViewModel
 
 @Composable
 fun UserEditScreen(userEditViewModel: UserEditViewModel = hiltViewModel()) {
