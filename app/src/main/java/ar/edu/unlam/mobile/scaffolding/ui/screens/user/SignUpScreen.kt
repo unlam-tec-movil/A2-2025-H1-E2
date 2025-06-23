@@ -29,7 +29,6 @@ import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpViewModel
 
 @Composable
 fun SignUpScreen(
