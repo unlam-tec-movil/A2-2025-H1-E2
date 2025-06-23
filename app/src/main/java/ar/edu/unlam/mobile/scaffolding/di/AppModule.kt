@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
+import ar.edu.unlam.mobile.scaffolding.data.database.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
@@ -7,6 +8,7 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepositoryImpl
+import ar.edu.unlam.mobile.scaffolding.ui.screens.LogInViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.SignUpViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserEditViewModel
 import dagger.Module
@@ -32,11 +34,18 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideUserRepository(api: UNLaMSocialApi): UserRepository = UserRepositoryImpl(api)
+    fun provideUserRepository(
+        api: UNLaMSocialApi,
+        dao: UserDao,
+    ): UserRepository = UserRepositoryImpl(api, dao)
 
     @Provides
     @Singleton
     fun provideSignUpViewModel(repository: UserRepository): SignUpViewModel = SignUpViewModel(userRepository = repository)
+
+    @Provides
+    @Singleton
+    fun providesLogInViewModel(repository: UserRepository): LogInViewModel = LogInViewModel(userRepository = repository)
 
     @Provides
     @Singleton

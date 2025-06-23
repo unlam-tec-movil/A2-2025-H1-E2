@@ -21,6 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -29,18 +30,14 @@ import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
+@Preview
 @Composable
-fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+fun LogInScreen(logInViewModel: LogInViewModel = hiltViewModel()) {
     var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-    var usernameError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
     var emailError by remember { mutableStateOf<String?>(null) }
+    var passwordError by remember { mutableStateOf<String?>(null) }
 
     Column(
         modifier =
@@ -49,31 +46,13 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // Título
+        // TITLE
         Text(
-            text = stringResource(R.string.createAccount),
+            text = stringResource(R.string.logIn),
             fontSize = 25.sp,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
         )
-// NAME
-        FormField(
-            label = stringResource(R.string.labelName),
-            text = username,
-            onTextChange = {
-                username = it
-                usernameError = null
-            },
-            placeholder = stringResource(R.string.phFieldName),
-            onFocusLost = {
-                if (username.isNotBlank()) {
-                    usernameError =
-                        FormValidator.isValidText(text = username)
-                }
-            },
-            errorMessage = usernameError,
-        )
-
 // EMAIL
         FormField(
             label = stringResource(R.string.labelEmail),
@@ -111,27 +90,6 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
             },
         )
 
-// CONFIRM PASSWORD
-        PasswordFormField(
-            label = stringResource(R.string.labelConfirmPassword),
-            password = confirmPassword,
-            onPasswordChange = {
-                confirmPassword = it
-                confirmPasswordError = null
-            },
-            placeholder = stringResource(R.string.phFieldConfirmPassword),
-            errorMessage = confirmPasswordError,
-            onFocusLost = {
-                if (password.isNotBlank()) {
-                    confirmPasswordError =
-                        FormValidator.isValidPassword(
-                            password = password,
-                            confirmPassword = confirmPassword,
-                        )
-                }
-            },
-        )
-
         Button(
             modifier = Modifier.padding(20.dp),
             colors =
@@ -140,25 +98,19 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
                     contentColor = Color.White,
                 ),
             onClick = {
-                usernameError = FormValidator.isValidText(text = username)
                 emailError = FormValidator.isValidEmail(email = email)
                 passwordError = FormValidator.isValidText(text = password, specialCharacters = true)
-                confirmPasswordError =
-                    FormValidator.isValidPassword(
-                        password = password,
-                        confirmPassword = confirmPassword,
-                    )
-                if (usernameError == null && emailError == null && passwordError == null && confirmPasswordError == null) {
+
+                if (emailError == null && passwordError == null) {
                     Log.d("AppEstado", "La app pasó por aquí correctamente.")
-                    signUpViewModel.signUpUser(
-                        name = username,
+                    logInViewModel.loginUser(
                         email = email,
                         password = password,
                     )
                 }
             },
         ) {
-            Text(text = stringResource(R.string.SingUp), fontSize = 20.sp)
+            Text(text = stringResource(R.string.logIn), fontSize = 20.sp)
         }
     }
 }

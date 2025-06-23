@@ -7,6 +7,6 @@ interface PostRepository {
     fun createPosts(
         userToken: String,
         appToken: String,
-        message: String
+        message: String,
     ): Flow<Resource<String>>
 }
