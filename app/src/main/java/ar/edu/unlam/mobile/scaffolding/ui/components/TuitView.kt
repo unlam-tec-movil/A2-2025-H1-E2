@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,6 +11,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,46 +24,54 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.rememberAsyncImagePainter
-import models.Tuit
+import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
+import coil.compose.AsyncImage
 
 @Composable
-fun TuitView(tuit: Tuit) {
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+fun TuitView(tuit: Post) {
+    Card(
+        onClick = {},
         modifier =
             Modifier
-                .background(Color.White)
-                .padding(4.dp)
+                .padding(3.dp)
                 .fillMaxWidth(),
     ) {
-        if (tuit.avatarUrl.isNotEmpty()) {
-            Image(
-                painter = rememberAsyncImagePainter(tuit.avatarUrl),
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-            )
-        }
-
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = Modifier.padding(4.dp),
         ) {
             Row(
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
+                if (tuit.avatarUrl.isNotEmpty()) {
+                    AsyncImage(
+                        model = tuit.avatarUrl,
+                        contentDescription = null,
+                        modifier =
+                            Modifier
+                                .size(36.dp)
+                                .clip(CircleShape)
+                                .background(Color.DarkGray),
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Rounded.AccountCircle,
+                        contentDescription = null,
+                        tint = Color.DarkGray,
+                        modifier =
+                            Modifier
+                                .size(36.dp)
+                                .clip(CircleShape),
+                    )
+                }
                 Text(
                     text = tuit.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.Black,
-                    modifier = Modifier.alignByBaseline(),
+                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
                 )
-
                 Text(
                     text = tuit.date,
                     fontSize = 12.sp,
@@ -88,7 +97,9 @@ fun TuitView(tuit: Tuit) {
                     text = tuit.likes.toString(),
                     fontSize = 16.sp,
                     color = Color.Black,
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically),
                 )
+                // Icon(imageVector = Icons.Outlined.AddComment, contentDescription = "Comments")
             }
         }
     }
@@ -98,7 +109,7 @@ fun TuitView(tuit: Tuit) {
 @Composable
 fun TuitViewPreview() {
     val tuit =
-        Tuit(
+        Post(
             id = 1,
             message = "This is a sample tuit message.",
             parentId = 0,
