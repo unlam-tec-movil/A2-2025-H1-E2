@@ -19,7 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
@@ -70,7 +70,7 @@ fun MainScreen() {
             }
 
             composable("postCreation") {
-                PostCreationScreen(navController = controller)
+                PostCreateScreen(navController = controller)
             }
 
             composable(

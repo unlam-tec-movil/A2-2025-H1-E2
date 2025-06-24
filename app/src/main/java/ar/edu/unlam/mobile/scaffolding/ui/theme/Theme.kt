@@ -21,8 +21,8 @@ private val DarkColorScheme =
         secondary = PurpleGrey80,
         tertiary = Pink80,
         background = Black,
+        onBackground = DarkGray,
         surfaceContainer = LightGray,
-        onBackground = White,
         onSurface = White,
     )
 
@@ -32,8 +32,8 @@ private val LightColorScheme =
         secondary = PurpleGrey40,
         tertiary = Pink40,
         background = White,
+        onBackground = LightGray,
         surfaceContainer = DarkGray,
-        onBackground = Black,
         onSurface = Black,
     )
 

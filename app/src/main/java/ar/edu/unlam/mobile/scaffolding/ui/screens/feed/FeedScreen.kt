@@ -21,7 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
-import ar.edu.unlam.mobile.scaffolding.ui.components.TuitView
+import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +65,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .fillMaxSize()
                         .padding(horizontal = 8.dp),
             ) {
-                items(posts) { tuit -> TuitView(tuit = tuit) }
+                items(posts) { tuit -> PostView(post = tuit) }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }

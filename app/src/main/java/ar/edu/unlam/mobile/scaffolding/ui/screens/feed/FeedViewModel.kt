@@ -47,9 +47,9 @@ class FeedViewModel
                         _isRefreshing.value = true
                     }
                     feedRepository.getFeed(
-                        "",
+                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxhcmFtYXlvNzUyQGFsdW1uby51bmxhbS5lZHUuYXIiLCJleHAiOjE3NTMzOTAyMjMsImlzcyI6InVubGFtLXR1aXRlciIsIm5hbWUiOiJsYXJhbWF5bzc1MkBhbHVtbm8udW5sYW0uZWR1LmFyIiwic3ViIjoyMTJ9.cy_gfyxNIgGLp9MwtzTrCKGdU019UvleOgtCS5rTJd0",
                         // TODO agregar token de usuario, que llegara cuando se logeen
-                        "",
+                        "77f54753a40f7cf44a0b4d9e69a65c24dff64022329bb75afc1196b43187399a",
                         // TODO agregar token de la app, aun nose como llegara
                         1,
                         false,

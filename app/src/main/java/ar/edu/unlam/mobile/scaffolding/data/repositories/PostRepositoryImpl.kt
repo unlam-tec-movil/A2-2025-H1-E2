@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
@@ -31,7 +32,6 @@ class PostRepositoryImpl
                             request = CreatePostRequest(message),
                         )
                     emit(Resource.Success(data = response.message))
-                    // TODO: Aun no me fije que retorna la Api
                 } catch (e: HttpException) {
                     val errorMessage =
                         try {
@@ -39,13 +39,15 @@ class PostRepositoryImpl
                             val gson = Gson()
                             gson.fromJson(errorBody, ErrorResponse::class.java).message
                         } catch (e: Exception) {
-                            exceptionMsg
+                            "$exceptionMsg - primer catch"
                         }
                     emit(Resource.Error(message = errorMessage))
                 } catch (e: IOException) {
                     emit(Resource.Error(message = internetConnectionErrorMsg))
                 } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
+                    val message = e.message ?: "$exceptionMsg - ultimo catch"
+                    Log.i("API call", e.toString())
+                    emit(Resource.Error(message = message))
                 }
             }
     }
