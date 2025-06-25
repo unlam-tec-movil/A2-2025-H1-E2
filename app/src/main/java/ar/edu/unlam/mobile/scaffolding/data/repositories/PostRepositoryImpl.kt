@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
-import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
@@ -15,7 +14,6 @@ import javax.inject.Inject
 class PostRepositoryImpl
     @Inject
     constructor(private val api: UNLaMSocialApi) : PostRepository {
-
         override fun createPosts(
             userToken: String,
             message: String,
@@ -24,26 +22,26 @@ class PostRepositoryImpl
                 val response =
                     try {
                         val data =
-                        api.createPost(
-                            userToken = userToken,
-                            createPostRequest = CreatePostRequest(message),
-                        )
-                    Resource.Success(data = data.message)
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            e.message
-                        }
-                    Resource.Error(message = errorMessage.toString())
-                } catch (e: IOException) {
-                    Resource.Error(message = e.message.toString())
-                } catch (e: Exception) {
-                    Resource.Error(message = e.message.toString())
-                }
+                            api.createPost(
+                                userToken = userToken,
+                                createPostRequest = CreatePostRequest(message),
+                            )
+                        Resource.Success(data.message)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
                 emit(response)
             }
     }

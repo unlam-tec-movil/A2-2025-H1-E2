@@ -16,7 +16,6 @@ class FeedRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
     ) : FeedRepository {
-
         override fun getFeed(
             userToken: String,
             page: Int,
