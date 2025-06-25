@@ -44,7 +44,7 @@ object AppModule {
     fun provideUserRepository(
         api: UNLaMSocialApi,
         db: AppDatabase,
-    ): UserRepository = UserRepositoryImpl(api, db.getUserDao())
+    ): UserRepository = UserRepositoryImpl(api, db.getUserDao(), db.getUserFavDao())
 
     @Provides
     @Singleton

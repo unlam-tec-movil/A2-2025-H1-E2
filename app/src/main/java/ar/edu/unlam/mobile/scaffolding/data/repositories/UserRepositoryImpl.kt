@@ -1,8 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import androidx.sqlite.SQLiteException
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
@@ -20,6 +23,7 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
+        private val userFavDao: UserFavDao,
     ) : UserRepository {
         override fun signUpUser(
             name: String,
@@ -162,4 +166,21 @@ class UserRepositoryImpl
                     }
                 emit(result)
             }
+
+        override fun getFavUser(): Flow<Resource<UserFavEntity>> =
+            flow {
+                val result =
+                    try {
+                        val data =
+                            userFavDao.getAll()
+                        Resource.Success(data)
+                    } catch (e: SQLiteException) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
+            }
+
+        override suspend fun insertFavUser(userFavEntity: UserFavEntity) {
+            userFavDao.insertUserFav(userFavEntity)
+        }
     }
