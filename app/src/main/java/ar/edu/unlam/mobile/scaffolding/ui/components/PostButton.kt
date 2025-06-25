@@ -29,7 +29,7 @@ fun PostButton(
                 containerColor = MaterialTheme.colorScheme.primary,
                 contentColor = Color.White,
                 disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
-                disabledContentColor = Color.Gray
+                disabledContentColor = Color.Gray,
             ),
         contentPadding = contentPadding,
     ) {

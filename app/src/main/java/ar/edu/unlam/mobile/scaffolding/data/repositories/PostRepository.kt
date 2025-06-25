@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun createPosts(
         userToken: String,
-        appToken: String,
         message: String,
     ): Flow<Resource<String>>
 }

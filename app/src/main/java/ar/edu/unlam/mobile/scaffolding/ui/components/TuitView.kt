@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -31,9 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
-import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
 fun PostView(post: Post) {
@@ -55,10 +53,11 @@ fun PostView(post: Post) {
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 AsyncImage(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondary),
+                    modifier =
+                        Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.secondary),
                     model = post.avatarUrl,
                     contentDescription = null,
                 )
@@ -67,17 +66,19 @@ fun PostView(post: Post) {
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier
-                        .alignByBaseline()
-                        .padding(top = 8.dp),
+                    modifier =
+                        Modifier
+                            .alignByBaseline()
+                            .padding(top = 8.dp),
                 )
                 Text(
                     text = post.date,
                     fontSize = 12.sp,
                     color = Color.Gray,
-                    modifier = Modifier
-                        .alignByBaseline()
-                        .padding(start = 3.dp),
+                    modifier =
+                        Modifier
+                            .alignByBaseline()
+                            .padding(start = 3.dp),
                 )
             }
 
@@ -89,9 +90,10 @@ fun PostView(post: Post) {
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterVertically)
-                        .size(24.dp),
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(24.dp),
                     onClick = {},
                 ) {
                     Icon(
@@ -104,19 +106,21 @@ fun PostView(post: Post) {
                     text = post.likes.toString(),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier
-                        .width(50.dp)
-                        .align(alignment = Alignment.CenterVertically)
-                        .padding(end = 12.dp),
+                    modifier =
+                        Modifier
+                            .width(50.dp)
+                            .align(alignment = Alignment.CenterVertically)
+                            .padding(end = 12.dp),
                 )
                 IconButton(
-                    modifier = Modifier
-                        .align(alignment = Alignment.CenterVertically)
-                        .size(23.dp),
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(23.dp),
                     onClick = {},
-                ){
+                ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_chat_bubble), // Usando painterResource
+                        painter = painterResource(id = R.drawable.ic_chat_bubble),
                         contentDescription = "Comments",
                         tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     )

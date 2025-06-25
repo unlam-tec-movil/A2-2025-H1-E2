@@ -20,10 +20,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -39,12 +39,14 @@ fun PostCreateScreen(
     navController: NavController,
 ) {
     val statusMessage by viewModel.statusMessage.collectAsState()
+
     fun back(): () -> Unit = { navController.popBackStack() }
 
-    fun createPost(): () -> Unit = {
-        viewModel.createPost(viewModel.myMessage)
-        //back()
-    }
+    fun createPost(): () -> Unit =
+        {
+            viewModel.createPost()
+            // back()
+        }
 
     Scaffold(
         topBar = { TopBar("Nuevo Post", back()) },
@@ -52,50 +54,54 @@ fun PostCreateScreen(
     ) {
             paddingValues ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background)
-                .padding(paddingValues = paddingValues),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background)
+                    .padding(paddingValues = paddingValues),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 12.dp, horizontal = 8.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp, horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.Top,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    if (/*TODO: Verificar que el usuario tenga avatar*/false) {
-                        /*TODO: Mostrar avatar del usuario esta logueado*/
-                    }else{
-                        Image(
-                            imageVector = Icons.Rounded.AccountCircle,
-                            contentDescription = null,
-                            modifier = Modifier
+                    // TODO: Cabiar por un AsyncImage para mostrar el avatar del usuario
+                    Image(
+                        imageVector = Icons.Rounded.AccountCircle,
+                        contentDescription = null,
+                        modifier =
+                            Modifier
                                 .size(44.dp)
                                 .clip(CircleShape)
                                 .background(MaterialTheme.colorScheme.secondary)
                                 .padding(3.dp),
-                            )
-                    }
+                    )
 
                     Text(
                         text = "Usuario(Tu)",
-                        //nombre del usuario logeado
+                        // nombre del usuario logeado
                         color = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .padding(start = 8.dp),
+                        modifier =
+                            Modifier
+                                .align(alignment = Alignment.CenterVertically)
+                                .padding(start = 8.dp),
                     )
                 }
 
                 PostButton(
                     text = "Publicar",
-                    onTap = if (viewModel.myMessage.isNotEmpty()){
-                        createPost()
-                    } else {{}},
+                    onTap =
+                        if (viewModel.myMessage.isNotEmpty()) {
+                            createPost()
+                        } else {
+                            {}
+                        },
                     contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                     enabled = viewModel.myMessage.isNotEmpty(),
                 )
@@ -103,11 +109,12 @@ fun PostCreateScreen(
 
             Card(
                 shape = RoundedCornerShape(4.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(8.dp)
-                    .padding(bottom = 50.dp),
-            ){
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(8.dp)
+                        .padding(bottom = 50.dp),
+            ) {
                 PostTextField(
                     value = viewModel.myMessage,
                     onValueChange = viewModel::onDescriptionChange,

@@ -15,17 +15,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.math.log
 
 @HiltViewModel
 class PostCreateViewModel
     @Inject
     constructor(
-        private val postRepository: PostRepository
+        private val postRepository: PostRepository,
     ) : ViewModel() {
-
         var myMessage by mutableStateOf("")
             private set
+
         fun onDescriptionChange(newDescription: String) {
             myMessage = newDescription
         }
@@ -35,7 +34,7 @@ class PostCreateViewModel
 
         private var newPostJob: Job? = null
 
-        fun createPost(message: String) {
+        fun createPost() {
             newPostJob?.cancel()
             if (myMessage.isBlank()) {
                 _statusMessage.value = "Error: El mensaje no puede estar vacío."
@@ -44,13 +43,12 @@ class PostCreateViewModel
             }
             newPostJob =
                 viewModelScope.launch {
-                    Log.i("API call", "Datos para crear post obtenidos")
                     postRepository.createPosts(
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImxhcmFtYXlvNzUyQGFsdW1uby51bmxhbS5lZHUuYXIiLCJleHAiOjE3NTMzOTAyMjMsImlzcyI6InVubGFtLXR1aXRlciIsIm5hbWUiOiJsYXJhbWF5bzc1MkBhbHVtbm8udW5sYW0uZWR1LmFyIiwic3ViIjoyMTJ9.cy_gfyxNIgGLp9MwtzTrCKGdU019UvleOgtCS5rTJd0",
-                        "77f54753a40f7cf44a0b4d9e69a65c24dff64022329bb75afc1196b43187399a",
-                        message
+                        "",
+                        // TODO: Obtener el token del usuario logeado
+                        myMessage,
                     ).collect {
-                        result ->
+                            result ->
                         when (result) {
                             is Resource.Success -> {
                                 _statusMessage.value = result.data!!
@@ -60,7 +58,7 @@ class PostCreateViewModel
                             is Resource.Error -> {
                                 _statusMessage.value = result.message!!
                                 Log.e(
-                                    "API call", result.message ?: "Error 400 - Bad Request",
+                                    "API call", result.message,
                                 )
                             }
                         }

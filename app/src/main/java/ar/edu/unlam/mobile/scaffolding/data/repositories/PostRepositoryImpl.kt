@@ -20,16 +20,14 @@ class PostRepositoryImpl
 
         override fun createPosts(
             userToken: String,
-            appToken: String,
             message: String,
         ): Flow<Resource<String>> =
             flow {
                 try {
                     val response =
                         api.createPost(
-                            userToken,
-                            appToken,
-                            request = CreatePostRequest(message),
+                            userToken = userToken,
+                            createPostRequest = CreatePostRequest(message),
                         )
                     emit(Resource.Success(data = response.message))
                 } catch (e: HttpException) {

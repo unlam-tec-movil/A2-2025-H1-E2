@@ -21,7 +21,6 @@ class FeedRepositoryImpl
 
         override fun getFeed(
             userToken: String,
-            appToken: String,
             page: Int,
             onlyParents: Boolean,
         ): Flow<Resource<List<Post>>> =
@@ -29,10 +28,9 @@ class FeedRepositoryImpl
                 try {
                     val response =
                         api.getFeed(
-                            userToken,
-                            appToken,
-                            page,
-                            onlyParents,
+                            userToken = userToken,
+                            page = page,
+                            onlyParents = onlyParents,
                         )
                     emit(Resource.Success(data = response))
                 } catch (e: HttpException) {

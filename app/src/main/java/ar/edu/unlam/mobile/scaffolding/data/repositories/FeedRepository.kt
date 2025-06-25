@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.Flow
 interface FeedRepository {
     fun getFeed(
         userToken: String,
-        appToken: String,
         page: Int,
         onlyParents: Boolean,
     ): Flow<Resource<List<Post>>>
