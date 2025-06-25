@@ -12,17 +12,16 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
-import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreationScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -55,7 +54,6 @@ fun MainScreen() {
     Log.d("MainScreen", BuildConfig.API_KEY)
 
     Scaffold(
-        bottomBar = { BottomBar(controller = controller) },
         floatingActionButton = {
             if (currentRoute == "feed") {
                 AddPostFloatingButton(navController = controller)
@@ -64,13 +62,17 @@ fun MainScreen() {
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(
-            navController = controller,
-            startDestination = "feed",
-            modifier = Modifier.padding(paddingValue),
-        ) {
+        NavHost(navController = controller, startDestination = "login", modifier = Modifier.padding(paddingValue)) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
+            composable("login") {
+                LoginScreen(navController = controller)
+            }
+
+            composable("signUp") {
+                SignUpScreen(navController = controller)
+            }
+
             composable("feed") {
                 FeedScreen()
             }
@@ -79,12 +81,8 @@ fun MainScreen() {
                 PostCreationScreen(navController = controller)
             }
 
-            composable(
-                route = "user/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType }),
-            ) { navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(userId = id)
+            composable("editUser") {
+                UserEditScreen(navController = controller)
             }
         }
     }

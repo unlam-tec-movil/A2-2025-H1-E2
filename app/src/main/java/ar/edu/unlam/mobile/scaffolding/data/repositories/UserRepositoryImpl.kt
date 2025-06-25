@@ -1,8 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
-import ar.edu.unlam.mobile.scaffolding.data.database.dao.UserDao
-import ar.edu.unlam.mobile.scaffolding.data.database.entities.UserEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
@@ -21,48 +21,44 @@ class UserRepositoryImpl
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
     ) : UserRepository {
-        private val exceptionMsg = "Algo salió mal"
-        private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
-
         override fun signUpUser(
             name: String,
             email: String,
             password: String,
         ): Flow<Resource<String>> =
             flow {
-                try {
-                    val response =
-                        api.signUpUser(
-                            request = SignUpRequest(name, email, password),
-                        )
-                    // ToDo: Almacenar datos en base de datos
-                    val user =
-                        UserEntity(
-                            id = 1,
-                            name = response.name,
-                            email = response.email,
-                            avatarUrl = null,
-                            userToken = response.token,
-                        )
-
-                    userDao.insertUser(user)
-
-                    emit(Resource.Success(data = response.name))
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            exceptionMsg
-                        }
-                    emit(Resource.Error(message = errorMessage))
-                } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
-                } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
-                }
+                val result =
+                    try {
+                        val data =
+                            api.signUpUser(
+                                request = SignUpRequest(name, email, password),
+                            )
+                        val user =
+                            UserEntity(
+                                id = 1,
+                                name = data.name,
+                                email = data.email,
+                                avatarUrl = null,
+                                userToken = data.token,
+                            )
+                        userDao.insertUser(user)
+                        Resource.Success(data.name)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
             }
 
         override fun loginUser(
@@ -70,70 +66,70 @@ class UserRepositoryImpl
             password: String,
         ): Flow<Resource<String>> =
             flow {
-                try {
-                    val response =
-                        api.loginUser(
-                            request = LoginRequest(email, password),
-                        )
-                    val user =
-                        UserEntity(
-                            id = 1,
-                            name = response.name,
-                            email = response.email,
-                            avatarUrl = null,
-                            userToken = response.token,
-                        )
-
-                    userDao.insertUser(user)
-                    // ToDo: Almacenar datos en base de datos
-                    emit(Resource.Success(data = response.name))
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            exceptionMsg
-                        }
-                    emit(Resource.Error(message = errorMessage))
-                } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
-                } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
-                }
+                val result =
+                    try {
+                        val data =
+                            api.loginUser(
+                                request = LoginRequest(email, password),
+                            )
+                        val user =
+                            UserEntity(
+                                id = 1,
+                                name = data.name,
+                                email = data.email,
+                                avatarUrl = null,
+                                userToken = data.token,
+                            )
+                        userDao.insertUser(user)
+                        Resource.Success(data.name)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
             }
 
         override fun getCurrentUser(): Flow<Resource<UserProfileModel>> =
             flow {
-                try {
-                    val user = userDao.getUser()
-                    val response =
-                        user?.let {
-                            api.getProfile(
-                                // ToDo: Obtener token de base de datos
-                                userToken = it.userToken,
-                            )
+                val result: Resource<UserProfileModel> =
+                    try {
+                        val currentUserToken = userDao.getUser()?.userToken
+                        if (currentUserToken.isNullOrBlank()) {
+                            Resource.Error(data = null, message = "No se encontró el token de usuario")
+                        } else {
+                            val data =
+                                api.getProfile(
+                                    userToken = currentUserToken,
+                                )
+                            Resource.Success(data)
                         }
-                    if (response != null) {
-                        userDao.updateAvatarUser(avatar = response.avatarURL)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
                     }
-                    emit(Resource.Success(data = response))
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            exceptionMsg
-                        }
-                    emit(Resource.Error(message = errorMessage))
-                } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
-                } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
-                }
+                emit(result)
             }
 
         override fun editUser(
@@ -142,28 +138,28 @@ class UserRepositoryImpl
             email: String,
         ): Flow<Resource<String>> =
             flow {
-                try {
-                    val response =
-                        api.signUpUser(
-                            request = SignUpRequest(name, avatarURL, email),
-                        )
-                    emit(Resource.Success(data = response.name))
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            exceptionMsg
-                        }
-                    emit(Resource.Error(message = errorMessage))
-                } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
-                } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
-                }
+                val result =
+                    try {
+                        val data =
+                            api.signUpUser(
+                                request = SignUpRequest(name, avatarURL, email),
+                            )
+                        Resource.Success(data.name)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
             }
-
-//        suspend fun getUser(): UserEntity? = userDao.getUser()
     }

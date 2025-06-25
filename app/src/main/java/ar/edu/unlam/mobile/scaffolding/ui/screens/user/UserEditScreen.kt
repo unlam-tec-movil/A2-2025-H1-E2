@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.EditableAvatarImage
@@ -29,7 +30,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
 @Composable
-fun UserEditScreen(userEditViewModel: UserEditViewModel = hiltViewModel()) {
+fun UserEditScreen(
+    userEditViewModel: UserEditViewModel = hiltViewModel(),
+    navController: NavController,
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -156,6 +160,7 @@ fun UserEditScreen(userEditViewModel: UserEditViewModel = hiltViewModel()) {
                         userEditViewModel.editUser(
                             name = username,
                             password = password,
+                            navController = navController,
                         )
                     }
                 },

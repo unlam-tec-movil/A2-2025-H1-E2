@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -21,18 +21,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
-@Preview
 @Composable
-fun LogInScreen(logInViewModel: LogInViewModel = hiltViewModel()) {
+fun LoginScreen(
+    loginViewModel: LoginViewModel = hiltViewModel(),
+    navController: NavController,
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -46,14 +48,15 @@ fun LogInScreen(logInViewModel: LogInViewModel = hiltViewModel()) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
-        // TITLE
+        // Título
         Text(
-            text = stringResource(R.string.logIn),
+            text = "Iniciar sesión",
             fontSize = 25.sp,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
         )
-// EMAIL
+
+        // EMAIL
         FormField(
             label = stringResource(R.string.labelEmail),
             text = email,
@@ -72,7 +75,7 @@ fun LogInScreen(logInViewModel: LogInViewModel = hiltViewModel()) {
             errorMessage = emailError,
         )
 
-// PASSWORD
+        // PASSWORD
         PasswordFormField(
             label = stringResource(R.string.labelPassword),
             password = password,
@@ -100,17 +103,41 @@ fun LogInScreen(logInViewModel: LogInViewModel = hiltViewModel()) {
             onClick = {
                 emailError = FormValidator.isValidEmail(email = email)
                 passwordError = FormValidator.isValidText(text = password, specialCharacters = true)
-
                 if (emailError == null && passwordError == null) {
                     Log.d("AppEstado", "La app pasó por aquí correctamente.")
-                    logInViewModel.loginUser(
+                    loginViewModel.loginUser(
                         email = email,
                         password = password,
+                        navController = navController,
                     )
                 }
             },
         ) {
-            Text(text = stringResource(R.string.logIn), fontSize = 20.sp)
+            Text(text = "Iniciar sesión", fontSize = 20.sp)
+        }
+
+        // Registrarse
+        Column(
+            modifier = Modifier.padding(vertical = 16.dp),
+        ) {
+            Text(
+                text = "¿Todavía no estás registrado?",
+                fontSize = 15.sp,
+                fontStyle = FontStyle.Normal,
+                fontWeight = FontWeight.Light,
+            )
+            Button(
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.White,
+                        contentColor = Color.Black,
+                    ),
+                onClick = {
+                    navController.navigate("signUp")
+                },
+            ) {
+                Text(text = "Registrarse", fontSize = 20.sp)
+            }
         }
     }
 }
