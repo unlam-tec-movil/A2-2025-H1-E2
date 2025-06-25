@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 fun AddPostFloatingButton(navController: NavController) {
     FloatingActionButton(
         onClick = { navController.navigate("postCreation") },
-        containerColor = MaterialTheme.colorScheme.primary,
+        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.95f),
         shape = CircleShape,
     ) {
         Icon(

@@ -10,14 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun topBar(
+fun TopBar(
     title: String,
     onNavigateBack: (() -> Unit)?,
 ) {
@@ -25,15 +24,15 @@ fun topBar(
         title = {
             Text(
                 text = title,
+                color = MaterialTheme.colorScheme.onBackground,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
             )
         },
         navigationIcon = {
             if (onNavigateBack != null) {
-                IconButton(onClick = onNavigateBack) { // La idea es que al hacer clic en el botón,
-                    // se retroceda a la pantalla anterior llamando al navController con la lambda
-                    // el boton solo dedberia aparecer al abrir un post
+                IconButton(onClick = onNavigateBack) {
+                    // Retrocede a la pantalla anterior si entra navController.popBackStack() pero se puede personalizar
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                         contentDescription = "Retroceder",
@@ -44,8 +43,8 @@ fun topBar(
         colors =
             TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = Color.White,
-                navigationIconContentColor = Color.White,
+                titleContentColor = MaterialTheme.colorScheme.onBackground,
+                navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
             ),
     )
 }
@@ -54,5 +53,5 @@ fun topBar(
 @Composable
 fun topBarPreview() {
     val back = {}
-    topBar("Feed", back)
+    TopBar("Feed", back)
 }

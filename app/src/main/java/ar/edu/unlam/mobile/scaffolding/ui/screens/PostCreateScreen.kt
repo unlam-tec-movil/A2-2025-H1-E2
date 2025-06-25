@@ -4,23 +4,26 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,17 +31,25 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
-import ar.edu.unlam.mobile.scaffolding.ui.components.topBar
+import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @Composable
-fun PostCreationScreen(
-    viewModel: PostCreationViewModel = hiltViewModel(),
+fun PostCreateScreen(
+    viewModel: PostCreateViewModel = hiltViewModel(),
     navController: NavController,
 ) {
+    val statusMessage by viewModel.statusMessage.collectAsState()
+
     fun back(): () -> Unit = { navController.popBackStack() }
 
+    fun createPost(): () -> Unit =
+        {
+            viewModel.createPost()
+            // back()
+        }
+
     Scaffold(
-        topBar = { topBar("Nuevo Post", back()) },
+        topBar = { TopBar("Nuevo Post", back()) },
         modifier = Modifier.fillMaxWidth(),
     ) {
             paddingValues ->
@@ -46,7 +57,7 @@ fun PostCreationScreen(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(Color.White)
+                    .background(color = MaterialTheme.colorScheme.background)
                     .padding(paddingValues = paddingValues),
         ) {
             Row(
@@ -60,20 +71,9 @@ fun PostCreationScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    /*IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            tint = Color.Black,
-                            contentDescription = null,
-                            modifier =
-                                Modifier
-                                    .size(32.dp),
-                        )
-                    }*/
+                    // TODO: Cabiar por un AsyncImage para mostrar el avatar del usuario
                     Image(
-                        imageVector = Icons.Default.Person,
+                        imageVector = Icons.Rounded.AccountCircle,
                         contentDescription = null,
                         modifier =
                             Modifier
@@ -82,9 +82,11 @@ fun PostCreationScreen(
                                 .background(MaterialTheme.colorScheme.secondary)
                                 .padding(3.dp),
                     )
+
                     Text(
-                        text = "UserName",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = "Usuario(Tu)",
+                        // nombre del usuario logeado
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier =
                             Modifier
                                 .align(alignment = Alignment.CenterVertically)
@@ -94,23 +96,30 @@ fun PostCreationScreen(
 
                 PostButton(
                     text = "Publicar",
-                    Color.White,
-                    MaterialTheme.colorScheme.primary,
-                    onTap = { viewModel.createTuit() },
-                    end = Arrangement.End,
+                    onTap =
+                        if (viewModel.myMessage.isNotEmpty()) {
+                            createPost()
+                        } else {
+                            {}
+                        },
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+                    enabled = viewModel.myMessage.isNotEmpty(),
                 )
             }
 
-            HorizontalDivider(
+            Card(
+                shape = RoundedCornerShape(4.dp),
                 modifier =
                     Modifier
-                        .padding(horizontal = 8.dp),
-            )
-
-            PostTextField(
-                value = viewModel.description,
-                onValueChange = viewModel::onDescriptionChange,
-            )
+                        .fillMaxSize()
+                        .padding(8.dp)
+                        .padding(bottom = 50.dp),
+            ) {
+                PostTextField(
+                    value = viewModel.myMessage,
+                    onValueChange = viewModel::onDescriptionChange,
+                )
+            }
         }
     }
 }
@@ -119,5 +128,5 @@ fun PostCreationScreen(
 @Composable
 fun PostCreationPreview() {
     val navController = rememberNavController()
-    PostCreationScreen(navController = navController)
+    PostCreateScreen(navController = navController)
 }

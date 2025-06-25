@@ -48,9 +48,7 @@ class FeedViewModel
                     }
                     feedRepository.getFeed(
                         "",
-                        // token de usuario, que llegara cuando se logeen
-                        "",
-                        // token de la app, aun nose como llegara
+                        // TODO agregar token de usuario, que llegara cuando se logeen
                         1,
                         false,
                     ).collect { result ->
