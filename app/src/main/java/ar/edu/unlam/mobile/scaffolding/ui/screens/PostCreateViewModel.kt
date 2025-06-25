@@ -57,9 +57,7 @@ class PostCreateViewModel
                             }
                             is Resource.Error -> {
                                 _statusMessage.value = result.message!!
-                                Log.e(
-                                    "API call", result.message,
-                                )
+                                Log.e("API call", result.message)
                             }
                         }
                     }
