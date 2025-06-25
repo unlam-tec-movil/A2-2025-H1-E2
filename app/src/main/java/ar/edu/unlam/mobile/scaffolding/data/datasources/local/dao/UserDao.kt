@@ -9,11 +9,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntit
 
 @Dao
 interface UserDao {
-    private companion object {
-        const val ID = 1
-    }
-
-    @Query("SELECT * FROM user_table WHERE id = ID")
+    @Query("SELECT * FROM user_table WHERE id = 1")
     suspend fun getUser(): UserEntity?
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
@@ -22,6 +18,6 @@ interface UserDao {
     @Delete
     suspend fun deleteUser(userEntity: UserEntity)
 
-    @Query("UPDATE user_table SET avatarUrl = :avatar WHERE id = ID")
+    @Query("UPDATE user_table SET avatarUrl = :avatar WHERE id = 1")
     suspend fun updateAvatarUser(avatar: String)
 }
