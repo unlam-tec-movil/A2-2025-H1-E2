@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,6 +52,7 @@ fun MainScreen() {
     val controller = rememberNavController()
     val navBackStackEntry by controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    Log.d("MainScreen", BuildConfig.API_KEY)
 
     Scaffold(
         bottomBar = { BottomBar(controller = controller) },
@@ -62,7 +64,11 @@ fun MainScreen() {
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = "feed", modifier = Modifier.padding(paddingValue)) {
+        NavHost(
+            navController = controller,
+            startDestination = "feed",
+            modifier = Modifier.padding(paddingValue),
+        ) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             composable("feed") {

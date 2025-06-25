@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
@@ -52,12 +51,12 @@ interface UNLaMSocialApi {
     @POST("me/tuits/")
     suspend fun createPost(
         @Header("Authorization") userToken: String,
-        @Header("Application-Token") appToken: String = API_KEY,
-        @Body request: CreatePostRequest,
+        @Header("Application-Token") appToken: String,
+        @Body createPostModel: CreatePostResponse,
     ): CreatePostResponse
 
     companion object {
         const val BASE_URL = "https://tuiter.fragua.com.ar/api/v1/"
-        const val API_KEY = "a525ebbe00449a9855d0b41332a506ca820405ea8cfd148292a632c0ab7b8dce"
+        const val API_KEY = BuildConfig.API_KEY
     }
 }
