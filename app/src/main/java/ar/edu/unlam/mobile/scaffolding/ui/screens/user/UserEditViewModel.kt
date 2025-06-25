@@ -1,16 +1,16 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -49,13 +49,23 @@ class UserEditViewModel
         fun editUser(
             name: String,
             password: String,
+            navController: NavController,
         ) {
             viewModelScope.launch {
                 editUserJob?.cancel()
                 editUserJob =
-                    userRepository
-                        .editUser(name, currentUser.value.avatarURL, password)
-                        .launchIn(CoroutineScope(Dispatchers.IO))
+                    CoroutineScope(Dispatchers.Main).launch {
+                        userRepository.editUser(name, currentUser.value.avatarURL, password).collect { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    navController.navigate("feed")
+                                }
+                                is Resource.Error -> {
+                                    Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                                }
+                            }
+                        }
+                    }
             }
         }
     }

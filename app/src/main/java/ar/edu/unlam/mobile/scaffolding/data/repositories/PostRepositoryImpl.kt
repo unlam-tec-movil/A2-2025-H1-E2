@@ -15,21 +15,20 @@ import javax.inject.Inject
 class PostRepositoryImpl
     @Inject
     constructor(private val api: UNLaMSocialApi) : PostRepository {
-        private val exceptionMsg = "Algo salió mal"
-        private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
 
         override fun createPosts(
             userToken: String,
             message: String,
         ): Flow<Resource<String>> =
             flow {
-                try {
-                    val response =
+                val response =
+                    try {
+                        val data =
                         api.createPost(
                             userToken = userToken,
                             createPostRequest = CreatePostRequest(message),
                         )
-                    emit(Resource.Success(data = response.message))
+                    Resource.Success(data = data.message)
                 } catch (e: HttpException) {
                     val errorMessage =
                         try {
@@ -37,15 +36,14 @@ class PostRepositoryImpl
                             val gson = Gson()
                             gson.fromJson(errorBody, ErrorResponse::class.java).message
                         } catch (e: Exception) {
-                            "$exceptionMsg - primer catch"
+                            e.message
                         }
-                    emit(Resource.Error(message = errorMessage))
+                    Resource.Error(message = errorMessage.toString())
                 } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
+                    Resource.Error(message = e.message.toString())
                 } catch (e: Exception) {
-                    val message = e.message ?: "$exceptionMsg - ultimo catch"
-                    Log.i("API call", e.toString())
-                    emit(Resource.Error(message = message))
+                    Resource.Error(message = e.message.toString())
                 }
+                emit(response)
             }
     }

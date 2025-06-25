@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.data.database.entities
+package ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
-import ar.edu.unlam.mobile.scaffolding.data.database.dao.UserDao
+import android.app.Application
+import androidx.room.Room
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
@@ -8,9 +10,6 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepositoryImpl
-import ar.edu.unlam.mobile.scaffolding.ui.screens.LogInViewModel
-import ar.edu.unlam.mobile.scaffolding.ui.screens.SignUpViewModel
-import ar.edu.unlam.mobile.scaffolding.ui.screens.UserEditViewModel
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -32,24 +31,22 @@ object AppModule {
             .build()
             .create(UNLaMSocialApi::class.java)
 
+    @Singleton
+    @Provides
+    fun providesAppDatabase(app: Application): AppDatabase =
+        Room
+            .databaseBuilder(
+                app,
+                AppDatabase::class.java,
+                "app.db",
+            ).build()
+
     @Provides
     @Singleton
     fun provideUserRepository(
         api: UNLaMSocialApi,
-        dao: UserDao,
-    ): UserRepository = UserRepositoryImpl(api, dao)
-
-    @Provides
-    @Singleton
-    fun provideSignUpViewModel(repository: UserRepository): SignUpViewModel = SignUpViewModel(userRepository = repository)
-
-    @Provides
-    @Singleton
-    fun providesLogInViewModel(repository: UserRepository): LogInViewModel = LogInViewModel(userRepository = repository)
-
-    @Provides
-    @Singleton
-    fun provideUserEditViewModel(repository: UserRepository): UserEditViewModel = UserEditViewModel(userRepository = repository)
+        db: AppDatabase,
+    ): UserRepository = UserRepositoryImpl(api, db.getUserDao())
 
     @Provides
     @Singleton

@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -24,13 +24,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
 @Composable
-fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
+fun SignUpScreen(
+    signUpViewModel: SignUpViewModel = hiltViewModel(),
+    navController: NavController,
+) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -154,6 +158,7 @@ fun SignUpScreen(signUpViewModel: SignUpViewModel = hiltViewModel()) {
                         name = username,
                         email = email,
                         password = password,
+                        navController = navController,
                     )
                 }
             },

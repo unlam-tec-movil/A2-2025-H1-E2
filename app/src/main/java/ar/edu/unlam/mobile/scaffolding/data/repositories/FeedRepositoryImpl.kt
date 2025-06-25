@@ -16,8 +16,6 @@ class FeedRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
     ) : FeedRepository {
-        private val exceptionMsg = "Algo salió mal"
-        private val internetConnectionErrorMsg = "Por favor, verificar la conexión a internet"
 
         override fun getFeed(
             userToken: String,
@@ -25,28 +23,30 @@ class FeedRepositoryImpl
             onlyParents: Boolean,
         ): Flow<Resource<List<Post>>> =
             flow {
-                try {
-                    val response =
-                        api.getFeed(
-                            userToken = userToken,
-                            page = page,
-                            onlyParents = onlyParents,
-                        )
-                    emit(Resource.Success(data = response))
-                } catch (e: HttpException) {
-                    val errorMessage =
-                        try {
-                            val errorBody = e.response.body?.string()
-                            val gson = Gson()
-                            gson.fromJson(errorBody, ErrorResponse::class.java).message
-                        } catch (e: Exception) {
-                            "$exceptionMsg - primer catch"
-                        }
-                    emit(Resource.Error(message = errorMessage))
-                } catch (e: IOException) {
-                    emit(Resource.Error(message = internetConnectionErrorMsg))
-                } catch (e: Exception) {
-                    emit(Resource.Error(message = exceptionMsg))
-                }
+                val result =
+                    try {
+                        val data =
+                            api.getFeed(
+                                userToken = userToken,
+                                page = page,
+                                onlyParents = onlyParents,
+                            )
+                        Resource.Success(data)
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response.body?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
             }
     }
