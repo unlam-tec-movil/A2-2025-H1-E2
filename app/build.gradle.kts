@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -23,6 +26,13 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        // https://stackoverflow.com/questions/60474010/read-value-from-local-properties-via-kotlin-dsl// Link de Ayuda para leer el archivo local.propertiesval
+        val p = Properties()
+        val localProps = File(rootProject.rootDir, "local.properties")
+        if (localProps.exists()) {
+            p.load(FileInputStream(localProps))
+        }
+        buildConfigField("String", "API_KEY", "\"${p.getProperty("API_KEY", "")}\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -45,6 +55,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -53,6 +64,7 @@ android {
         jvmTarget = "17"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     packaging {

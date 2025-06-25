@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,6 +51,7 @@ fun MainScreen() {
     val controller = rememberNavController()
     val navBackStackEntry by controller.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    Log.d("MainScreen", BuildConfig.API_KEY)
 
     Scaffold(
         floatingActionButton = {
