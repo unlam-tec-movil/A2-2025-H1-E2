@@ -61,7 +61,7 @@ class UserEditViewModel
                         userRepository.editUser(name, _currentUserState.value.avatarURL, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
-                                    navController.navigate("feed")
+                                    navController.navigate("user")
                                 }
                                 is Resource.Error -> {
                                     Log.e("API call", result.message ?: "Ocurrió un error inesperado")
