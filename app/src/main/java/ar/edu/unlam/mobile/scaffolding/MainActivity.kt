@@ -16,11 +16,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
+import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreationScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -52,6 +54,11 @@ fun MainScreen() {
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
+        bottomBar = {
+            if (currentRoute == "feed" || currentRoute == "user") {
+                BottomBar(controller)
+            }
+        },
         floatingActionButton = {
             if (currentRoute == "feed") {
                 AddPostFloatingButton(navController = controller)
@@ -73,6 +80,10 @@ fun MainScreen() {
 
             composable("feed") {
                 FeedScreen()
+            }
+
+            composable("user") {
+                UserScreen(navController = controller)
             }
 
             composable("postCreation") {
