@@ -6,6 +6,8 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepositoryImpl
 import dagger.Module
@@ -49,4 +51,8 @@ object AppModule {
     @Provides
     @Singleton
     fun provideFeedRepository(api: UNLaMSocialApi): FeedRepository = FeedRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun providePostRepository(api: UNLaMSocialApi): PostRepository = PostRepositoryImpl(api)
 }

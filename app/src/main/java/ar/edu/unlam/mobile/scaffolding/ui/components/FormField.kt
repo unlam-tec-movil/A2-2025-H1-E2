@@ -33,14 +33,21 @@ import ar.edu.unlam.mobile.scaffolding.R
 
 @Composable
 fun FormField(
-    label: String, // etiqueta del formulario
-    text: String, // valor dado por el usario
-    onTextChange: (String) -> Unit, // actualiza el valor cuando el usario escribe
-    placeholder: String, // texto que se muestra cuando el campo esta vacio
-    errorMessage: String?, // mensaje de error que se mostrara debajo del campo
-    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text), // opciones para el teclado
+    label: String,
+    // etiqueta del formulario
+    text: String,
+    // valor dado por el usario
+    onTextChange: (String) -> Unit,
+    // actualiza el valor cuando el usario escribe
+    placeholder: String,
+    // texto que se muestra cuando el campo esta vacio
+    errorMessage: String?,
+    // mensaje de error que se mostrara debajo del campo
+    keyboardOptions: KeyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+    // opciones para el teclado
     isSingleLine: Boolean = true,
-    onFocusLost: () -> Unit, // esto se ejecuta cuando el formulario no esta en foco
+    onFocusLost: () -> Unit,
+    // esto se ejecuta cuando el formulario no esta en foco
 ) {
     val showError = errorMessage != null
 
@@ -56,8 +63,10 @@ fun FormField(
         value = text,
         colors =
             TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent, // fondo cuando el formulario está enfocado
-                unfocusedContainerColor = Color.Transparent, // fondo cuando el formulario no está enfocado
+                focusedContainerColor = Color.Transparent,
+                // fondo cuando el formulario está enfocado
+                unfocusedContainerColor = Color.Transparent,
+                // fondo cuando el formulario no está enfocado
             ),
         onValueChange = onTextChange,
         label = { Text(text = label) },
@@ -94,8 +103,10 @@ fun PasswordFormField(
         value = password,
         colors =
             TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent, // fondo cuando el formulario está enfocado
-                unfocusedContainerColor = Color.Transparent, // fondo cuando el formulario no está enfocado
+                focusedContainerColor = Color.Transparent,
+                // fondo cuando el formulario está enfocado
+                unfocusedContainerColor = Color.Transparent,
+                // fondo cuando el formulario no está enfocado
             ),
         onValueChange = onPasswordChange,
         label = { Text(text = label) },

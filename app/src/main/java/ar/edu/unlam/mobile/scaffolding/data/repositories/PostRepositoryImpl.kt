@@ -2,8 +2,8 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
-import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.network.HttpException
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
@@ -11,26 +11,22 @@ import kotlinx.coroutines.flow.flow
 import okio.IOException
 import javax.inject.Inject
 
-class FeedRepositoryImpl
+class PostRepositoryImpl
     @Inject
-    constructor(
-        private val api: UNLaMSocialApi,
-    ) : FeedRepository {
-        override fun getFeed(
+    constructor(private val api: UNLaMSocialApi) : PostRepository {
+        override fun createPosts(
             userToken: String,
-            page: Int,
-            onlyParents: Boolean,
-        ): Flow<Resource<List<Post>>> =
+            message: String,
+        ): Flow<Resource<String>> =
             flow {
-                val result =
+                val response =
                     try {
                         val data =
-                            api.getFeed(
+                            api.createPost(
                                 userToken = userToken,
-                                page = page,
-                                onlyParents = onlyParents,
+                                createPostRequest = CreatePostRequest(message),
                             )
-                        Resource.Success(data)
+                        Resource.Success(data.message)
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
@@ -46,6 +42,6 @@ class FeedRepositoryImpl
                     } catch (e: Exception) {
                         Resource.Error(message = e.message.toString())
                     }
-                emit(result)
+                emit(response)
             }
     }
