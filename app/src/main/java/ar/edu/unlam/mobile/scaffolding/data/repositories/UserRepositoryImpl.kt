@@ -4,6 +4,7 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
@@ -135,16 +136,23 @@ class UserRepositoryImpl
         override fun editUser(
             name: String,
             avatarURL: String,
-            email: String,
+            password: String,
         ): Flow<Resource<String>> =
             flow {
-                val result =
+                val result: Resource<String> =
                     try {
-                        val data =
-                            api.signUpUser(
-                                request = SignUpRequest(name, avatarURL, email),
-                            )
-                        Resource.Success(data.name)
+                        val currentUserToken = userDao.getUser()?.userToken
+                        if (currentUserToken.isNullOrBlank()) {
+                            Resource.Error(data = null, message = "No se encontró el token de usuario")
+                        } else {
+                            val data =
+                                api.editProfile(
+                                    userToken = currentUserToken,
+                                    request = EditUserRequest(name, avatarURL, password),
+                                )
+                            userDao.updateUser(name, avatarURL)
+                            Resource.Success(data.name)
+                        }
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {

@@ -55,7 +55,7 @@ fun UserEditScreen(
             horizontalArrangement = Arrangement.Center,
         ) {
             EditableAvatarImage(
-                imageUrl = userEditViewModel.currentUser.value.avatarURL,
+                imageUrl = userEditViewModel.currentUserState.value.avatarURL,
                 contentDescription = null,
                 onEditClick = {
                     // Todo
@@ -76,7 +76,7 @@ fun UserEditScreen(
                     username = it
                     usernameError = null
                 },
-                placeholder = userEditViewModel.currentUser.value.name,
+                placeholder = userEditViewModel.currentUserState.value.name,
                 onFocusLost = {
                     if (username.isNotBlank()) {
                         usernameError =
@@ -130,13 +130,13 @@ fun UserEditScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             OutlinedButton(
                 onClick = {
-                    // Todo: Back navigation
+                    navController.navigate("user")
                 },
                 modifier = Modifier.weight(1f),
             ) {
