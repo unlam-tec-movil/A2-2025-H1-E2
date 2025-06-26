@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.HorizontalDivider
@@ -23,28 +22,29 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.PostEntity
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @Composable
 fun PostDraftScreen(
-    viewModel: PostDraftViewModel = viewModel(),
+    viewModel: PostDraftViewModel = hiltViewModel(),
     navController: NavController,
 ) {
     fun back(): () -> Unit = { navController.popBackStack() }
+    val drafts by viewModel.drafts.collectAsState()
 
     @Composable
-    fun draftItem(
-        //TODO: cambiar el tipo de dato a TuitEntity
-        draft: String,
-        index: Int,
-    ) {
+    fun draftItem(draft: PostEntity) {
         Row(
             modifier =
                 Modifier
@@ -63,19 +63,24 @@ fun PostDraftScreen(
                         .clickable {
                             navController.previousBackStackEntry
                                 ?.savedStateHandle
-                                ?.set("draft_index", index)
+                                ?.set("draft_id", draft.id)
 
                             navController.popBackStack()
                         },
             ) {
                 Text(
-                    text = draft,
+                    text = draft.content,
+                    color = Color.LightGray,
                     modifier = Modifier.padding(start = 16.dp),
                 )
             }
 
-            IconButton(onClick = { viewModel.deleteDraft(index) }) {
-                Icon(Icons.Default.Close, contentDescription = "Eliminar")
+            IconButton(onClick = { viewModel.deleteDraft(draft.id) }) {
+                Icon(
+                    Icons.Default.Close,
+                    contentDescription = "Eliminar",
+                    tint = Color.Gray,
+                )
             }
         }
     }
@@ -93,8 +98,8 @@ fun PostDraftScreen(
                     .padding(top = 24.dp),
         ) {
             LazyColumn {
-                itemsIndexed(viewModel.drafts) { index, draft ->
-                    draftItem(draft, index)
+                items(drafts) { draft ->
+                    draftItem(draft)
                     HorizontalDivider()
                 }
             }
@@ -102,16 +107,10 @@ fun PostDraftScreen(
     }
 }
 
-@SuppressLint("ViewModelConstructorInComposable")
 @Preview
 @Composable
 fun PostDraftScreenPreview() {
-    val fakeViewModel =
-        PostDraftViewModel().apply {
-            drafts.addAll(listOf("Borrador 1", "Borrador 2"))
-        }
     PostDraftScreen(
-        viewModel = fakeViewModel,
         navController = rememberNavController(),
     )
 }

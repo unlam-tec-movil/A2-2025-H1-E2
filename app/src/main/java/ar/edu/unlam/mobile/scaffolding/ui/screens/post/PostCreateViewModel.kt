@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.TuitEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.PostEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -37,6 +37,13 @@ class PostCreateViewModel
 
         private var newPostJob: Job? = null
 
+        fun setInitialContent(draftId: Long) {
+            viewModelScope.launch {
+                val post = database.getPostDao().getById(draftId)
+                myMessage = post?.content ?: ""
+            }
+        }
+
         fun createPost() {
             newPostJob?.cancel()
             if (myMessage.isBlank()) {
@@ -53,7 +60,9 @@ class PostCreateViewModel
                             is Resource.Success -> {
                                 _statusMessage.value = result.data!!
                                 Log.d("API call", result.data)
-                                myMessage = ""
+
+                                // TODO: deleteDraft(post.id)
+                                // navController.popBackStack() // Assuming you have a navController available
                             }
 
                             is Resource.Error -> {
@@ -65,10 +74,17 @@ class PostCreateViewModel
                 }
         }
 
+        fun deleteDraft(id: Long) {
+            viewModelScope.launch {
+                database.getPostDao().deleteDraftById(id)
+                myMessage = ""
+            }
+        }
+
         fun saveDraft(myMessage: String) {
             viewModelScope.launch {
-                val tuit = TuitEntity(content = myMessage, isDraft = true)
-                database.getTuitDao().insertTuit(tuit)
+                val post = PostEntity(content = myMessage, isDraft = true)
+                database.getPostDao().insertPost(post)
             }
         }
     }

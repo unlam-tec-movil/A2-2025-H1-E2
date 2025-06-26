@@ -33,7 +33,6 @@ import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
 
 @Composable
 fun PostCreateScreen(
@@ -62,7 +61,7 @@ fun PostCreateScreen(
         ) {
             TextButton(
                 onClick = {
-                    navController.navigate("postDraft")
+                    navController.navigate("postDrafts")
                 },
                 contentPadding =
                     PaddingValues(

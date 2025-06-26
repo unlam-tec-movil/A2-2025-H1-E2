@@ -10,8 +10,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -20,6 +22,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
@@ -90,11 +93,16 @@ fun MainScreen() {
             }
 
             composable("postCreation") { backStackEntry ->
-                val savedStateHandle = backStackEntry.savedStateHandle
-                val draftIndex = savedStateHandle.get<Int>("draft_index")
-                //TODO: obtener el post draft por el índice
+                val viewModel: PostCreateViewModel = hiltViewModel()
+                val draftId = backStackEntry.savedStateHandle.get<Long>("draft_id")
 
-                PostCreateScreen(navController = controller)
+                LaunchedEffect(draftId) {
+                    draftId?.let { viewModel.setInitialContent(it) }
+                }
+
+                PostCreateScreen(
+                    navController = controller,
+                )
             }
 
             composable("editUser") {
