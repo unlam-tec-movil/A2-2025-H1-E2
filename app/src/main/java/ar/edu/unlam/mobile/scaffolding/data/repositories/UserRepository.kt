@@ -21,6 +21,6 @@ interface UserRepository {
     fun editUser(
         name: String,
         avatarURL: String,
-        email: String,
+        password: String,
     ): Flow<Resource<String>>
 }
