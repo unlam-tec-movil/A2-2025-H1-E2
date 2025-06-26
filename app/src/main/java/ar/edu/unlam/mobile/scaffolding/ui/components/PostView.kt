@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -36,8 +35,8 @@ import coil.compose.AsyncImage
 @Composable
 fun PostView(post: Post) {
     Card(
-        shape = RoundedCornerShape(7.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
+        shape = RoundedCornerShape(9.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)),
         modifier =
             Modifier
                 .padding(2.dp)
@@ -55,7 +54,7 @@ fun PostView(post: Post) {
                 AsyncImage(
                     modifier =
                         Modifier
-                            .size(36.dp)
+                            .size(40.dp)
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.secondary),
                     model = post.avatarUrl,
@@ -65,7 +64,7 @@ fun PostView(post: Post) {
                     text = post.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier =
                         Modifier
                             .alignByBaseline()
@@ -99,7 +98,12 @@ fun PostView(post: Post) {
                     Icon(
                         imageVector = Icons.Outlined.Favorite,
                         contentDescription = "Likes",
-                        tint = if (post.liked) Color.Red else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        tint =
+                            if (post.liked) {
+                                Color.Red
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
+                            },
                     )
                 }
                 Text(
@@ -122,7 +126,7 @@ fun PostView(post: Post) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_chat_bubble),
                         contentDescription = "Comments",
-                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
                     )
                 }
             }
@@ -132,8 +136,8 @@ fun PostView(post: Post) {
 
 @Preview
 @Composable
-fun TuitViewPreview() {
-    val tuit =
+fun PostViewPreview() {
+    val post =
         Post(
             id = 1,
             message = "This is a sample tuit message.",
@@ -144,5 +148,5 @@ fun TuitViewPreview() {
             liked = false,
             date = "2023-10-01",
         )
-    PostView(tuit)
+    PostView(post)
 }

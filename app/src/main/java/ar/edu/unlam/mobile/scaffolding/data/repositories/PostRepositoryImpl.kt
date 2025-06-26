@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
@@ -13,20 +15,25 @@ import javax.inject.Inject
 
 class PostRepositoryImpl
     @Inject
-    constructor(private val api: UNLaMSocialApi) : PostRepository {
-        override fun createPosts(
-            userToken: String,
-            message: String,
-        ): Flow<Resource<String>> =
+    constructor(
+        private val api: UNLaMSocialApi,
+        private val userDao: UserDao,
+    ) : PostRepository {
+        override fun createPosts(message: String): Flow<Resource<String>> =
             flow {
-                val response =
+                val response: Resource<String> =
                     try {
-                        val data =
-                            api.createPost(
-                                userToken = userToken,
-                                createPostRequest = CreatePostRequest(message),
-                            )
-                        Resource.Success(data.message)
+                        val currentUserToken = userDao.getUser()?.userToken
+                        if (currentUserToken.isNullOrBlank()) {
+                            Resource.Error(data = null, message = Log.e("API call", "Error: No hay token").toString())
+                        } else {
+                            val data =
+                                api.createPost(
+                                    userToken = currentUserToken,
+                                    createPostRequest = CreatePostRequest(message),
+                                )
+                            Resource.Success(data.message)
+                        }
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {

@@ -44,8 +44,6 @@ class PostCreateViewModel
             newPostJob =
                 viewModelScope.launch {
                     postRepository.createPosts(
-                        "",
-                        // TODO: Obtener el token del usuario logeado
                         myMessage,
                     ).collect {
                             result ->
