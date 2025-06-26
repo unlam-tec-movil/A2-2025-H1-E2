@@ -10,6 +10,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -17,7 +18,8 @@ import androidx.core.view.WindowCompat
 
 private val DarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
+        primary = Gray80,
+        onPrimary = SkyBlue,
         secondary = PurpleGrey80,
         tertiary = Pink80,
         background = Black,
@@ -28,7 +30,8 @@ private val DarkColorScheme =
 
 private val LightColorScheme =
     lightColorScheme(
-        primary = Purple40,
+        primary = Gray40,
+        onPrimary = DarkBlue,
         secondary = PurpleGrey40,
         tertiary = Pink40,
         background = White,
@@ -40,7 +43,7 @@ private val LightColorScheme =
 @Composable
 fun ScaffoldingV2Theme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme =
@@ -57,7 +60,8 @@ fun ScaffoldingV2Theme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = colorScheme.background.toArgb()
+            val darkTheme = colorScheme.onSurface.luminance() < 0.5f
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
         }
     }
