@@ -18,8 +18,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreateScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
@@ -88,12 +89,20 @@ fun MainScreen() {
                 UserScreen(navController = controller)
             }
 
-            composable("postCreation") {
+            composable("postCreation") { backStackEntry ->
+                val savedStateHandle = backStackEntry.savedStateHandle
+                val draftIndex = savedStateHandle.get<Int>("draft_index")
+                //TODO: obtener el post draft por el índice
+
                 PostCreateScreen(navController = controller)
             }
 
             composable("editUser") {
                 UserEditScreen(navController = controller)
+            }
+
+            composable("postDrafts") {
+                PostDraftScreen(navController = controller)
             }
         }
     }
