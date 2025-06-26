@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import kotlinx.coroutines.flow.Flow
 
@@ -23,4 +24,8 @@ interface UserRepository {
         avatarURL: String,
         email: String,
     ): Flow<Resource<String>>
+
+    fun getFavUser(): Flow<Resource<UserFavEntity>>
+
+    suspend fun insertFavUser(userFavEntity: UserFavEntity)
 }
