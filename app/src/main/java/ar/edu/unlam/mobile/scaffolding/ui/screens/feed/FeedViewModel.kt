@@ -47,8 +47,6 @@ class FeedViewModel
                         _isRefreshing.value = true
                     }
                     feedRepository.getFeed(
-                        "",
-                        // TODO agregar token de usuario, que llegara cuando se logeen
                         1,
                         false,
                     ).collect { result ->

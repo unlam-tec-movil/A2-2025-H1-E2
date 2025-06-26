@@ -46,24 +46,22 @@ class PostCreateViewModel
             }
             newPostJob =
                 viewModelScope.launch {
-                    postRepository
-                        .createPosts(
-                            "",
-                            // TODO: Obtener el token del usuario logeado
-                            myMessage,
-                        ).collect { result ->
-                            when (result) {
-                                is Resource.Success -> {
-                                    _statusMessage.value = result.data!!
-                                    Log.d("API call", result.data)
-                                    myMessage = ""
-                                }
-                                is Resource.Error -> {
-                                    _statusMessage.value = result.message!!
-                                    Log.e("API call", result.message)
-                                }
+                    postRepository.createPosts(
+                        myMessage,
+                    ).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                _statusMessage.value = result.data!!
+                                Log.d("API call", result.data)
+                                myMessage = ""
+                            }
+
+                            is Resource.Error -> {
+                                _statusMessage.value = result.message!!
+                                Log.e("API call", result.message)
                             }
                         }
+                    }
                 }
         }
 

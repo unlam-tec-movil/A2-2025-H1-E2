@@ -26,8 +26,8 @@ fun PostButton(
         enabled = enabled,
         colors =
             ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.onPrimary,
+                contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
                 disabledContentColor = Color.Gray,
             ),

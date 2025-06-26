@@ -2,17 +2,18 @@ package ar.edu.unlam.mobile.scaffolding.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)
 
-val Purple40 = Color(0xFF6650a4)
 val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val White = Color(0xFFF5F4FA)
-val Black = Color(0xFF000000)
-val DarkGray = Color(0xFF222222)
 val LightGray = Color(0xFFE0E0E0)
+val Gray40 = Color(0xFFAFAFAF)
 val Gray = Color(0xFF888888)
-val SkyBlue = Color(0xFF039BE5)
+val DarkGray = Color(0xFF222222)
+val Gray80 = Color(0xFF181818)
+val Black = Color(0xFF000000)
+val SkyBlue = Color(0xFF67ABF6)
+val DarkBlue = Color(0xFF022E79)

@@ -53,8 +53,8 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                 Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),
                     isRefreshing = isRefreshing,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    containerColor = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     state = refreshState,
                 )
             },
