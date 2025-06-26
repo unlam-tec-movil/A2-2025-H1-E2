@@ -46,23 +46,24 @@ class FeedViewModel
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = true
                     }
-                    feedRepository.getFeed(
-                        "",
-                        // TODO agregar token de usuario, que llegara cuando se logeen
-                        1,
-                        false,
-                    ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _feedState.value = result.data!!
+                    feedRepository
+                        .getFeed(
+                            "",
+                            // TODO agregar token de usuario, que llegara cuando se logeen
+                            1,
+                            false,
+                        ).collect { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _feedState.value = result.data!!
+                                }
+                                is Resource.Error ->
+                                    Log.e(
+                                        "API call",
+                                        result.message ?: "Error 400 - Bad Request",
+                                    )
                             }
-                            is Resource.Error ->
-                                Log.e(
-                                    "API call",
-                                    result.message ?: "Error 400 - Bad Request",
-                                )
                         }
-                    }
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = false
                     }

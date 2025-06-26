@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
-import androidx.sqlite.SQLiteException
+import android.database.sqlite.SQLiteException
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
@@ -167,7 +167,7 @@ class UserRepositoryImpl
                 emit(result)
             }
 
-        override fun getFavUser(): Flow<Resource<UserFavEntity>> =
+        override suspend fun getFavUser(): Flow<Resource<List<UserFavEntity>>> =
             flow {
                 val result =
                     try {
@@ -181,6 +181,7 @@ class UserRepositoryImpl
             }
 
         override suspend fun insertFavUser(userFavEntity: UserFavEntity) {
-            userFavDao.insertUserFav(userFavEntity)
+            val exist = userFavDao.existsByAuthor(userFavEntity.author)
+            if (!exist)userFavDao.insertUserFav(userFavEntity)
         }
     }

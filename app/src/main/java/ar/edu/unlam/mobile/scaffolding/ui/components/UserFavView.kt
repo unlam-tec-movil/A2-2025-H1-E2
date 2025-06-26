@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,12 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.mobile.scaffolding.data.model.UserFavModel
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 
 @Composable
-fun UserFavView(userFav : UserFavModel) {
+fun UserFavView(userFav: UserFavEntity) {
     Box(
         modifier =
             Modifier
@@ -91,6 +90,7 @@ fun UserFavViewPreview() {
             date = "2023-10-01",
         )
 
-    val userFav = UserFavModel(author =  tuit.author , avatarUrl = tuit.avatarUrl)
-    UserFavView(userFav)
+    val user = UserFavEntity(author = tuit.author, avatarUrl = tuit.avatarUrl)
+
+    UserFavView(userFav = user)
 }

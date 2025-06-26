@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "userFav_table")
 data class UserFavEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "author") val name: String,
+    @ColumnInfo(name = "id") val id: Int = 0,
+    @ColumnInfo(name = "author") val author: String,
     @ColumnInfo(name = "avatar_url") val avatarUrl: String,
 )

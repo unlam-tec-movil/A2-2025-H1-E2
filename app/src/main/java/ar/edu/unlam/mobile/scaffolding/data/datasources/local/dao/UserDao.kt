@@ -18,6 +18,15 @@ interface UserDao {
     @Delete
     suspend fun deleteUser(userEntity: UserEntity)
 
-    @Query("UPDATE user_table SET avatarUrl = :avatar WHERE id = 1")
-    suspend fun updateAvatarUser(avatar: String)
+    @Query(
+        "UPDATE user_table " +
+                "SET name = :name, " +
+                "avatarUrl = :avatar" +
+                " WHERE id = 1",
+    )
+
+    suspend fun updateUser(
+        name: String,
+        avatar: String,
+    )
 }

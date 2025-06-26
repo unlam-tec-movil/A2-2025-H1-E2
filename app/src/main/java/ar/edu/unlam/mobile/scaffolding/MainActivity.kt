@@ -22,6 +22,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserFavScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,7 +37,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    MainScreen()
+//                    MainScreen()
+                    UserFavScreen()
                 }
             }
         }
@@ -62,7 +64,11 @@ fun MainScreen() {
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = "login", modifier = Modifier.padding(paddingValue)) {
+        NavHost(
+            navController = controller,
+            startDestination = "login",
+            modifier = Modifier.padding(paddingValue),
+        ) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             composable("login") {
