@@ -18,6 +18,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,17 +43,10 @@ fun PostCreateScreen(
 
     fun back(): () -> Unit = { navController.popBackStack() }
 
-    fun createPost(): () -> Unit =
-        {
-            viewModel.createPost()
-            // back()
-        }
-
     Scaffold(
         topBar = { TopBar("Nuevo Post", back()) },
         modifier = Modifier.fillMaxWidth(),
-    ) {
-            paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier =
                 Modifier
@@ -60,52 +54,9 @@ fun PostCreateScreen(
                     .background(color = MaterialTheme.colorScheme.background)
                     .padding(paddingValues = paddingValues),
         ) {
-            Row(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp, horizontal = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    // TODO: Cabiar por un AsyncImage para mostrar el avatar del usuario
-                    Image(
-                        imageVector = Icons.Rounded.AccountCircle,
-                        contentDescription = null,
-                        modifier =
-                            Modifier
-                                .size(44.dp)
-                                .clip(CircleShape)
-                                .background(MaterialTheme.colorScheme.secondary)
-                                .padding(3.dp),
-                    )
+            ButtonsView(viewModel = viewModel)
 
-                    Text(
-                        text = "Usuario(Tu)",
-                        // nombre del usuario logeado
-                        color = MaterialTheme.colorScheme.onSurface,
-                        modifier =
-                            Modifier
-                                .align(alignment = Alignment.CenterVertically)
-                                .padding(start = 8.dp),
-                    )
-                }
-
-                PostButton(
-                    text = "Publicar",
-                    onTap =
-                        if (viewModel.myMessage.isNotEmpty()) {
-                            createPost()
-                        } else {
-                            {}
-                        },
-                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
-                    enabled = viewModel.myMessage.isNotEmpty(),
-                )
-            }
+            UserView()
 
             Card(
                 shape = RoundedCornerShape(4.dp),
@@ -121,6 +72,88 @@ fun PostCreateScreen(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun ButtonsView(viewModel: PostCreateViewModel) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(top = 12.dp),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextButton(
+            onClick = { viewModel.saveDraft(viewModel.myMessage) }, // Llama a la nueva función para guardar borrador
+            enabled = viewModel.myMessage.isNotEmpty(), // Se habilita si hay texto
+            contentPadding =
+                PaddingValues(
+                    horizontal = 12.dp,
+                    vertical = 8.dp,
+                ),
+        ) {
+            Text(
+                text = "Borrador",
+                color =
+                    if (viewModel.myMessage.isNotEmpty()) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = 0.38f,
+                        )
+                    },
+            )
+        }
+
+        PostButton(
+            text = "Publicar",
+            onTap =
+                if (viewModel.myMessage.isNotEmpty()) {
+                    { viewModel.createPost() }
+                } else {
+                    {}
+                },
+            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
+            enabled = viewModel.myMessage.isNotEmpty(),
+        )
+    }
+}
+
+@Composable
+private fun UserView() {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .padding(bottom = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        // TODO: Cambiar por un AsyncImage para mostrar el avatar del usuario
+        Image(
+            imageVector = Icons.Rounded.AccountCircle,
+            contentDescription = null,
+            modifier =
+                Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary)
+                    .padding(3.dp),
+        )
+
+        Text(
+            text = "Usuario(Tu)",
+            // nombre del usuario logeado
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier =
+                Modifier
+                    .align(alignment = Alignment.CenterVertically)
+                    .padding(start = 8.dp),
+        )
     }
 }
 
