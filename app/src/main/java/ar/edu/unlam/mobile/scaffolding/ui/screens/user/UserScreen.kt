@@ -64,29 +64,29 @@ fun UserScreen(
         Text(text = userViewModel.currentUserState.value.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
 
         // Email
-        Text(text = userViewModel.currentUserState.value.email, fontSize = 14.sp, color = Color.Gray)
+        Text(text = userViewModel.currentUserState.value.email, fontSize = 14.sp, color = Color.Black)
 
         Spacer(modifier = Modifier.height(24.dp))
 
         // Options
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
             modifier = Modifier.fillMaxWidth(),
         ) {
             OptionCard(
-                title = "Edit Profile",
+                title = "Editar usuario",
                 icon = Icons.Default.Edit,
                 onClick = { navController.navigate("editUser") },
             )
             OptionCard(
-                title = "Favorite Users",
+                title = "Usuarios favoritos",
                 icon = Icons.Default.Favorite,
                 onClick = { navController.navigate("") },
             )
             OptionCard(
-                title = "Log Out",
+                title = "Cerrar sesión",
                 icon = Icons.AutoMirrored.Filled.ExitToApp,
-                onClick = { navController.navigate("login") },
+                onClick = { userViewModel.logout(navController) },
                 color = Color.Red,
             )
         }

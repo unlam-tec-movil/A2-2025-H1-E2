@@ -170,4 +170,18 @@ class UserRepositoryImpl
                     }
                 emit(result)
             }
+
+        override fun logoutUser(): Flow<Resource<Boolean>> =
+            flow {
+                val result: Resource<Boolean> =
+                    try {
+                        userDao.logoutUser()
+                        Resource.Success(true)
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(result)
+            }
     }
