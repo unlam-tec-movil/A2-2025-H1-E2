@@ -50,7 +50,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideFeedRepository(api: UNLaMSocialApi): FeedRepository = FeedRepositoryImpl(api)
+    fun provideFeedRepository(
+        api: UNLaMSocialApi,
+        db: AppDatabase,
+    ): FeedRepository = FeedRepositoryImpl(api, db.getUserFavDao())
 
     @Provides
     @Singleton

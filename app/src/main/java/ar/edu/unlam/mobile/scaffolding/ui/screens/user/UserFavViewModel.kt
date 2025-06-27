@@ -25,34 +25,6 @@ class UserFavViewModel
 
         private var userFavJob: Job? = null
 
-        val user =
-            UserFavEntity(
-                author = "John Doe",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-        val user2 =
-            UserFavEntity(
-                author = "John Doer",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-        val user3 =
-            UserFavEntity(
-                author = "John Doet",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
-        val user4 =
-            UserFavEntity(
-                author = "John Doess",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
-        val user5 =
-            UserFavEntity(
-                author = "John DoessR",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
         init {
             getUsers()
         }
@@ -61,11 +33,6 @@ class UserFavViewModel
             userFavJob?.cancel()
             userFavJob =
                 viewModelScope.launch {
-                    repository.insertFavUser(user)
-                    repository.insertFavUser(user2)
-                    repository.insertFavUser(user3)
-                    repository.insertFavUser(user4)
-                    repository.insertFavUser(user5)
                     repository.getFavUser().collect { result ->
                         when (result) {
                             is Resource.Success -> {

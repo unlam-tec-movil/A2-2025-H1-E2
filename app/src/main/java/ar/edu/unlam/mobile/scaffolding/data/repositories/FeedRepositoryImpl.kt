@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
@@ -15,6 +17,7 @@ class FeedRepositoryImpl
     @Inject
     constructor(
         private val api: UNLaMSocialApi,
+        private val userFavDao: UserFavDao,
     ) : FeedRepository {
         override fun getFeed(
             userToken: String,
@@ -48,4 +51,9 @@ class FeedRepositoryImpl
                     }
                 emit(result)
             }
+
+        override suspend fun insertFavUser(userFavEntity: UserFavEntity) {
+            val exist = userFavDao.existsByAuthor(userFavEntity.author)
+            if (!exist) userFavDao.insertUserFav(userFavEntity)
+        }
     }

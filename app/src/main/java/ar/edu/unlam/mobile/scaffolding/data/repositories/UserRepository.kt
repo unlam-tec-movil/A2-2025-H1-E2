@@ -26,6 +26,4 @@ interface UserRepository {
     ): Flow<Resource<String>>
 
     suspend fun getFavUser(): Flow<Resource<List<UserFavEntity>>>
-
-    suspend fun insertFavUser(userFavEntity: UserFavEntity)
 }

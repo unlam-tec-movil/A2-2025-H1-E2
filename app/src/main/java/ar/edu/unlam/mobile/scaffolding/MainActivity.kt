@@ -22,7 +22,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserFavScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -38,7 +37,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background,
                 ) {
 //                    MainScreen()
-                    UserFavScreen()
+                    FeedScreen()
                 }
             }
         }

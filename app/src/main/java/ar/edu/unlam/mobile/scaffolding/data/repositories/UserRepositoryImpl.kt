@@ -179,9 +179,4 @@ class UserRepositoryImpl
                     }
                 emit(result)
             }
-
-        override suspend fun insertFavUser(userFavEntity: UserFavEntity) {
-            val exist = userFavDao.existsByAuthor(userFavEntity.author)
-            if (!exist)userFavDao.insertUserFav(userFavEntity)
-        }
     }

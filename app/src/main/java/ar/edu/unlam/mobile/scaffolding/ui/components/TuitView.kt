@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -34,7 +34,10 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 
 @Composable
-fun PostView(post: Post) {
+fun PostView(
+    post: Post,
+    onInsertClick: () -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(7.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
@@ -99,7 +102,14 @@ fun PostView(post: Post) {
                     Icon(
                         imageVector = Icons.Outlined.Favorite,
                         contentDescription = "Likes",
-                        tint = if (post.liked) Color.Red else MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        tint =
+                            if (post.liked) {
+                                Color.Red
+                            } else {
+                                MaterialTheme.colorScheme.onBackground.copy(
+                                    alpha = 0.7f,
+                                )
+                            },
                     )
                 }
                 Text(
@@ -125,6 +135,20 @@ fun PostView(post: Post) {
                         tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                     )
                 }
+                Spacer(modifier = Modifier.padding(10.dp))
+                IconButton(
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(23.dp),
+                    onClick = { onInsertClick() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
+                        contentDescription = "Comments",
+                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                    )
+                }
             }
         }
     }
@@ -144,5 +168,4 @@ fun TuitViewPreview() {
             liked = false,
             date = "2023-10-01",
         )
-    PostView(tuit)
 }

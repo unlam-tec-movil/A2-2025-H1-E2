@@ -38,8 +38,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
 
     Scaffold(
         topBar = { TopBar("Feed", null) },
-    ) {
-            paddingValues ->
+    ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
@@ -65,7 +64,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .fillMaxSize()
                         .padding(horizontal = 8.dp),
             ) {
-                items(posts) { tuit -> PostView(post = tuit) }
+                items(posts) { tuit -> PostView(post = tuit, onInsertClick = {feedViewModel.insertUserFav()}) }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
