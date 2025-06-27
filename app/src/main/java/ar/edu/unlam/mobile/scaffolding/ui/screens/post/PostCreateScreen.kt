@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -41,12 +42,19 @@ fun PostCreateScreen(
 ) {
     val statusMessage by viewModel.statusMessage.collectAsState()
 
-    fun back(): () -> Unit = {
-        if (viewModel.myMessage.isNotEmpty()) {
-            viewModel.saveDraft(viewModel.myMessage) // Guarda el borrador antes de salir
+    LaunchedEffect(statusMessage) {
+        if (statusMessage != null && !statusMessage!!.startsWith("Error")) {
+            navController.popBackStack()
         }
-        navController.popBackStack()
     }
+
+    fun back(): () -> Unit =
+        {
+            if (viewModel.myMessage.isNotEmpty()) {
+                viewModel.saveDraft(viewModel.myMessage) // Guarda el borrador antes de salir
+            }
+            navController.popBackStack()
+        }
 
     @Composable
     fun ButtonsView() {

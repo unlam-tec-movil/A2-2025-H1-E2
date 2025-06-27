@@ -35,10 +35,12 @@ class PostCreateViewModel
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
+        private var _draftId: Long? = null
         private var newPostJob: Job? = null
 
         fun setInitialContent(draftId: Long) {
             viewModelScope.launch {
+                _draftId = draftId
                 val post = database.getPostDao().getById(draftId)
                 myMessage = post?.content ?: ""
             }
@@ -53,24 +55,24 @@ class PostCreateViewModel
             }
             newPostJob =
                 viewModelScope.launch {
-                    postRepository.createPosts(
-                        myMessage,
-                    ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _statusMessage.value = result.data!!
-                                Log.d("API call", result.data)
+                    postRepository
+                        .createPosts(
+                            myMessage,
+                        ).collect { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _statusMessage.value = result.data!!
+                                    Log.d("API call", result.data)
 
-                                // TODO: deleteDraft(post.id)
-                                // navController.popBackStack() // Assuming you have a navController available
-                            }
+                                    _draftId?.let { deleteDraft(it) }
+                                }
 
-                            is Resource.Error -> {
-                                _statusMessage.value = result.message!!
-                                Log.e("API call", result.message)
+                                is Resource.Error -> {
+                                    _statusMessage.value = result.message!!
+                                    Log.e("API call", result.message)
+                                }
                             }
                         }
-                    }
                 }
         }
 
