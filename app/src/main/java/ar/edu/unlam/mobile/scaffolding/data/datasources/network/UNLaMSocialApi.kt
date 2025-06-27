@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.datasources.network
 
 import ar.edu.unlam.mobile.scaffolding.BuildConfig
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi.Companion.API_KEY
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
@@ -14,6 +15,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UNLaMSocialApi {
@@ -56,6 +58,13 @@ interface UNLaMSocialApi {
         @Header("Application-Token") appToken: String = API_KEY,
         @Body createPostRequest: CreatePostRequest,
     ): CreatePostResponse
+
+    @GET("me/tuits/{tuit_Id}")
+    suspend fun getPost(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+    ): Post
 
     companion object {
         const val BASE_URL = "https://tuiter.fragua.com.ar/api/v1/"
