@@ -2,16 +2,16 @@
     <string name="app_name">ScaffoldingV2</string>
 
 
-    <string name="createAccount">Crea tu cuenta</string>
+    <string name="createAccount">Creá tu cuenta</string>
     <string name="SingUp">Registrarse</string>
-    <string name="logIn">Iniciar Sesion</string>
+    <string name="logIn">Iniciar Sesión</string>
 
 
     <!-- formField label-->
-    <string name="labelName">Name</string>
+    <string name="labelName">Nombre</string>
     <string name="labelEmail">Email</string>
-    <string name="labelPassword">Password</string>
-    <string name="labelConfirmPassword">Confirm Password</string>
+    <string name="labelPassword">Contraseña</string>
+    <string name="labelConfirmPassword">Confimar contraseña</string>
 
     <!-- formField place holder -->
     <string name="phFieldName">Ingrese un nombre</string>
