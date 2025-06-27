@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
@@ -36,6 +37,59 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         feedViewModel.refreshPosts()
     }
 
+    val tuits =
+        listOf(
+            Post(
+                id = 1,
+                message = "This is a sample tuit message.",
+                parentId = 0,
+                author = "Jo",
+                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
+                likes = 10,
+                liked = false,
+                date = "2023-10-01",
+            ),
+            Post(
+                id = 1,
+                message = "This is a sample tuit message.",
+                parentId = 0,
+                author = "John Doe",
+                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
+                likes = 10,
+                liked = false,
+                date = "2023-10-01",
+            ),
+            Post(
+                id = 1,
+                message = "This is a sample tuit message.",
+                parentId = 0,
+                author = "Doe",
+                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
+                likes = 10,
+                liked = false,
+                date = "2023-10-01",
+            ),
+            Post(
+                id = 1,
+                message = "This is a sample tuit message.",
+                parentId = 0,
+                author = "Doe",
+                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
+                likes = 10,
+                liked = false,
+                date = "2023-10-01",
+            ),
+            Post(
+                id = 1,
+                message = "This is a sample tuit message.",
+                parentId = 0,
+                author = "deberia funcionar",
+                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
+                likes = 10,
+                liked = false,
+                date = "2023-10-01",
+            ),
+        )
     Scaffold(
         topBar = { TopBar("Feed", null) },
     ) { paddingValues ->
@@ -64,7 +118,17 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .fillMaxSize()
                         .padding(horizontal = 8.dp),
             ) {
-                items(posts) { tuit -> PostView(post = tuit, onInsertClick = {feedViewModel.insertUserFav()}) }
+                items(tuits) { tuit ->
+                    PostView(
+                        post = tuit,
+                        onInsertClick = {
+                            feedViewModel.insertUserFav(
+                                author = tuit.author,
+                                avatarUrl = tuit.avatarUrl,
+                            )
+                        },
+                    )
+                }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }

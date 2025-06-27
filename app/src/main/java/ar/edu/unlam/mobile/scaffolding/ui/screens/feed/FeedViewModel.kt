@@ -73,10 +73,15 @@ class FeedViewModel
             fetchPosts(isRefreshingIndicator = true)
         }
 
-        fun insertUserFav() {
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+        ) {
+            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
             getFeedJob?.cancel()
             getFeedJob =
                 viewModelScope.launch {
+                    feedRepository.insertFavUser(userFav)
                     feedRepository.insertFavUser(user)
                     feedRepository.insertFavUser(user2)
                     feedRepository.insertFavUser(user3)
