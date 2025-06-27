@@ -42,6 +42,7 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidXHilt" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version = "2.9.0" }
 
 google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "dagger" }
 google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "dagger" }
@@ -55,6 +56,7 @@ livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", vers
 lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version = "2.7.0" }
 androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
 androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
+logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version = "5.0.0-alpha.11" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

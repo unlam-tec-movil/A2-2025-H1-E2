@@ -10,16 +10,20 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserEditScreen
@@ -88,12 +92,25 @@ fun MainScreen() {
                 UserScreen(navController = controller)
             }
 
-            composable("postCreation") {
-                PostCreateScreen(navController = controller)
+            composable("postCreation") { backStackEntry ->
+                val viewModel: PostCreateViewModel = hiltViewModel()
+                val draftId = backStackEntry.savedStateHandle.get<Long>("draft_id")
+
+                LaunchedEffect(draftId) {
+                    draftId?.let { viewModel.setInitialContent(it) }
+                }
+
+                PostCreateScreen(
+                    navController = controller,
+                )
             }
 
             composable("editUser") {
                 UserEditScreen(navController = controller)
+            }
+
+            composable("postDrafts") {
+                PostDraftScreen(navController = controller)
             }
         }
     }
