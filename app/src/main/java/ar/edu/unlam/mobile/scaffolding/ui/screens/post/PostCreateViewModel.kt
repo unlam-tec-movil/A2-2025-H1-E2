@@ -35,6 +35,7 @@ class PostCreateViewModel
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
+        @Suppress("ktlint:standard:backing-property-naming")
         private var _draftId: Long? = null
         private var newPostJob: Job? = null
 

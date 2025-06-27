@@ -20,8 +20,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
