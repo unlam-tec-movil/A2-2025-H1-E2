@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface PostRepository {
     fun createPosts(message: String): Flow<Resource<String>>
 
-    fun getPost(id: Int): Flow<Resource<List<Post>>>
+    fun getPost(id: Int): Flow<Resource<Post>>
 }

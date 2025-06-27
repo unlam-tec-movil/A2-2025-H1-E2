@@ -14,6 +14,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -24,12 +25,17 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
+fun FeedScreen(
+    feedViewModel: FeedViewModel = hiltViewModel(),
+    navController: NavController
+) {
     val posts by feedViewModel.feedState.collectAsState()
     Log.d("Cantidad actual de posts:", "${posts.size}")
 
@@ -38,6 +44,12 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
     val onRefresh = {
         Log.d("FeedScreen", "PullToRefresh: onRefresh triggered")
         feedViewModel.refreshPosts()
+    }
+
+    LaunchedEffect(Unit) {
+        feedViewModel.navigationEvent.collect { postId ->
+            navController.navigate("postDetail/$postId")
+        }
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -84,7 +96,12 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .fillMaxSize()
                         .padding(horizontal = 8.dp),
             ) {
-                items(posts) { tuit -> PostView(post = tuit) }
+                items(posts) { tuit ->
+                    PostView(
+                        post = tuit,
+                        onClickAction = { feedViewModel.goToDetail(tuit.id) },
+                    )
+                }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
@@ -94,5 +111,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
 @Preview
 @Composable
 fun FeedScreenPreview() {
-    FeedScreen()
+    FeedScreen(
+        navController = rememberNavController(),
+    )
 }

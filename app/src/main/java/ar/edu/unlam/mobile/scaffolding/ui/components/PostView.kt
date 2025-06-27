@@ -33,7 +33,10 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 
 @Composable
-fun PostView(post: Post) {
+fun PostView(
+    post: Post,
+    onClickAction: () -> Unit = {}
+) {
     Card(
         shape = RoundedCornerShape(9.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)),
@@ -41,7 +44,9 @@ fun PostView(post: Post) {
             Modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
-        onClick = {},
+        onClick = {
+            onClickAction()
+        },
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),

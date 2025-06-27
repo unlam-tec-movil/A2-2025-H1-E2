@@ -8,11 +8,14 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @HiltViewModel
 class FeedViewModel
@@ -27,6 +30,9 @@ class FeedViewModel
         val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
         private var getFeedJob: Job? = null
+
+        private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
+        val navigationEvent: SharedFlow<Int> = _navigationEvent
 
         init {
             fetchPosts()
@@ -70,5 +76,11 @@ class FeedViewModel
         override fun onCleared() {
             super.onCleared()
             getFeedJob?.cancel()
+        }
+
+        fun goToDetail(postId: Int) {
+            viewModelScope.launch {
+                _navigationEvent.emit(postId)
+            }
         }
     }

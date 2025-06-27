@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,37 +16,54 @@ import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import androidx.compose.foundation.lazy.items
-
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
+import androidx.hilt.navigation.compose.hiltViewModel
+import ar.edu.unlam.mobile.scaffolding.data.Resource
 
 @Composable
 fun PostDetailScreen(
-    post: Post,
-    replies: List<String> = emptyList(),
+    viewModel: PostDetailViewModel = hiltViewModel(),
+    postId: Int,
     onBack: () -> Unit
 ) {
+    val postResource = viewModel.post.collectAsState().value
+
+    LaunchedEffect(postId) {
+        viewModel.getPost(postId)
+    }
+
     Scaffold(
-        topBar = { TopBar("Post", onNavigateBack = {}) },
+        topBar = { TopBar("Post", onNavigateBack = onBack) },
         modifier = Modifier.fillMaxWidth(),
     ) { paddingValues ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background)
-                    .padding(paddingValues = paddingValues)
-                    .padding(top = 24.dp),
-        ) {
-            LazyColumn {
-                items(replies) { reply ->
-//                    Column(modifier = Modifier.padding(8.dp)) {
-//                        Text(reply.author, style = MaterialTheme.typography.labelMedium)
-//                        Text(reply.content, style = MaterialTheme.typography.bodyMedium)
-//                    }
+        when (val result = postResource) {
+            null -> {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
+            }
+            is Resource.Success -> {
+                result.data?.let { post ->
+                    Text(
+                        text = post.message,
+                        modifier = Modifier.padding(paddingValues),
+                    )
+                }
+            }
+            is Resource.Error -> {
+                Text(
+                    text = result.message ?: "Error desconocido",
+                    modifier = Modifier.padding(paddingValues),
+                )
             }
         }
     }
 }
+
 //
 //@Preview
 //@Composable

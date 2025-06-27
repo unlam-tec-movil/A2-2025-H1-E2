@@ -56,7 +56,7 @@ class PostRepositoryImpl
                 emit(response)
             }
 
-        override fun getPost(tuitId: Int): Flow<Resource<List<Post>>> =
+        override fun getPost(tuitId: Int): Flow<Resource<Post>> =
             flow {
                 val token = userDao.getUser()?.userToken
 
@@ -71,7 +71,7 @@ class PostRepositoryImpl
                             userToken = token,
                             tuitId = tuitId,
                         )
-                    emit(Resource.Success(data = listOf(post)))
+                    emit(Resource.Success(data = post))
                 } catch (e: HttpException) {
                     val errorMessage =
                         try {
