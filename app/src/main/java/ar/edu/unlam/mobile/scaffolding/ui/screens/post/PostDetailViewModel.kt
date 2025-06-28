@@ -20,7 +20,7 @@ class PostDetailViewModel
         private val _post = MutableStateFlow<Resource<Post>?>(null)
         val post: StateFlow<Resource<Post>?> = _post
         private val _replies = MutableStateFlow<Resource<List<Post>>>(Resource.Success(emptyList()))
-        val replies: StateFlow<Resource<List<Post>>> = MutableStateFlow(Resource.Success(emptyList()))
+        val replies: StateFlow<Resource<List<Post>>> = _replies
 
         fun getPost(id: Int) {
             viewModelScope.launch {
@@ -34,6 +34,19 @@ class PostDetailViewModel
             viewModelScope.launch {
                 repository.getPostReplies(postId).collect {
                     _replies.value = it
+                }
+            }
+        }
+
+        fun sendReply(
+            postId: Int,
+            message: String,
+        ) {
+            viewModelScope.launch {
+                repository.sendReply(postId, message).collect { result ->
+                    if (result is Resource.Success) {
+                        getPostReplies(postId)
+                    }
                 }
             }
         }

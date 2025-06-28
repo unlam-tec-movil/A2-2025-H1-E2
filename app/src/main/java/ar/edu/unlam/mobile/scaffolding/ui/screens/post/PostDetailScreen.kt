@@ -19,6 +19,8 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
@@ -27,6 +29,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @Composable
 fun PostDetailScreen(
+    navController: NavController = rememberNavController(),
     viewModel: PostDetailViewModel = hiltViewModel(),
     postId: Int,
     onBack: () -> Unit,
@@ -40,17 +43,23 @@ fun PostDetailScreen(
     }
 
     PostDetailContent(
+        navController = navController,
         postResource = postResource,
         repliesResource = repliesResource,
         onBack = onBack,
+        onReply = { message ->
+            viewModel.sendReply(postId, message)
+        },
     )
 }
 
 @Composable
 private fun PostDetailContent(
+    navController: NavController = rememberNavController(),
     postResource: Resource<Post>?,
     repliesResource: Resource<List<Post>>,
-    onBack: () -> Unit,
+    onBack: () -> Unit = {},
+    onReply: (String) -> Unit = {},
 ) {
     @Composable
     fun PostReplies(
@@ -67,15 +76,16 @@ private fun PostDetailContent(
             item {
                 Column {
                     PostView(post = post)
-                    ReplyTextField()
+                    ReplyTextField(onReply = { message ->
+                        onReply(message)
+                    })
                 }
             }
             items(replies) { reply ->
                 PostView(
                     post = reply,
-                    modifier =
-                        Modifier
-                            .scale(0.9f),
+                    modifier = Modifier.scale(0.9f),
+                    onClickAction = { navController.navigate("postDetail/${reply.id}")},
                 )
             }
         }
@@ -133,6 +143,5 @@ fun PostDetailContentPreview() {
                     Post(3, "Segundo reply", 1, "Ana", "", 1, false, "3-1-2023"),
                 ),
             ),
-        onBack = {},
     )
 }

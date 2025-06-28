@@ -97,6 +97,7 @@ fun MainScreen() {
                 val postId = backStackEntry.arguments?.getString("postId")?.toIntOrNull()
                 if (postId != null) {
                     PostDetailScreen(
+                        navController = controller,
                         postId = postId,
                         onBack = { controller.popBackStack() },
                     )

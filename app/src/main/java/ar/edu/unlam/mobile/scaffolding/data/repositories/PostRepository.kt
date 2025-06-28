@@ -10,4 +10,9 @@ interface PostRepository {
     fun getPost(id: Int): Flow<Resource<Post>>
 
     fun getPostReplies(postId: Int): Flow<Resource<List<Post>>>
+
+    fun sendReply(
+        postId: Int,
+        message: String,
+    ): Flow<Resource<String>>
 }
