@@ -2,7 +2,9 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
@@ -21,6 +23,7 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
+        private val userFavDao: UserFavDao,
     ) : UserRepository {
         override fun signUpUser(
             name: String,
@@ -184,4 +187,14 @@ class UserRepositoryImpl
                     }
                 emit(result)
             }
+
+        override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
+
+        override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
+            userFavDao.deleteUserFav(userFavEntity)
+        }
+
+        override suspend fun deleteAllUserFav() {
+            userFavDao.deleteAllUserFav()
+        }
     }

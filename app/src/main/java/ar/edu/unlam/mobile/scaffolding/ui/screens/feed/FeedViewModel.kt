@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +40,19 @@ class FeedViewModel
             fetchPosts(isRefreshingIndicator = true)
         }
 
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+        ) {
+            if (author.isBlank() || avatarUrl.isBlank()) return
+            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
+            getFeedJob?.cancel()
+            getFeedJob =
+                viewModelScope.launch {
+                    feedRepository.insertFavUser(userFav)
+                }
+        }
+
         private fun fetchPosts(isRefreshingIndicator: Boolean = false) {
             getFeedJob?.cancel()
             getFeedJob =
@@ -46,21 +60,22 @@ class FeedViewModel
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = true
                     }
-                    feedRepository.getFeed(
-                        1,
-                        false,
-                    ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _feedState.value = result.data!!
+                    feedRepository
+                        .getFeed(
+                            1,
+                            false,
+                        ).collect { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _feedState.value = result.data!!
+                                }
+                                is Resource.Error ->
+                                    Log.e(
+                                        "API call",
+                                        result.message ?: "Error 400 - Bad Request",
+                                    )
                             }
-                            is Resource.Error ->
-                                Log.e(
-                                    "API call",
-                                    result.message ?: "Error 400 - Bad Request",
-                                )
                         }
-                    }
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = false
                     }
