@@ -29,39 +29,6 @@ class FeedViewModel
 
         private var getFeedJob: Job? = null
 
-        val user =
-            UserFavEntity(
-                author = "John Doe",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-        val user2 =
-            UserFavEntity(
-                author = "John Doer",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-        val user3 =
-            UserFavEntity(
-                author = "John Doet",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
-        val user4 =
-            UserFavEntity(
-                author = "John Doess",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
-        val user5 =
-            UserFavEntity(
-                author = "John DoessR",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-        val userTest =
-            UserFavEntity(
-                author = "Deberia estar",
-                avatarUrl = "https://fotos.perfil.com/2023/06/13/trim/720/410/messi-copa-del-mundo-1588008.jpg?webp",
-            )
-
         init {
             fetchPosts()
         }
@@ -77,17 +44,12 @@ class FeedViewModel
             author: String,
             avatarUrl: String,
         ) {
+            if (author.isBlank() || avatarUrl.isBlank()) return
             val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
             getFeedJob?.cancel()
             getFeedJob =
                 viewModelScope.launch {
                     feedRepository.insertFavUser(userFav)
-                    feedRepository.insertFavUser(user)
-                    feedRepository.insertFavUser(user2)
-                    feedRepository.insertFavUser(user3)
-                    feedRepository.insertFavUser(user4)
-                    feedRepository.insertFavUser(user5)
-                    feedRepository.insertFavUser(userTest)
                 }
         }
 
@@ -100,7 +62,7 @@ class FeedViewModel
                     }
                     feedRepository
                         .getFeed(
-                            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImRlbHJpb3NhcmllbEBnbWFpbC5jb20iLCJleHAiOjE3NTI5NTU5MjEsImlzcyI6InVubGFtLXR1aXRlciIsIm5hbWUiOiJkZWxyaW9zYXJpZWxAZ21haWwuY29tIiwic3ViIjoyMTV9.YOg97noxFCqpF-vuXcA6otr27PDm1VBDM4E8zLCb2Q4",
+                            "",
                             // TODO agregar token de usuario, que llegara cuando se logeen
                             1,
                             false,
