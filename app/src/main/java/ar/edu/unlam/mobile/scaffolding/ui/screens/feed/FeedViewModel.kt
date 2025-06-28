@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @HiltViewModel
 class FeedViewModel
     @Inject
@@ -52,21 +51,22 @@ class FeedViewModel
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = true
                     }
-                    feedRepository.getFeed(
-                        1,
-                        false,
-                    ).collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _feedState.value = result.data!!
+                    feedRepository
+                        .getFeed(
+                            1,
+                            false,
+                        ).collect { result ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _feedState.value = result.data!!
+                                }
+                                is Resource.Error ->
+                                    Log.e(
+                                        "API call",
+                                        result.message ?: "Error 400 - Bad Request",
+                                    )
                             }
-                            is Resource.Error ->
-                                Log.e(
-                                    "API call",
-                                    result.message ?: "Error 400 - Bad Request",
-                                )
                         }
-                    }
                     if (isRefreshingIndicator) {
                         _isRefreshing.value = false
                     }

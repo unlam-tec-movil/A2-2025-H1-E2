@@ -35,7 +35,7 @@ import coil.compose.AsyncImage
 @Composable
 fun PostView(
     post: Post,
-    onClickAction: () -> Unit = {}
+    onClickAction: () -> Unit = {},
 ) {
     Card(
         shape = RoundedCornerShape(9.dp),

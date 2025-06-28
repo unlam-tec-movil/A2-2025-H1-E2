@@ -34,7 +34,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 @Composable
 fun FeedScreen(
     feedViewModel: FeedViewModel = hiltViewModel(),
-    navController: NavController
+    navController: NavController,
 ) {
     val posts by feedViewModel.feedState.collectAsState()
     Log.d("Cantidad actual de posts:", "${posts.size}")
@@ -102,7 +102,6 @@ fun FeedScreen(
                         onClickAction = { feedViewModel.goToDetail(tuit.id) },
                     )
                 }
-                // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
     }

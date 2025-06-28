@@ -1,4 +1,3 @@
-@file:Suppress("ktlint:standard:import-ordering")
 
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
@@ -9,13 +8,12 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
-//import coil.network.HttpException
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
-import javax.inject.Inject
 import retrofit2.HttpException
+import javax.inject.Inject
 
 class PostRepositoryImpl
     @Inject
@@ -44,7 +42,7 @@ class PostRepositoryImpl
                                 val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
-                            } catch (ex: Exception) {
+                            } catch (e: Exception) {
                                 e.message
                             }
                         Resource.Error(message = errorMessage.toString())
@@ -77,8 +75,8 @@ class PostRepositoryImpl
                         try {
                             val errorBody = e.response()?.errorBody()?.string()
                             val parsed = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                            parsed.message ?: "Error desconocido"
-                        } catch (ex: Exception) {
+                            parsed.message
+                        } catch (e: Exception) {
                             e.message ?: "Error desconocido"
                         }
                     emit(Resource.Error(message = errorMessage))

@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PostDetailViewModel
-@Inject
+    @Inject
     constructor(
         private val repository: PostRepository,
     ) : ViewModel() {
