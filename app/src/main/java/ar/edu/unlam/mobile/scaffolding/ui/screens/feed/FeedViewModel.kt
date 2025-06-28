@@ -24,16 +24,19 @@ sealed interface MessageUIState {
     data class Success(
         val message: String,
         val posts: List<Post>,
+        val isRefreshing: Boolean,
     ) : MessageUIState
 
     data class Error(
         val message: String,
+        val isRefreshing: Boolean,
     ) : MessageUIState
 }
 
 data class FeedUIState(
     val messageState: MessageUIState = MessageUIState.Loading,
     val posts: List<Post> = emptyList(),
+    val isRefreshing: Boolean = false,
 )
 
 @HiltViewModel
@@ -43,8 +46,6 @@ class FeedViewModel
         private val feedRepository: FeedRepository,
         private val postRepository: PostRepository,
     ) : ViewModel() {
-        private val _isRefreshing = MutableStateFlow(false)
-        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
         private val _uiState = MutableStateFlow(FeedUIState())
         val uiState: StateFlow<FeedUIState> = _uiState.asStateFlow()
 
@@ -55,9 +56,6 @@ class FeedViewModel
         }
 
         fun refreshPosts(refreshing: Boolean = true) {
-            if (getFeedJob?.isActive == true) {
-                return
-            }
             fetchPosts(pullToRefresh = refreshing)
         }
 
@@ -75,7 +73,12 @@ class FeedViewModel
                             )
                         }
                     } else if (pullToRefresh) {
-                        _isRefreshing.value = true
+                        _uiState.update {
+                            it.copy(
+                                messageState = MessageUIState.Loading,
+                                isRefreshing = true,
+                            )
+                        }
                     }
                     feedRepository.getFeed(
                         1,
@@ -89,24 +92,23 @@ class FeedViewModel
                                             MessageUIState.Success(
                                                 message = "Success",
                                                 posts = result.data!!,
+                                                isRefreshing = false,
                                             ),
                                     )
                                 }
                             }
-                            is Resource.Error ->
-                                _uiState.update {
-                                    it.copy(
-                                        messageState =
-                                            MessageUIState.Error(
-                                                message = result.message ?: "Error 400 - Bad Request",
-                                            ),
+                            is Resource.Error -> {
+                                _uiState.update { currentState ->
+                                    currentState.copy(
+                                        isRefreshing = false,
                                     )
                                 }
+                                Log.e("API call", result.message.toString())
+                            }
                         }
                     }
-                    if (pullToRefresh) {
-                        _isRefreshing.value = false
-                        Log.d("FeedViewModel", "Refreshing finished")
+                    if (_uiState.value.isRefreshing) {
+                        _uiState.update { it.copy(isRefreshing = false) }
                     }
                 }
         }
