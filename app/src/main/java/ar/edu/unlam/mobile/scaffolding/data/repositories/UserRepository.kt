@@ -23,4 +23,6 @@ interface UserRepository {
         avatarURL: String,
         password: String,
     ): Flow<Resource<String>>
+
+    fun logoutUser(): Flow<Resource<Boolean>>
 }
