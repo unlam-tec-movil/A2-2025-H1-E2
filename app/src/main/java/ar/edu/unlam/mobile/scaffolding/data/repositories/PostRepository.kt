@@ -5,4 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface PostRepository {
     fun createPosts(message: String): Flow<Resource<String>>
+
+    fun likePost(
+        postId: Int,
+        liked: Boolean,
+    ): Flow<Resource<String>>
 }

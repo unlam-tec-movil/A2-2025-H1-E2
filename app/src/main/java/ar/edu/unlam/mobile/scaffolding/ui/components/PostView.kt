@@ -33,7 +33,10 @@ import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 
 @Composable
-fun PostView(post: Post) {
+fun PostView(
+    post: Post,
+    onLikeClick: () -> Unit = {},
+) {
     Card(
         shape = RoundedCornerShape(9.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)),
@@ -93,7 +96,7 @@ fun PostView(post: Post) {
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .size(24.dp),
-                    onClick = {},
+                    onClick = { onLikeClick() },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Favorite,

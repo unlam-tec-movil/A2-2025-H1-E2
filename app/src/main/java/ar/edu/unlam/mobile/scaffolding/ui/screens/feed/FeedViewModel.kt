@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -19,12 +20,20 @@ class FeedViewModel
     @Inject
     constructor(
         private val feedRepository: FeedRepository,
+        private val postRepository: PostRepository,
     ) : ViewModel() {
         private val _feedState = MutableStateFlow<List<Post>>(emptyList())
         val feedState: StateFlow<List<Post>> = _feedState.asStateFlow()
 
         private val _isRefreshing = MutableStateFlow(false)
         val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+        fun isLikePost(
+            postId: Int,
+            isLiked: Boolean,
+        ) {
+            likePost(postId, isLiked)
+        }
 
         private var getFeedJob: Job? = null
 
@@ -65,6 +74,26 @@ class FeedViewModel
                         _isRefreshing.value = false
                     }
                 }
+        }
+
+        private fun likePost(
+            postId: Int,
+            isLiked: Boolean,
+        ) {
+            viewModelScope.launch {
+                postRepository.likePost(
+                    postId = postId,
+                    liked = isLiked,
+                ).collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            fetchPosts()
+                        }
+                        is Resource.Error ->
+                            Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                    }
+                }
+            }
         }
 
         override fun onCleared() {

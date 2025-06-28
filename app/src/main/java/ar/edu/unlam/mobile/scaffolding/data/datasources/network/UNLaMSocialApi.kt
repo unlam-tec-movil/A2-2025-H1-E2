@@ -5,15 +5,17 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePo
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.CreatePostResponse
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.PostResponse
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.UserResponse
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UNLaMSocialApi {
@@ -55,7 +57,21 @@ interface UNLaMSocialApi {
         @Header("Authorization") userToken: String,
         @Header("Application-Token") appToken: String = API_KEY,
         @Body createPostRequest: CreatePostRequest,
-    ): CreatePostResponse
+    ): PostResponse
+
+    @POST("me/tuits/{tuit_id}/likes")
+    suspend fun postLike(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_id") tuitId: Int,
+    ): PostResponse
+
+    @DELETE("me/tuits/{tuit_id}/likes")
+    suspend fun removePostLike(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_id") tuitId: Int,
+    ): PostResponse
 
     companion object {
         const val BASE_URL = "https://tuiter.fragua.com.ar/api/v1/"

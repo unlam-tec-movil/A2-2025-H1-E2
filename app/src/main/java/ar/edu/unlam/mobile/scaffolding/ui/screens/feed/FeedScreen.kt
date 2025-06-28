@@ -40,6 +40,13 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         feedViewModel.refreshPosts()
     }
 
+    fun onLikePost(
+        id: Int,
+        liked: Boolean,
+    ) {
+        feedViewModel.isLikePost(id, liked)
+    }
+
     val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer =
@@ -84,7 +91,13 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                         .fillMaxSize()
                         .padding(horizontal = 8.dp),
             ) {
-                items(posts) { tuit -> PostView(post = tuit) }
+                items(posts) {
+                        tuit ->
+                    PostView(
+                        post = tuit,
+                        onLikeClick = { onLikePost(tuit.id, tuit.liked) },
+                    )
+                }
                 // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
             }
         }
