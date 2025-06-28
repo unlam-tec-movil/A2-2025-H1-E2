@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun PostView(
+    modifier: Modifier = Modifier,
     post: Post,
     onClickAction: () -> Unit = {},
 ) {
@@ -41,7 +42,7 @@ fun PostView(
         shape = RoundedCornerShape(9.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)),
         modifier =
-            Modifier
+            modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
         onClick = {
@@ -153,5 +154,5 @@ fun PostViewPreview() {
             liked = false,
             date = "2023-10-01",
         )
-    PostView(post)
+    PostView(post = post)
 }

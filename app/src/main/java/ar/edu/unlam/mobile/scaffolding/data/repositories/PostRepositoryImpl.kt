@@ -86,4 +86,37 @@ class PostRepositoryImpl
                     emit(Resource.Error(message = "Error inesperado: ${e.message}"))
                 }
             }
+
+        override fun getPostReplies(tuitId: Int): Flow<Resource<List<Post>>> =
+            flow {
+                val token = userDao.getUser()?.userToken
+
+                if (token.isNullOrBlank()) {
+                    emit(Resource.Error(message = "Token de usuario no disponible"))
+                    return@flow
+                }
+
+                try {
+                    val replies =
+                        api.getPostReplies(
+                            userToken = token,
+                            tuitId = tuitId,
+                        )
+                    emit(Resource.Success(data = replies))
+                } catch (e: HttpException) {
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response()?.errorBody()?.string()
+                            val parsed = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            parsed.message
+                        } catch (e: Exception) {
+                            e.message ?: "Error desconocido"
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = "Error de red: ${e.message}"))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = "Error inesperado: ${e.message}"))
+                }
+            }
     }

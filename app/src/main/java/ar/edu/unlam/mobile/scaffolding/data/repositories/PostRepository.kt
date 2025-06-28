@@ -8,4 +8,6 @@ interface PostRepository {
     fun createPosts(message: String): Flow<Resource<String>>
 
     fun getPost(id: Int): Flow<Resource<Post>>
+
+    fun getPostReplies(postId: Int): Flow<Resource<List<Post>>>
 }
