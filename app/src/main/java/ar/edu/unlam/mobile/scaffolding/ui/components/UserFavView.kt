@@ -12,22 +12,29 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 
 @Composable
-fun UserFavView(userFav: UserFavEntity) {
+fun UserFavView(
+    userFav: UserFavEntity,
+    onDeleteClick: () -> Unit,
+) {
     Box(
         modifier =
             Modifier
@@ -67,9 +74,27 @@ fun UserFavView(userFav: UserFavEntity) {
                     text = userFav.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier =
+                        Modifier
+                            .alignByBaseline()
+                            .padding(top = 8.dp),
                 )
+                IconButton(
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(13.dp),
+                    onClick = {
+                        onDeleteClick()
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
+                        contentDescription = "save",
+                        tint = Color.Red,
+                    )
+                }
             }
         }
     }
@@ -91,6 +116,4 @@ fun UserFavViewPreview() {
         )
 
     val user = UserFavEntity(author = tuit.author, avatarUrl = tuit.avatarUrl)
-
-    UserFavView(userFav = user)
 }

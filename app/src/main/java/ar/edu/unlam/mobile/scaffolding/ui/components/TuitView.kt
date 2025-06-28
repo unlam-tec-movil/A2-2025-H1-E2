@@ -20,6 +20,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,12 +37,17 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
 
 @Composable
 fun PostView(
     post: Post,
     onInsertClick: () -> Unit,
 ) {
+    val color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+    var click by remember { mutableStateOf(false) }
+    var tintSaveUser by remember { mutableStateOf(color) }
+
     Card(
         shape = RoundedCornerShape(7.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainer),
@@ -141,13 +151,25 @@ fun PostView(
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .size(23.dp),
-                    onClick = { onInsertClick() },
+                    onClick = {
+                        onInsertClick()
+                        tintSaveUser = Color.Red
+                        click = true
+                    },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_bookmark_24),
                         contentDescription = "Comments",
-                        tint = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                        tint = tintSaveUser,
                     )
+                }
+
+                if (click) {
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        tintSaveUser = color
+                        click = false
+                    }
                 }
             }
         }

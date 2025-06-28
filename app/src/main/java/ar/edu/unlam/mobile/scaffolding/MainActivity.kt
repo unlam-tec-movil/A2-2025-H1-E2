@@ -91,7 +91,7 @@ fun MainScreen() {
             }
 
             composable("userFavScreen") {
-                UserFavScreen()
+                UserFavScreen(navController = controller)
             }
         }
     }

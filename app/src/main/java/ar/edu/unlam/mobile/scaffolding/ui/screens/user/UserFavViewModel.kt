@@ -1,9 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,24 +22,34 @@ class UserFavViewModel
         val userFavState: StateFlow<List<UserFavEntity>> = _userFavState.asStateFlow()
 
         private var userFavJob: Job? = null
+        private var getFavJob: Job? = null
 
         init {
             getUsers()
         }
 
-        private fun getUsers() {
+        fun deleteAllUser() {
             userFavJob?.cancel()
             userFavJob =
                 viewModelScope.launch {
-                    repository.getFavUser().collect { result ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _userFavState.value = result.data!!
-                            }
+                    repository.deleteAllUserFav()
+                }
+        }
 
-                            is Resource.Error ->
-                                Log.e("Data Base call", result.message ?: "Error")
-                        }
+        fun deleteUser(userFavEntity: UserFavEntity) {
+            userFavJob?.cancel()
+            userFavJob =
+                viewModelScope.launch {
+                    repository.deleteUserFav(userFavEntity)
+                }
+        }
+
+        private fun getUsers() {
+            getFavJob?.cancel()
+            getFavJob =
+                viewModelScope.launch {
+                    repository.getFavUser().collect { result ->
+                        _userFavState.value = result
                     }
                 }
         }

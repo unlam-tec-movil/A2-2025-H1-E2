@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
-import android.database.sqlite.SQLiteException
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
@@ -167,16 +166,13 @@ class UserRepositoryImpl
                 emit(result)
             }
 
-        override suspend fun getFavUser(): Flow<Resource<List<UserFavEntity>>> =
-            flow {
-                val result =
-                    try {
-                        val data =
-                            userFavDao.getAll()
-                        Resource.Success(data)
-                    } catch (e: SQLiteException) {
-                        Resource.Error(message = e.message.toString())
-                    }
-                emit(result)
-            }
+        override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
+
+        override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
+            userFavDao.deleteUserFav(userFavEntity)
+        }
+
+        override suspend fun deleteAllUserFav() {
+            userFavDao.deleteAllUserFav()
+        }
     }

@@ -49,10 +49,15 @@ fun PostCreateScreen(
         }
 
     Scaffold(
-        topBar = { TopBar("Nuevo Post", back()) },
+        topBar = {
+            TopBar(
+                "Nuevo Post",
+                back(),
+                onDropMenuClick = null,
+            )
+        },
         modifier = Modifier.fillMaxWidth(),
-    ) {
-            paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier =
                 Modifier

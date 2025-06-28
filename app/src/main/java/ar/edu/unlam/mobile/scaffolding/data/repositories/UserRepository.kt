@@ -25,5 +25,9 @@ interface UserRepository {
         email: String,
     ): Flow<Resource<String>>
 
-    suspend fun getFavUser(): Flow<Resource<List<UserFavEntity>>>
+    fun getFavUser(): Flow<List<UserFavEntity>>
+
+    suspend fun deleteUserFav(userFavEntity: UserFavEntity)
+
+    suspend fun deleteAllUserFav()
 }
