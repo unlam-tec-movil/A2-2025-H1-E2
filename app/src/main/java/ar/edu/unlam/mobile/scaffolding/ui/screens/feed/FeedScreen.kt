@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults.Indicator
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
@@ -30,13 +32,12 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
-    val posts by feedViewModel.feedState.collectAsState()
-    Log.d("Cantidad actual de posts:", "${posts.size}")
+    val uiState by feedViewModel.uiState.collectAsState()
 
     val isRefreshing by feedViewModel.isRefreshing.collectAsState()
     val refreshState = rememberPullToRefreshState()
     val onRefresh = {
-        Log.d("FeedScreen", "PullToRefresh: onRefresh triggered")
+        Log.d("FeedScreen", "Refreshing start")
         feedViewModel.refreshPosts()
     }
 
@@ -52,7 +53,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME) {
-                    feedViewModel.refreshPosts()
+                    feedViewModel.refreshPosts(false)
                 }
             }
 
@@ -85,20 +86,36 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                 )
             },
         ) {
-            LazyColumn(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 8.dp),
-            ) {
-                items(posts) {
-                        tuit ->
-                    PostView(
-                        post = tuit,
-                        onLikeClick = { onLikePost(tuit.id, tuit.liked) },
+            when (val state = uiState.messageState) {
+                is MessageUIState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center),
                     )
                 }
-                // el item tuit deveria ser clikeable para abrir el post, en una pantalla unica para verlo en detalle
+                is MessageUIState.Success -> {
+                    LazyColumn(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 8.dp),
+                    ) {
+                        items(state.posts) {
+                                post ->
+                            PostView(
+                                post = post,
+                                onLikeClick = { onLikePost(post.id, post.liked) },
+                            )
+                        }
+                        Log.d("Cantidad actual de posts:", "${state.posts.size}")
+                        // TODO Los post deverian ser clikeable para abrir el post
+                    }
+                }
+                is MessageUIState.Error -> {
+                    Text(
+                        text = state.message,
+                        modifier = Modifier.padding(16.dp),
+                    )
+                }
             }
         }
     }
