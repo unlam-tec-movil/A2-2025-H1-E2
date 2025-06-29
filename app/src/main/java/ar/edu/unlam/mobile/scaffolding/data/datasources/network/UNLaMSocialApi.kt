@@ -73,6 +73,28 @@ interface UNLaMSocialApi {
         @Path("tuit_id") tuitId: Int,
     ): PostResponse
 
+    @GET("me/tuits/{tuit_Id}")
+    suspend fun getPost(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+    ): Post
+
+    @GET("me/tuits/{tuit_Id}/replies")
+    suspend fun getPostReplies(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+    ): List<Post>
+
+    @POST("me/tuits/{tuit_Id}/replies")
+    suspend fun sendReply(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+        @Body createPostRequest: CreatePostRequest,
+    ): PostResponse
+
     companion object {
         const val BASE_URL = "https://tuiter.fragua.com.ar/api/v1/"
         const val API_KEY = BuildConfig.API_KEY

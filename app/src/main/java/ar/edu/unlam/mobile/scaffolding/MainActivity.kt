@@ -23,6 +23,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDetailScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostDraftScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.SignUpScreen
@@ -90,11 +91,22 @@ fun MainScreen() {
             }
 
             composable("feed") {
-                FeedScreen()
+                FeedScreen(navController = controller)
             }
 
             composable("user") {
                 UserScreen(navController = controller)
+            }
+
+            composable("postDetail/{postId}") { backStackEntry ->
+                val postId = backStackEntry.arguments?.getString("postId")?.toIntOrNull()
+                if (postId != null) {
+                    PostDetailScreen(
+                        navController = controller,
+                        postId = postId,
+                        onBack = { controller.popBackStack() },
+                    )
+                }
             }
 
             composable("postCreation") { backStackEntry ->

@@ -6,11 +6,12 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.CreatePostRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
-import coil.network.HttpException
+import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class PostRepositoryImpl
@@ -37,7 +38,7 @@ class PostRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -80,7 +81,7 @@ class PostRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -93,5 +94,108 @@ class PostRepositoryImpl
                         Resource.Error(message = e.message.toString())
                     }
                 emit(response)
+            }
+
+        override fun getPost(tuitId: Int): Flow<Resource<Post>> =
+            flow {
+                val token = userDao.getUser()?.userToken
+
+                if (token.isNullOrBlank()) {
+                    emit(Resource.Error(message = "Token de usuario no disponible"))
+                    return@flow
+                }
+
+                try {
+                    val post =
+                        api.getPost(
+                            userToken = token,
+                            tuitId = tuitId,
+                        )
+                    emit(Resource.Success(data = post))
+                } catch (e: HttpException) {
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response()?.errorBody()?.string()
+                            val parsed = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            parsed.message
+                        } catch (e: Exception) {
+                            e.message ?: "Error desconocido"
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = "Error de red: ${e.message}"))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = "Error inesperado: ${e.message}"))
+                }
+            }
+
+        override fun getPostReplies(tuitId: Int): Flow<Resource<List<Post>>> =
+            flow {
+                val token = userDao.getUser()?.userToken
+
+                if (token.isNullOrBlank()) {
+                    emit(Resource.Error(message = "Token de usuario no disponible"))
+                    return@flow
+                }
+
+                try {
+                    val replies =
+                        api.getPostReplies(
+                            userToken = token,
+                            tuitId = tuitId,
+                        )
+                    emit(Resource.Success(data = replies))
+                } catch (e: HttpException) {
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response()?.errorBody()?.string()
+                            val parsed = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            parsed.message
+                        } catch (e: Exception) {
+                            e.message ?: "Error desconocido"
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = "Error de red: ${e.message}"))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = "Error inesperado: ${e.message}"))
+                }
+            }
+
+        override fun sendReply(
+            tuitId: Int,
+            message: String,
+        ): Flow<Resource<String>> =
+            flow {
+                val token = userDao.getUser()?.userToken
+
+                if (token.isNullOrBlank()) {
+                    emit(Resource.Error(message = "Token de usuario no disponible"))
+                    return@flow
+                }
+
+                try {
+                    val response =
+                        api.sendReply(
+                            userToken = token,
+                            tuitId = tuitId,
+                            createPostRequest = CreatePostRequest(message),
+                        )
+                    emit(Resource.Success(data = response.message))
+                } catch (e: HttpException) {
+                    val errorMessage =
+                        try {
+                            val errorBody = e.response()?.errorBody()?.string()
+                            val parsed = Gson().fromJson(errorBody, ErrorResponse::class.java)
+                            parsed.message
+                        } catch (e: Exception) {
+                            e.message ?: "Error desconocido"
+                        }
+                    emit(Resource.Error(message = errorMessage))
+                } catch (e: IOException) {
+                    emit(Resource.Error(message = "Error de red: ${e.message}"))
+                } catch (e: Exception) {
+                    emit(Resource.Error(message = "Error inesperado: ${e.message}"))
+                }
             }
     }

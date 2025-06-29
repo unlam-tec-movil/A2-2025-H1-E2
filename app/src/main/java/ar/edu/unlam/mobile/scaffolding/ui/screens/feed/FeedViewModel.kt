@@ -11,7 +11,9 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -52,12 +54,15 @@ class FeedViewModel
 
         private var getFeedJob: Job? = null
 
+        private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
+        val navigationEvent: SharedFlow<Int> = _navigationEvent
+
         init {
-            fetchPosts(isInitialLoad = true)
+            fetchPosts(initialLoad = true)
         }
 
-        fun refreshPosts(refreshing: Boolean = true) {
-            fetchPosts(pullToRefresh = refreshing)
+        fun refreshPosts(pullToRefresh: Boolean = true) {
+            fetchPosts(pullToRefresh = pullToRefresh)
         }
 
         fun insertUserFav(
@@ -74,26 +79,26 @@ class FeedViewModel
         }
 
         private fun fetchPosts(
-            isInitialLoad: Boolean = false,
+            initialLoad: Boolean = false,
             pullToRefresh: Boolean = false,
         ) {
             getFeedJob?.cancel()
             getFeedJob =
                 viewModelScope.launch {
-                    if (isInitialLoad) {
+                    if (initialLoad) {
+                        // Solo para la carga inicial
                         _uiState.update {
                             it.copy(
                                 messageState = MessageUIState.Loading,
                             )
                         }
                     } else if (pullToRefresh) {
+                        // Usar refreshPosts(true) activa la animación del pull to refresh
                         _uiState.update {
-                            it.copy(
-                                messageState = MessageUIState.Loading,
-                                isRefreshing = true,
-                            )
+                            it.copy(isRefreshing = true)
                         }
                     }
+                    // Llamar a refreshPosts(false) para el resto de casos
                     feedRepository.getFeed(
                         1,
                         false,
@@ -112,12 +117,16 @@ class FeedViewModel
                                 }
                             }
                             is Resource.Error -> {
-                                _uiState.update { currentState ->
-                                    currentState.copy(
-                                        isRefreshing = false,
+                                _uiState.update {
+                                    it.copy(
+                                        messageState =
+                                            MessageUIState.Error(
+                                                message = result.message ?: "Error 400 - Bad Request",
+                                                isRefreshing = false,
+                                            ),
                                     )
                                 }
-                                Log.e("API call", result.message.toString())
+                                Log.e("API call", "${result.message}")
                             }
                         }
                     }
@@ -157,5 +166,11 @@ class FeedViewModel
         override fun onCleared() {
             super.onCleared()
             getFeedJob?.cancel()
+        }
+
+        fun goToDetail(postId: Int) {
+            viewModelScope.launch {
+                _navigationEvent.emit(postId)
+            }
         }
     }

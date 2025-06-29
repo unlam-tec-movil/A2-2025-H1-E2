@@ -17,7 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -26,20 +26,29 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
+fun FeedScreen(
+    feedViewModel: FeedViewModel = hiltViewModel(),
+    navController: NavController,
+) {
     val uiState by feedViewModel.uiState.collectAsState()
+
     val onRefresh = {
         Log.d("FeedScreen", "Refreshing feed")
         feedViewModel.refreshPosts()
+    }
+
+    LaunchedEffect(Unit) {
+        feedViewModel.navigationEvent.collect { postId ->
+            navController.navigate("postDetail/$postId")
+        }
     }
 
     fun onLikePost(
@@ -54,7 +63,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME) {
-                    feedViewModel.refreshPosts()
+                    feedViewModel.refreshPosts(false)
                 }
             }
 
@@ -95,6 +104,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                             PostView(
                                 post = post,
                                 onLikeClick = { onLikePost(post.id, post.liked) },
+                                onClickAction = { feedViewModel.goToDetail(post.id) },
                                 onInsertClick = {
                                     feedViewModel.insertUserFav(
                                         author = post.author,
@@ -103,7 +113,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                                 },
                             )
                         }
-                        Log.d("Cantidad actual de posts:", "${state.posts.size}")
+                        Log.d("FeedScreen", "Cantidad de posts: ${uiState.posts.size}")
                     }
                 }
                 is MessageUIState.Error -> {
@@ -127,5 +137,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
 @Preview
 @Composable
 fun FeedScreenPreview() {
-    FeedScreen()
+    FeedScreen(
+        navController = rememberNavController(),
+    )
 }
