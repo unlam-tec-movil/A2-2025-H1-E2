@@ -1,7 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -72,7 +72,7 @@ fun LoginScreen(
                 fontSize = 25.sp,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.SemiBold,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -118,7 +118,7 @@ fun LoginScreen(
                 modifier = Modifier.padding(20.dp),
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = Color.Black,
+                        containerColor = MaterialTheme.colorScheme.onPrimary,
                         contentColor = Color.White,
                     ),
                 onClick = {
@@ -149,13 +149,13 @@ fun LoginScreen(
                     fontWeight = FontWeight.Light,
                     color = Color.Black,
                 )
+                Spacer(modifier = Modifier.padding(3.dp))
                 Button(
                     colors =
                         ButtonDefaults.buttonColors(
-                            containerColor = Color.Black,
+                            containerColor = MaterialTheme.colorScheme.onPrimary,
                             contentColor = Color.White,
                         ),
-                    border = BorderStroke(1.dp, Color.Black),
                     onClick = {
                         navController.navigate("signUp")
                     },

@@ -23,14 +23,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import ar.edu.unlam.mobile.scaffolding.R
 
-/*Usar este codigo donde se vaya usar el formulario
- para mostrar los errores cuando se quita el foco del formulario
-  onFocusLost = {
-     if (username.isNotBlank()){
-       usernameError = isValidText(username) }
-   },
-*/
-
 @Composable
 fun FormField(
     label: String,

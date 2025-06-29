@@ -14,7 +14,7 @@
 
     <!-- authentication-->
     <string name="createAccount">Crea tu cuenta</string>
-    <string name="SingUp">Registrarse</string>
+    <string name="singUp">Registrarse</string>
     <string name="logIn">Iniciar Sesion</string>
 
 

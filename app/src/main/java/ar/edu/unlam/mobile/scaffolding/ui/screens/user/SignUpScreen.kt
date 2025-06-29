@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -157,7 +156,6 @@ fun SignUpScreen(
                         confirmPassword = confirmPassword,
                     )
                 if (usernameError == null && emailError == null && passwordError == null && confirmPasswordError == null) {
-                    Log.d("AppEstado", "La app pasó por aquí correctamente.")
                     signUpViewModel.signUpUser(
                         name = username,
                         email = email,
@@ -167,7 +165,7 @@ fun SignUpScreen(
                 }
             },
         ) {
-            Text(text = stringResource(R.string.SingUp), fontSize = 20.sp)
+            Text(text = stringResource(R.string.singUp), fontSize = 20.sp)
         }
     }
 }
