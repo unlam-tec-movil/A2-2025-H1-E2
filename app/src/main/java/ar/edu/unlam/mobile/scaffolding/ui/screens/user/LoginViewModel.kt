@@ -10,6 +10,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,11 +22,23 @@ class LoginViewModel
     constructor(
         private val userRepository: UserRepository,
     ) : ViewModel() {
+        private var loginUserJob: Job? = null
+
+        private val _isUserLogged = MutableStateFlow(false)
+        val isUserLogged: StateFlow<Boolean> = _isUserLogged
+
         init {
-            // Chequear si ya hay un usuario guardado en la base de datos local
+            isLogged()
         }
 
-        private var loginUserJob: Job? = null
+        private fun isLogged() {
+            loginUserJob?.cancel()
+
+            loginUserJob =
+                viewModelScope.launch {
+                    _isUserLogged.value = userRepository.isUserLogged()
+                }
+        }
 
         fun loginUser(
             email: String,
@@ -37,8 +52,13 @@ class LoginViewModel
                         userRepository.loginUser(email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
-                                    navController.navigate("feed")
+                                    navController.navigate("feed") {
+                                        popUpTo("login") {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
+
                                 is Resource.Error -> {
                                     Log.e("API call", result.message ?: "Error 400 - Bad Request")
                                 }

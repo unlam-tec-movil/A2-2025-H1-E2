@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -59,7 +59,7 @@ fun SignUpScreen(
             fontSize = 25.sp,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
 
         Column {
@@ -144,7 +144,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(20.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
                     contentColor = Color.White,
                 ),
             onClick = {
@@ -157,7 +157,6 @@ fun SignUpScreen(
                         confirmPassword = confirmPassword,
                     )
                 if (usernameError == null && emailError == null && passwordError == null && confirmPasswordError == null) {
-                    Log.d("AppEstado", "La app pasó por aquí correctamente.")
                     signUpViewModel.signUpUser(
                         name = username,
                         email = email,
@@ -167,7 +166,7 @@ fun SignUpScreen(
                 }
             },
         ) {
-            Text(text = stringResource(R.string.SingUp), fontSize = 20.sp)
+            Text(text = stringResource(R.string.singUp), fontSize = 20.sp)
         }
     }
 }

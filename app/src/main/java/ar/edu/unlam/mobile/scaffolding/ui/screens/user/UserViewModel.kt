@@ -39,7 +39,12 @@ class UserViewModel
                                         avatarURL = result.data?.avatarURL ?: "",
                                     )
                             }
-                            is Resource.Error -> Log.e("API call", result.message ?: "Ocurrió un error inesperado")
+
+                            is Resource.Error ->
+                                Log.e(
+                                    "API call",
+                                    result.message ?: "Ocurrió un error inesperado",
+                                )
                         }
                     }
                 }
@@ -51,8 +56,18 @@ class UserViewModel
                 viewModelScope.launch {
                     userRepository.logoutUser().collect { result ->
                         when (result) {
-                            is Resource.Success -> navController.navigate("login")
-                            is Resource.Error -> Log.e("DB call", result.message ?: "Ocurrió un error inesperado")
+                            is Resource.Success ->
+                                navController.navigate("login") {
+                                    popUpTo("feed") {
+                                        inclusive = true
+                                    }
+                                }
+
+                            is Resource.Error ->
+                                Log.e(
+                                    "DB call",
+                                    result.message ?: "Ocurrió un error inesperado",
+                                )
                         }
                     }
                 }

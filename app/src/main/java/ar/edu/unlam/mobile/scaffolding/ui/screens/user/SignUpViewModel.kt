@@ -34,7 +34,11 @@ class SignUpViewModel
                         userRepository.signUpUser(name, email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
-                                    navController.navigate("feed")
+                                    navController.navigate("feed") {
+                                        popUpTo("login") {
+                                            inclusive = true
+                                        }
+                                    }
                                 }
                                 is Resource.Error -> {
                                     Log.e("API call", result.message ?: "Error 400 - Bad Request")

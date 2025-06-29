@@ -14,6 +14,12 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)
 
+    @Query("SELECT  COUNT(*) FROM user_table")
+    suspend fun getUserCount(): Int
+
+    @Query("SELECT EXISTS(SELECT 1 FROM user_table WHERE ID = 1)")
+    suspend fun existUser(): Boolean
+
     @Query("DELETE FROM user_table WHERE id = 1")
     suspend fun logoutUser()
 
