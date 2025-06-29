@@ -10,6 +10,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,6 +24,9 @@ class LoginViewModel
         init {
             // Chequear si ya hay un usuario guardado en la base de datos local
         }
+
+        private val _showToastEvent = MutableSharedFlow<String>()
+        val showToastEvent = _showToastEvent.asSharedFlow()
 
         private var loginUserJob: Job? = null
 
@@ -40,11 +45,19 @@ class LoginViewModel
                                     navController.navigate("feed")
                                 }
                                 is Resource.Error -> {
-                                    Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                                    val message = result.message ?: "Error 400 - Bad Request"
+                                    Log.e("API call", message)
+                                    showToast(message)
                                 }
                             }
                         }
                     }
+            }
+        }
+
+        fun showToast(message: String) {
+            viewModelScope.launch {
+                _showToastEvent.emit(message)
             }
         }
     }
