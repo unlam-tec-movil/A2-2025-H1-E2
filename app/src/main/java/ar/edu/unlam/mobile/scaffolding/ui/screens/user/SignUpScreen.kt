@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -58,7 +59,7 @@ fun SignUpScreen(
             fontSize = 25.sp,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
 
         Column {
@@ -143,7 +144,7 @@ fun SignUpScreen(
             modifier = Modifier.padding(20.dp),
             colors =
                 ButtonDefaults.buttonColors(
-                    containerColor = Color.Black,
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
                     contentColor = Color.White,
                 ),
             onClick = {
