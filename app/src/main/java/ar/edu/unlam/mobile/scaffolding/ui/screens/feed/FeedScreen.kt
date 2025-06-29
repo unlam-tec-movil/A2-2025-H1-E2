@@ -100,6 +100,12 @@ fun FeedScreen(
                     PostView(
                         post = tuit,
                         onClickAction = { feedViewModel.goToDetail(tuit.id) },
+                        onInsertClick = {
+                            feedViewModel.insertUserFav(
+                                author = tuit.author,
+                                avatarUrl = tuit.avatarUrl,
+                            )
+                        },
                     )
                 }
             }

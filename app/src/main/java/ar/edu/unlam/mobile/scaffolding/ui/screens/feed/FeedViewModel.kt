@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -42,6 +43,19 @@ class FeedViewModel
                 return
             }
             fetchPosts(isRefreshingIndicator = true)
+        }
+
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+        ) {
+            if (author.isBlank() || avatarUrl.isBlank()) return
+            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
+            getFeedJob?.cancel()
+            getFeedJob =
+                viewModelScope.launch {
+                    feedRepository.insertFavUser(userFav)
+                }
         }
 
         private fun fetchPosts(isRefreshingIndicator: Boolean = false) {
