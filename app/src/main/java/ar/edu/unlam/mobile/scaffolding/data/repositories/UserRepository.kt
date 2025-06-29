@@ -19,6 +19,8 @@ interface UserRepository {
 
     fun getCurrentUser(): Flow<Resource<UserProfileModel>>
 
+    suspend fun isUserLogged(): Boolean
+
     fun editUser(
         name: String,
         avatarURL: String,

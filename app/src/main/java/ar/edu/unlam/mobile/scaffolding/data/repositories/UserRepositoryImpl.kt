@@ -188,6 +188,8 @@ class UserRepositoryImpl
                 emit(result)
             }
 
+        override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
+
         override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
 
         override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
