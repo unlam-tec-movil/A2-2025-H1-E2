@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -19,6 +20,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,15 +37,27 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
 
 @Composable
 fun PostView(
     post: Post,
     onLikeClick: () -> Unit = {},
+    onInsertClick: (() -> Unit?)?,
 ) {
+    val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
+    var click by remember { mutableStateOf(false) }
+    var tintSaveUser by remember { mutableStateOf(color) }
+
     Card(
         shape = RoundedCornerShape(9.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f)),
+        colors =
+            CardDefaults.cardColors(
+                containerColor =
+                    MaterialTheme.colorScheme.onBackground.copy(
+                        alpha = 0.8f,
+                    ),
+            ),
         modifier =
             Modifier
                 .padding(2.dp)
@@ -132,6 +150,35 @@ fun PostView(
                         tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
                     )
                 }
+                Spacer(modifier = Modifier.padding(end = 20.dp))
+
+                IconButton(
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(23.dp),
+                    onClick = {
+                        if (onInsertClick != null) {
+                            onInsertClick()
+                        }
+                        tintSaveUser = Color.Red
+                        click = true
+                    },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
+                        contentDescription = "Comments",
+                        tint = tintSaveUser,
+                    )
+                }
+
+                if (click) {
+                    LaunchedEffect(Unit) {
+                        delay(2000)
+                        tintSaveUser = color
+                        click = false
+                    }
+                }
             }
         }
     }
@@ -151,5 +198,5 @@ fun PostViewPreview() {
             liked = false,
             date = "2023-10-01",
         )
-    PostView(post)
+    PostView(post, { }, null)
 }

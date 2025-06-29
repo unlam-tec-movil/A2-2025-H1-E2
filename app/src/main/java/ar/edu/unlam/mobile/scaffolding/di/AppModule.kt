@@ -62,14 +62,14 @@ object AppModule {
     fun provideUserRepository(
         api: UNLaMSocialApi,
         db: AppDatabase,
-    ): UserRepository = UserRepositoryImpl(api, db.getUserDao())
+    ): UserRepository = UserRepositoryImpl(api, db.getUserDao(), db.getUserFavDao())
 
     @Provides
     @Singleton
     fun provideFeedRepository(
         api: UNLaMSocialApi,
         db: AppDatabase,
-    ): FeedRepository = FeedRepositoryImpl(api, db.getUserDao())
+    ): FeedRepository = FeedRepositoryImpl(api, db.getUserDao(), db.getUserFavDao())
 
     @Provides
     @Singleton

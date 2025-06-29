@@ -53,7 +53,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         val observer =
             LifecycleEventObserver { _, event ->
                 if (event == Lifecycle.Event.ON_RESUME) {
-                    feedViewModel.refreshPosts(false)
+                    feedViewModel.refreshPosts()
                 }
             }
 
@@ -94,6 +94,12 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                             PostView(
                                 post = post,
                                 onLikeClick = { onLikePost(post.id, post.liked) },
+                                onInsertClick = {
+                                    feedViewModel.insertUserFav(
+                                        author = tuit.author,
+                                        avatarUrl = tuit.avatarUrl,
+                                    )
+                                },
                             )
                         }
                         Log.d("Cantidad actual de posts:", "${state.posts.size}")

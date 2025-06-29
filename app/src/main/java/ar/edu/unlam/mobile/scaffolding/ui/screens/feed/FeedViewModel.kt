@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
@@ -57,6 +58,19 @@ class FeedViewModel
 
         fun refreshPosts(refreshing: Boolean = true) {
             fetchPosts(pullToRefresh = refreshing)
+        }
+
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+        ) {
+            if (author.isBlank() || avatarUrl.isBlank()) return
+            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
+            getFeedJob?.cancel()
+            getFeedJob =
+                viewModelScope.launch {
+                    feedRepository.insertFavUser(userFav)
+                }
         }
 
         private fun fetchPosts(

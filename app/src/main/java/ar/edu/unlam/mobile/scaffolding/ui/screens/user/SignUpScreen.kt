@@ -51,7 +51,7 @@ fun SignUpScreen(
             Modifier
                 .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.SpaceAround,
     ) {
         // Título
         Text(
@@ -59,82 +59,86 @@ fun SignUpScreen(
             fontSize = 25.sp,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-        )
-// NAME
-        FormField(
-            label = stringResource(R.string.labelName),
-            text = username,
-            onTextChange = {
-                username = it
-                usernameError = null
-            },
-            placeholder = stringResource(R.string.phFieldName),
-            onFocusLost = {
-                if (username.isNotBlank()) {
-                    usernameError =
-                        FormValidator.isValidText(text = username)
-                }
-            },
-            errorMessage = usernameError,
+            color = Color.Black,
         )
 
-// EMAIL
-        FormField(
-            label = stringResource(R.string.labelEmail),
-            text = email,
-            onTextChange = {
-                email = it
-                emailError = null
-            },
-            placeholder = stringResource(R.string.phFieldEmail),
-            onFocusLost = {
-                if (email.isNotBlank()) {
-                    emailError =
-                        FormValidator.isValidEmail(email = email)
-                }
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            errorMessage = emailError,
-        )
+        Column {
+            // NAME
+            FormField(
+                label = stringResource(R.string.labelName),
+                text = username,
+                onTextChange = {
+                    username = it
+                    usernameError = null
+                },
+                placeholder = stringResource(R.string.phFieldName),
+                onFocusLost = {
+                    if (username.isNotBlank()) {
+                        usernameError =
+                            FormValidator.isValidText(text = username)
+                    }
+                },
+                errorMessage = usernameError,
+            )
 
-// PASSWORD
-        PasswordFormField(
-            label = stringResource(R.string.labelPassword),
-            password = password,
-            onPasswordChange = {
-                password = it
-                passwordError = null
-            },
-            placeholder = stringResource(R.string.phFieldPassword),
-            errorMessage = passwordError,
-            onFocusLost = {
-                if (password.isNotBlank()) {
-                    passwordError =
-                        FormValidator.isValidText(text = password, specialCharacters = true)
-                }
-            },
-        )
+            // EMAIL
+            FormField(
+                label = stringResource(R.string.labelEmail),
+                text = email,
+                onTextChange = {
+                    email = it
+                    emailError = null
+                },
+                placeholder = stringResource(R.string.phFieldEmail),
+                onFocusLost = {
+                    if (email.isNotBlank()) {
+                        emailError =
+                            FormValidator.isValidEmail(email = email)
+                    }
+                },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                errorMessage = emailError,
+            )
 
-// CONFIRM PASSWORD
-        PasswordFormField(
-            label = stringResource(R.string.labelConfirmPassword),
-            password = confirmPassword,
-            onPasswordChange = {
-                confirmPassword = it
-                confirmPasswordError = null
-            },
-            placeholder = stringResource(R.string.phFieldConfirmPassword),
-            errorMessage = confirmPasswordError,
-            onFocusLost = {
-                if (password.isNotBlank()) {
-                    confirmPasswordError =
-                        FormValidator.isValidPassword(
-                            password = password,
-                            confirmPassword = confirmPassword,
-                        )
-                }
-            },
-        )
+            // PASSWORD
+            PasswordFormField(
+                label = stringResource(R.string.labelPassword),
+                password = password,
+                onPasswordChange = {
+                    password = it
+                    passwordError = null
+                },
+                placeholder = stringResource(R.string.phFieldPassword),
+                errorMessage = passwordError,
+                onFocusLost = {
+                    if (password.isNotBlank()) {
+                        passwordError =
+                            FormValidator.isValidText(text = password, specialCharacters = true)
+                    }
+                },
+            )
+
+            // CONFIRM PASSWORD
+            PasswordFormField(
+                label = stringResource(R.string.labelConfirmPassword),
+                password = confirmPassword,
+                onPasswordChange = {
+                    confirmPassword = it
+                    confirmPasswordError = null
+                },
+                placeholder = stringResource(R.string.phFieldConfirmPassword),
+                errorMessage = confirmPasswordError,
+                onFocusLost = {
+                    if (password.isNotBlank()) {
+                        confirmPasswordError =
+                            FormValidator.isValidPassword(
+                                password = password,
+                                confirmPassword = confirmPassword,
+                            )
+                    }
+                },
+            )
+        }
 
         Button(
             modifier = Modifier.padding(20.dp),

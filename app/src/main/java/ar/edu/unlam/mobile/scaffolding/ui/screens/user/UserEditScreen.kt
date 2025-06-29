@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,7 +68,7 @@ fun UserEditScreen(
         // Formulario
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.Start,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             // NAME
             FormField(
@@ -140,13 +142,18 @@ fun UserEditScreen(
                 },
                 modifier = Modifier.weight(1f),
             ) {
-                Text("cancelar")
+                Text("Cancelar", color = Color.Black)
             }
 
             Spacer(modifier = Modifier.width(16.dp))
 
             Button(
                 modifier = Modifier.weight(1f),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color.Black,
+                        contentColor = Color.White,
+                    ),
                 onClick = {
                     usernameError = FormValidator.isValidText(text = username)
                     passwordError = FormValidator.isValidText(text = password, specialCharacters = true)
@@ -165,7 +172,7 @@ fun UserEditScreen(
                     }
                 },
             ) {
-                Text("guardar cambios")
+                Text("Guardar cambios")
             }
         }
     }

@@ -1,7 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -15,8 +14,8 @@ interface UserDao {
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)
 
-    @Delete
-    suspend fun deleteUser(userEntity: UserEntity)
+    @Query("DELETE FROM user_table WHERE id = 1")
+    suspend fun logoutUser()
 
     @Query(
         "UPDATE user_table " +
