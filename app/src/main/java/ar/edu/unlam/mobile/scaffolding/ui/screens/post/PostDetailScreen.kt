@@ -85,7 +85,7 @@ private fun PostDetailContent(
                 PostView(
                     post = reply,
                     modifier = Modifier.scale(0.9f),
-                    onClickAction = { navController.navigate("postDetail/${reply.id}")},
+                    onClickAction = { navController.navigate("postDetail/${reply.id}") },
                 )
             }
         }
