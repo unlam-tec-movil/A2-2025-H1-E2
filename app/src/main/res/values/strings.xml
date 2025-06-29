@@ -3,6 +3,7 @@
 
     <!-- title TopAppBar-->
     <string name="tittleUserFav">Usuarios guardados</string>
+    <string name="feedName">Feed</string>
 
     <!-- UserFavScreen-->
     <string name="userFvEmpty">Aun no hay usuarios guardados</string>

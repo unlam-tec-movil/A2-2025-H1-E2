@@ -22,22 +22,23 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
-    val feedName = "Feed"
     val uiState by feedViewModel.uiState.collectAsState()
     val onRefresh = {
-        Log.d("FeedScreen", "Refreshing start")
+        Log.d("FeedScreen", "Refreshing feed")
         feedViewModel.refreshPosts()
     }
 
@@ -48,7 +49,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         feedViewModel.isLikePost(id, liked)
     }
 
-    val lifecycleOwner = LocalLifecycleOwner.current
+    /*val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer =
             LifecycleEventObserver { _, event ->
@@ -62,10 +63,10 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
-    }
+    }*/
 
     Scaffold(
-        topBar = { TopBar(feedName, null) },
+        topBar = { TopBar(stringResource(R.string.feedName), null) },
     ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = uiState.isRefreshing,
@@ -96,8 +97,8 @@ fun FeedScreen(feedViewModel: FeedViewModel = hiltViewModel()) {
                                 onLikeClick = { onLikePost(post.id, post.liked) },
                                 onInsertClick = {
                                     feedViewModel.insertUserFav(
-                                        author = tuit.author,
-                                        avatarUrl = tuit.avatarUrl,
+                                        author = post.author,
+                                        avatarUrl = post.avatarUrl,
                                     )
                                 },
                             )
