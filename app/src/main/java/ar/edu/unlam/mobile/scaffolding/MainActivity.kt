@@ -117,7 +117,7 @@ fun MainScreen() {
             composable("postDrafts") {
                 PostDraftScreen(navController = controller)
             }
-            composable("UserFavScreen") {
+            composable("userFavScreen") {
                 UserFavScreen(navController = controller)
             }
         }
