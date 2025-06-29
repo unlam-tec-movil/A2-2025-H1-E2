@@ -72,7 +72,7 @@ fun TopBar(
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         TextButton(onClick = { onDropMenuClick() }) {
-                            Text(text = textMenu, color = MaterialTheme.colorScheme.onPrimary)
+                            Text(text = textMenu, color = MaterialTheme.colorScheme.inversePrimary)
                         }
                     }
                 }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -84,18 +85,22 @@ fun UserFavView(
                     modifier =
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
-                            .size(15.dp),
+                            .size(20.dp),
                     onClick = {
                         onDeleteClick()
                     },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
+                        painter = painterResource(id = R.drawable.baseline_bookmark_remove_24),
                         contentDescription = "save",
-                        tint = Color.Red,
+                        tint = Color.Black,
                     )
                 }
             }
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
+                thickness = 1.dp,
+            )
         }
     }
 }

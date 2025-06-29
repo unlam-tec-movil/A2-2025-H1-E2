@@ -61,10 +61,20 @@ fun UserScreen(
         Spacer(modifier = Modifier.height(12.dp))
 
         // Name
-        Text(text = userViewModel.currentUserState.value.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+        Text(
+//            text = userViewModel.currentUserState.value.name,
+            text = "ariel",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+        )
 
         // Email
-        Text(text = userViewModel.currentUserState.value.email, fontSize = 14.sp, color = Color.Black)
+        Text(
+//            text = userViewModel.currentUserState.value.email,
+            text = "delriosariel@gmail.com",
+            fontSize = 14.sp,
+            color = Color.Black,
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -81,7 +91,7 @@ fun UserScreen(
             OptionCard(
                 title = "Usuarios favoritos",
                 icon = Icons.Default.Favorite,
-                onClick = { navController.navigate("") },
+                onClick = { navController.navigate("userFavScreen") },
             )
             OptionCard(
                 title = "Cerrar sesión",

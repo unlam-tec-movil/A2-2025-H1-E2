@@ -174,7 +174,7 @@ fun PostView(
 
                 if (click) {
                     LaunchedEffect(Unit) {
-                        delay(2000)
+                        delay(1500)
                         tintSaveUser = color
                         click = false
                     }
