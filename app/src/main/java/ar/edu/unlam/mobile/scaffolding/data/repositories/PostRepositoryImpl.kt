@@ -1,4 +1,3 @@
-
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import android.util.Log
@@ -34,6 +33,49 @@ class PostRepositoryImpl
                                     userToken = currentUserToken,
                                     createPostRequest = CreatePostRequest(message),
                                 )
+                            Resource.Success(data.message)
+                        }
+                    } catch (e: HttpException) {
+                        val errorMessage =
+                            try {
+                                val errorBody = e.response()?.errorBody()?.string()
+                                val gson = Gson()
+                                gson.fromJson(errorBody, ErrorResponse::class.java).message
+                            } catch (e: Exception) {
+                                e.message
+                            }
+                        Resource.Error(message = errorMessage.toString())
+                    } catch (e: IOException) {
+                        Resource.Error(message = e.message.toString())
+                    } catch (e: Exception) {
+                        Resource.Error(message = e.message.toString())
+                    }
+                emit(response)
+            }
+
+        override fun likePost(
+            postId: Int,
+            liked: Boolean,
+        ): Flow<Resource<String>> =
+            flow {
+                val response: Resource<String> =
+                    try {
+                        val currentUserToken = userDao.getUser()?.userToken
+                        if (currentUserToken.isNullOrBlank()) {
+                            Resource.Error(data = null, message = Log.e("API call", "Error: No hay token").toString())
+                        } else {
+                            val data =
+                                if (liked) {
+                                    api.removePostLike(
+                                        userToken = currentUserToken,
+                                        tuitId = postId,
+                                    )
+                                } else {
+                                    api.postLike(
+                                        userToken = currentUserToken,
+                                        tuitId = postId,
+                                    )
+                                }
                             Resource.Success(data.message)
                         }
                     } catch (e: HttpException) {

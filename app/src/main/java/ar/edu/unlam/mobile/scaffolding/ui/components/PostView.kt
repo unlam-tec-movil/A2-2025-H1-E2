@@ -43,6 +43,7 @@ import kotlinx.coroutines.delay
 fun PostView(
     modifier: Modifier = Modifier,
     post: Post,
+    onLikeClick: () -> Unit = {},
     onClickAction: () -> Unit = {},
     onInsertClick: (() -> Unit?)? = null,
 ) {
@@ -117,7 +118,7 @@ fun PostView(
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .size(24.dp),
-                    onClick = {},
+                    onClick = { onLikeClick() },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Favorite,
