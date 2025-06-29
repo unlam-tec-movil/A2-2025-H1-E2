@@ -14,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UNLaMSocialApi {
@@ -54,6 +55,28 @@ interface UNLaMSocialApi {
     suspend fun createPost(
         @Header("Authorization") userToken: String,
         @Header("Application-Token") appToken: String = API_KEY,
+        @Body createPostRequest: CreatePostRequest,
+    ): CreatePostResponse
+
+    @GET("me/tuits/{tuit_Id}")
+    suspend fun getPost(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+    ): Post
+
+    @GET("me/tuits/{tuit_Id}/replies")
+    suspend fun getPostReplies(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
+    ): List<Post>
+
+    @POST("me/tuits/{tuit_Id}/replies")
+    suspend fun sendReply(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Path("tuit_Id") tuitId: Int,
         @Body createPostRequest: CreatePostRequest,
     ): CreatePostResponse
 

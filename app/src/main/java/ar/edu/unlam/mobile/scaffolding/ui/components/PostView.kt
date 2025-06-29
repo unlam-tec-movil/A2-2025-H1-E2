@@ -41,8 +41,10 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun PostView(
+    modifier: Modifier = Modifier,
     post: Post,
-    onInsertClick: (() -> Unit?)?,
+    onClickAction: () -> Unit = {},
+    onInsertClick: (() -> Unit?)? = null,
 ) {
     val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
     var click by remember { mutableStateOf(false) }
@@ -58,10 +60,12 @@ fun PostView(
                     ),
             ),
         modifier =
-            Modifier
+            modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
-        onClick = {},
+        onClick = {
+            onClickAction()
+        },
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -197,5 +201,5 @@ fun PostViewPreview() {
             liked = false,
             date = "2023-10-01",
         )
-    PostView(post, null)
+    PostView(post = post)
 }
