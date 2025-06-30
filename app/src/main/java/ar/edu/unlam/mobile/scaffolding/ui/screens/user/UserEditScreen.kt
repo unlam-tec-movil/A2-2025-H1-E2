@@ -17,7 +17,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -49,10 +48,7 @@ fun UserEditScreen(
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
@@ -114,10 +110,7 @@ fun UserEditScreen(
         }
         // Botones
         Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {

@@ -49,9 +49,7 @@ fun LoginScreen(
     }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column(

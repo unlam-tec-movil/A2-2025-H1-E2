@@ -53,7 +53,7 @@ class UserEditViewModel
         private var _message = MutableStateFlow<String?>(null)
         var message: StateFlow<String?> = _message
 
-        // Onchange function
+        // Onchange
         fun onNameChange(name: String) {
             _nameError.value = null
             _name.value = name
@@ -69,7 +69,7 @@ class UserEditViewModel
             _confirmPassword.value = confirmPassWord
         }
 
-        // onFocusLost function
+        // onFocusLost
 
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {

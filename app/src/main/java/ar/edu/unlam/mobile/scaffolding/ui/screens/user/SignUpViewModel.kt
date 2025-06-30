@@ -37,7 +37,7 @@ class SignUpViewModel
         private var _confirmPassword = MutableStateFlow("")
         var confirmPassword: StateFlow<String> = _confirmPassword
 
-    //MESSAGE
+        // MESSAGE
         private var _nameError = MutableStateFlow<String?>(null)
         var nameError: StateFlow<String?> = _nameError
 
@@ -53,7 +53,7 @@ class SignUpViewModel
         private var _message = MutableStateFlow<String?>(null)
         var message: StateFlow<String?> = _message
 
-        // Onchange function
+        // Onchange
         fun onNameChange(name: String) {
             _nameError.value = null
             _name.value = name
@@ -74,7 +74,7 @@ class SignUpViewModel
             _confirmPassword.value = confirmPassWord
         }
 
-        // onFocusLost function
+        // onFocusLost
 
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {
