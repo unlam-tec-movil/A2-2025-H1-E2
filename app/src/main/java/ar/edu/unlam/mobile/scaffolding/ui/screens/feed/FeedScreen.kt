@@ -97,7 +97,6 @@ fun FeedScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = 8.dp),
                     ) {
-
                         items(state.posts) { post ->
                             PostView(
                                 post = post,
