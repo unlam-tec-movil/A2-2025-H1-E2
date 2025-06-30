@@ -11,6 +11,7 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,12 +28,10 @@ sealed interface MessageUIState {
     data class Success(
         val message: String,
         val posts: List<Post>,
-        val isRefreshing: Boolean,
     ) : MessageUIState
 
     data class Error(
         val message: String,
-        val isRefreshing: Boolean,
     ) : MessageUIState
 }
 
@@ -52,10 +51,10 @@ class FeedViewModel
         private val _uiState = MutableStateFlow(FeedUIState())
         val uiState: StateFlow<FeedUIState> = _uiState.asStateFlow()
 
-        private var getFeedJob: Job? = null
-
         private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
         val navigationEvent: SharedFlow<Int> = _navigationEvent
+
+        private var getFeedJob: Job? = null
 
         init {
             fetchPosts(initialLoad = true)
@@ -102,36 +101,32 @@ class FeedViewModel
                     feedRepository.getFeed(
                         1,
                         false,
-                    ).collect { result ->
+                    ).collect {
+                            result: Resource<List<Post>> ->
                         when (result) {
                             is Resource.Success -> {
                                 _uiState.update {
                                     it.copy(
+                                        isRefreshing = false,
                                         messageState =
                                             MessageUIState.Success(
-                                                message = "Success",
-                                                posts = result.data!!,
-                                                isRefreshing = false,
+                                                "Success",
+                                                result.data!!,
                                             ),
                                     )
                                 }
                             }
                             is Resource.Error -> {
+                                delay(1000)
+                                val errorMsg = result.message ?: "Error 400 - Bad Request"
                                 _uiState.update {
                                     it.copy(
-                                        messageState =
-                                            MessageUIState.Error(
-                                                message = result.message ?: "Error 400 - Bad Request",
-                                                isRefreshing = false,
-                                            ),
+                                        isRefreshing = false,
+                                        messageState = MessageUIState.Error(errorMsg),
                                     )
                                 }
-                                Log.e("API call", "${result.message}")
                             }
                         }
-                    }
-                    if (_uiState.value.isRefreshing) {
-                        _uiState.update { it.copy(isRefreshing = false) }
                     }
                 }
         }

@@ -110,17 +110,16 @@ fun FeedScreen(
                                 },
                             )
                         }
-                        Log.d("FeedScreen", "Cantidad de posts: ${uiState.posts.size}")
                     }
                 }
                 is MessageUIState.Error -> {
-                    Column {
+                    Column(modifier = Modifier.padding(6.dp)) {
                         Text(
                             text = state.message,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
-                            feedViewModel.refreshPosts()
+                            feedViewModel.refreshPosts(false)
                         }) {
                             Text("Reintentar")
                         }
