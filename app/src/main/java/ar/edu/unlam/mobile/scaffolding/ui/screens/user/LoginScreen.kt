@@ -13,14 +13,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -39,17 +37,6 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val userLogged by loginViewModel.isUserLogged.collectAsState()
-
-    if (userLogged) {
-        navController.navigate("feed") {
-            popUpTo("login") {
-                // esto quitara a login del stack
-                inclusive = true
-            }
-        }
-    }
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -119,7 +106,7 @@ fun LoginScreen(
                 colors =
                     ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary,
-                        contentColor = Color.White,
+                        contentColor = MaterialTheme.colorScheme.onBackground,
                     ),
                 onClick = {
                     emailError = FormValidator.isValidEmail(email = email)
@@ -135,7 +122,10 @@ fun LoginScreen(
                     }
                 },
             ) {
-                Text(text = "Iniciar sesión", fontSize = 20.sp)
+                Text(
+                    text = "Iniciar sesión",
+                    fontSize = 20.sp,
+                )
             }
             // Registrarse
             Column(
@@ -147,20 +137,23 @@ fun LoginScreen(
                     fontSize = 15.sp,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Light,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Button(
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onPrimary,
-                            contentColor = Color.White,
+                            contentColor = MaterialTheme.colorScheme.onBackground,
                         ),
                     onClick = {
                         navController.navigate("signUp")
                     },
                 ) {
-                    Text(text = "Registrarse", fontSize = 20.sp)
+                    Text(
+                        text = "Registrarse",
+                        fontSize = 20.sp,
+                    )
                 }
             }
         }
