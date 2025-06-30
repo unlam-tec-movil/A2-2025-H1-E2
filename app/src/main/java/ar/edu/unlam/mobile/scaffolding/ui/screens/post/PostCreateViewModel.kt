@@ -35,6 +35,9 @@ class PostCreateViewModel
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
+        private val _isLoading = MutableStateFlow<Boolean>(false)
+        val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+
         @Suppress("ktlint:standard:backing-property-naming")
         private var _draftId: Long? = null
         private var newPostJob: Job? = null
@@ -43,11 +46,15 @@ class PostCreateViewModel
             viewModelScope.launch {
                 _draftId = draftId
                 val post = database.getPostDao().getById(draftId)
-                myMessage = post?.content ?: ""
+                myMessage = post.content
             }
         }
 
         fun createPost() {
+            if (myMessage.isEmpty() || _isLoading.value) {
+                return
+            }
+            _isLoading.value = true
             newPostJob?.cancel()
             if (myMessage.isBlank()) {
                 _statusMessage.value = "Error: El mensaje no puede estar vacío."
@@ -60,6 +67,7 @@ class PostCreateViewModel
                         .createPosts(
                             myMessage,
                         ).collect { result ->
+                            _isLoading.value = false
                             when (result) {
                                 is Resource.Success -> {
                                     _statusMessage.value = result.data!!
