@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -62,18 +63,17 @@ fun UserScreen(
 
         // Name
         Text(
-//            text = userViewModel.currentUserState.value.name,
-            text = "ariel",
+            text = userViewModel.currentUserState.value.name,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         // Email
         Text(
-//            text = userViewModel.currentUserState.value.email,
-            text = "delriosariel@gmail.com",
+            text = userViewModel.currentUserState.value.email,
             fontSize = 14.sp,
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.onSurface,
         )
 
         Spacer(modifier = Modifier.height(24.dp))

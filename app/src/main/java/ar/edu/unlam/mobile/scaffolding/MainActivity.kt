@@ -20,6 +20,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.PostCreateViewModel
@@ -77,11 +78,15 @@ fun MainScreen() {
         // podrán ser destinos de navegación.
         NavHost(
             navController = controller,
-            startDestination = "login",
+            startDestination = "home",
             modifier = Modifier.padding(paddingValue),
         ) {
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
+
+            composable("home") {
+                HomeScreen(navController = controller)
+            }
             composable("login") {
                 LoginScreen(navController = controller)
             }

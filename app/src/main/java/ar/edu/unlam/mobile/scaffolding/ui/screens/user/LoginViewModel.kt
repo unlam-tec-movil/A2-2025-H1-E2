@@ -11,8 +11,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,22 +21,6 @@ class LoginViewModel
         private val userRepository: UserRepository,
     ) : ViewModel() {
         private var loginUserJob: Job? = null
-
-        private val _isUserLogged = MutableStateFlow(false)
-        val isUserLogged: StateFlow<Boolean> = _isUserLogged
-
-        init {
-            isLogged()
-        }
-
-        private fun isLogged() {
-            loginUserJob?.cancel()
-
-            loginUserJob =
-                viewModelScope.launch {
-                    _isUserLogged.value = userRepository.isUserLogged()
-                }
-        }
 
         fun loginUser(
             email: String,

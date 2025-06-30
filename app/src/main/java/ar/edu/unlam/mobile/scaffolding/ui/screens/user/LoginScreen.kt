@@ -13,7 +13,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,17 +38,6 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val userLogged by loginViewModel.isUserLogged.collectAsState()
-
-    if (userLogged) {
-        navController.navigate("feed") {
-            popUpTo("login") {
-                // esto quitara a login del stack
-                inclusive = true
-            }
-        }
-    }
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
@@ -72,7 +60,7 @@ fun LoginScreen(
                 fontSize = 25.sp,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -147,7 +135,7 @@ fun LoginScreen(
                     fontSize = 15.sp,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Light,
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Spacer(modifier = Modifier.padding(3.dp))
                 Button(
@@ -160,7 +148,11 @@ fun LoginScreen(
                         navController.navigate("signUp")
                     },
                 ) {
-                    Text(text = "Registrarse", fontSize = 20.sp)
+                    Text(
+                        text = "Registrarse",
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
                 }
             }
         }
