@@ -102,16 +102,17 @@ class FeedViewModel
                         1,
                         false,
                     ).collect {
-                        result: Resource<List<Post>> ->
+                            result: Resource<List<Post>> ->
                         when (result) {
                             is Resource.Success -> {
                                 _uiState.update {
                                     it.copy(
                                         isRefreshing = false,
-                                        messageState = MessageUIState.Success(
-                                            "Success",
-                                            result.data!!,
-                                        )
+                                        messageState =
+                                            MessageUIState.Success(
+                                                "Success",
+                                                result.data!!,
+                                            ),
                                     )
                                 }
                             }
@@ -121,7 +122,7 @@ class FeedViewModel
                                 _uiState.update {
                                     it.copy(
                                         isRefreshing = false,
-                                        messageState = MessageUIState.Error(errorMsg)
+                                        messageState = MessageUIState.Error(errorMsg),
                                     )
                                 }
                             }
