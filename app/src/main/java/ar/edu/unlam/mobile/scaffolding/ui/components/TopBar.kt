@@ -20,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -72,7 +71,7 @@ fun TopBar(
                     }
                     DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                         TextButton(onClick = { onDropMenuClick() }) {
-                            Text(text = textMenu, color = MaterialTheme.colorScheme.inversePrimary)
+                            Text(text = textMenu, color = MaterialTheme.colorScheme.onBackground)
                         }
                     }
                 }
@@ -83,11 +82,4 @@ fun TopBar(
             thickness = 1.dp,
         )
     }
-}
-
-@Preview
-@Composable
-fun topBarPreview() {
-    val back = {}
-    TopBar("Feed", back)
 }

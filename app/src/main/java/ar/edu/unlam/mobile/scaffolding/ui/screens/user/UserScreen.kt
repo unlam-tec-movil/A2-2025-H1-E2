@@ -87,11 +87,13 @@ fun UserScreen(
                 title = "Editar usuario",
                 icon = Icons.Default.Edit,
                 onClick = { navController.navigate("editUser") },
+                color = MaterialTheme.colorScheme.onSurface,
             )
             OptionCard(
                 title = "Usuarios favoritos",
                 icon = Icons.Default.Favorite,
                 onClick = { navController.navigate("userFavScreen") },
+                color = MaterialTheme.colorScheme.onSurface,
             )
             OptionCard(
                 title = "Cerrar sesión",
@@ -108,7 +110,7 @@ fun OptionCard(
     title: String,
     icon: ImageVector,
     onClick: () -> Unit,
-    color: Color = Color.Black,
+    color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Card(
         modifier =

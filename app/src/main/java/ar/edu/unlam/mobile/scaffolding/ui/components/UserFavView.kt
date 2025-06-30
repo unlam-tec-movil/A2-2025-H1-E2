@@ -75,7 +75,7 @@ fun UserFavView(
                     text = userFav.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier =
                         Modifier
                             .alignByBaseline()

@@ -58,6 +58,8 @@ class UserViewModel
                         when (result) {
                             is Resource.Success ->
                                 navController.navigate("login") {
+                                    launchSingleTop = true
+
                                     popUpTo("feed") {
                                         inclusive = true
                                     }

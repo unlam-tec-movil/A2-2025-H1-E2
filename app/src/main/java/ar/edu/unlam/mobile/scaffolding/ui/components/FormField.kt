@@ -61,8 +61,18 @@ fun FormField(
                 // fondo cuando el formulario no está enfocado
             ),
         onValueChange = onTextChange,
-        label = { Text(text = label) },
-        placeholder = { Text(placeholder) },
+        label = {
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        placeholder = {
+            Text(
+                placeholder,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
         keyboardOptions = keyboardOptions,
         isError = showError,
         singleLine = isSingleLine,
@@ -101,8 +111,18 @@ fun PasswordFormField(
                 // fondo cuando el formulario no está enfocado
             ),
         onValueChange = onPasswordChange,
-        label = { Text(text = label) },
-        placeholder = { Text(placeholder) },
+        label = {
+            Text(
+                text = label,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        placeholder = {
+            Text(
+                placeholder,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+        },
         isError = showError,
         singleLine = isSingleLin,
         supportingText = { ErrorText(showError = showError, message = errorMessage) },
@@ -120,7 +140,6 @@ fun PasswordFormField(
     )
 }
 
-// esta funcion muestra el error el cual es recibido por parametro por el formulario y lo muestra
 @Composable
 fun ErrorText(
     showError: Boolean,

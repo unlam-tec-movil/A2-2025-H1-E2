@@ -50,7 +50,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body?.string()
+                                val errorBody = e.response.body.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -89,7 +89,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body?.string()
+                                val errorBody = e.response.body.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -121,7 +121,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body?.string()
+                                val errorBody = e.response.body.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -159,7 +159,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body?.string()
+                                val errorBody = e.response.body.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -190,6 +190,7 @@ class UserRepositoryImpl
 
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 
+        // metodos de usuarios guardados
         override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
 
         override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {

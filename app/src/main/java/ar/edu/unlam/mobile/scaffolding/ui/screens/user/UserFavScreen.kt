@@ -44,7 +44,7 @@ fun UserFavScreen(
                 text = stringResource(R.string.userFvEmpty),
                 fontSize = 18.sp,
                 modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colorScheme.onPrimary,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     } else {
@@ -72,13 +72,17 @@ fun UserFavScreen(
                                 userFavViewModel.deleteAllUser()
                                 showDialog = false
                             }) {
-                                TextColorPrimary(text = stringResource(R.string.userFvDgAccept))
+                                Text(
+                                    text = stringResource(R.string.userFvDgAccept),
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
                             }
                         },
                         dismissButton = {
                             TextButton(onClick = { showDialog = false }) {
-                                TextColorPrimary(
+                                Text(
                                     text = stringResource(R.string.userFvDgCancel),
+                                    color = MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         },
@@ -101,9 +105,4 @@ fun UserFavScreen(
             }
         }
     }
-}
-
-@Composable
-fun TextColorPrimary(text: String) {
-    Text(text = text, color = MaterialTheme.colorScheme.onPrimary)
 }

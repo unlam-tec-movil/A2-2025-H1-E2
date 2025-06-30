@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +59,7 @@ fun LoginScreen(
                 fontSize = 25.sp,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -107,7 +106,7 @@ fun LoginScreen(
                 colors =
                     ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary,
-                        contentColor = Color.White,
+                        contentColor = MaterialTheme.colorScheme.onBackground,
                     ),
                 onClick = {
                     emailError = FormValidator.isValidEmail(email = email)
@@ -123,7 +122,10 @@ fun LoginScreen(
                     }
                 },
             ) {
-                Text(text = "Iniciar sesión", fontSize = 20.sp)
+                Text(
+                    text = "Iniciar sesión",
+                    fontSize = 20.sp,
+                )
             }
             // Registrarse
             Column(
@@ -142,7 +144,7 @@ fun LoginScreen(
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = MaterialTheme.colorScheme.onPrimary,
-                            contentColor = Color.White,
+                            contentColor = MaterialTheme.colorScheme.onBackground,
                         ),
                     onClick = {
                         navController.navigate("signUp")
@@ -151,7 +153,6 @@ fun LoginScreen(
                     Text(
                         text = "Registrarse",
                         fontSize = 20.sp,
-                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
