@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,9 +43,17 @@ fun PostCreateScreen(
     navController: NavController,
 ) {
     val statusMessage by viewModel.statusMessage.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    fun refreshFeed() {
+        navController.previousBackStackEntry
+            ?.savedStateHandle
+            ?.set("refresh_feed", true)
+    }
 
     LaunchedEffect(statusMessage) {
         if (statusMessage != null && !statusMessage!!.startsWith("Error")) {
+            refreshFeed()
             navController.popBackStack()
         }
     }
@@ -92,12 +102,7 @@ fun PostCreateScreen(
 
             PostButton(
                 text = "Publicar",
-                onTap =
-                    if (viewModel.myMessage.isNotEmpty()) {
-                        { viewModel.createPost() }
-                    } else {
-                        {}
-                    },
+                onTap = { viewModel.createPost() },
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 enabled = viewModel.myMessage.isNotEmpty(),
             )
@@ -143,28 +148,40 @@ fun PostCreateScreen(
         topBar = { TopBar("Nuevo Post", back()) },
         modifier = Modifier.fillMaxWidth(),
     ) { paddingValues ->
-        Column(
+        Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background)
-                    .padding(paddingValues = paddingValues),
+                    .fillMaxSize(),
         ) {
-            ButtonsView()
-
-            UserView()
-
-            Card(
-                shape = RoundedCornerShape(4.dp),
+            Column(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(8.dp)
-                        .padding(bottom = 50.dp),
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .padding(paddingValues = paddingValues),
             ) {
-                PostTextField(
-                    value = viewModel.myMessage,
-                    onValueChange = viewModel::onDescriptionChange,
+                ButtonsView()
+
+                UserView()
+
+                Card(
+                    shape = RoundedCornerShape(4.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(8.dp)
+                            .padding(bottom = 50.dp),
+                ) {
+                    PostTextField(
+                        value = viewModel.myMessage,
+                        onValueChange = viewModel::onDescriptionChange,
+                    )
+                }
+            }
+
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
                 )
             }
         }
