@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,18 +15,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.EditableAvatarImage
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
@@ -35,13 +35,14 @@ fun UserEditScreen(
     userEditViewModel: UserEditViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    val name by userEditViewModel.name.collectAsState()
+    val password by userEditViewModel.password.collectAsState()
+    val confirmPassword by userEditViewModel.confirmPassword.collectAsState()
 
-    var usernameError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
+    val nameError by userEditViewModel.nameError.collectAsState()
+    val passwordError by userEditViewModel.passwordError.collectAsState()
+    val confirmPasswordError by userEditViewModel.confirmPasswordError.collectAsState()
+    val message by userEditViewModel.message.collectAsState()
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -72,19 +73,15 @@ fun UserEditScreen(
             // NAME
             FormField(
                 label = stringResource(R.string.labelName),
-                text = username,
+                text = name,
                 onTextChange = {
-                    username = it
-                    usernameError = null
+                    userEditViewModel.onNameChange(it)
                 },
                 placeholder = userEditViewModel.currentUserState.value.name,
                 onFocusLost = {
-                    if (username.isNotBlank()) {
-                        usernameError =
-                            FormValidator.isValidText(text = username)
-                    }
+                    userEditViewModel.onNameFocusLost(name)
                 },
-                errorMessage = usernameError,
+                errorMessage = nameError,
             )
 
             // PASSWORD
@@ -92,16 +89,12 @@ fun UserEditScreen(
                 label = stringResource(R.string.labelPassword),
                 password = password,
                 onPasswordChange = {
-                    password = it
-                    passwordError = null
+                    userEditViewModel.onPassWordChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldPassword),
                 errorMessage = passwordError,
                 onFocusLost = {
-                    if (password.isNotBlank()) {
-                        passwordError =
-                            FormValidator.isValidText(text = password, specialCharacters = true)
-                    }
+                    userEditViewModel.onPassWordFocusLost(password)
                 },
             )
 
@@ -110,19 +103,12 @@ fun UserEditScreen(
                 label = stringResource(R.string.labelConfirmPassword),
                 password = confirmPassword,
                 onPasswordChange = {
-                    confirmPassword = it
-                    confirmPasswordError = null
+                    userEditViewModel.onConfirmPassWordChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldConfirmPassword),
                 errorMessage = confirmPasswordError,
                 onFocusLost = {
-                    if (password.isNotBlank()) {
-                        confirmPasswordError =
-                            FormValidator.isValidPassword(
-                                password = password,
-                                confirmPassword = confirmPassword,
-                            )
-                    }
+                    userEditViewModel.onConfirmPassWordFocusLost(password, confirmPassword)
                 },
             )
         }
@@ -157,20 +143,13 @@ fun UserEditScreen(
                         contentColor = MaterialTheme.colorScheme.onBackground,
                     ),
                 onClick = {
-                    usernameError = FormValidator.isValidText(text = username)
-                    passwordError =
-                        FormValidator.isValidText(text = password, specialCharacters = true)
-                    confirmPasswordError =
-                        FormValidator.isValidPassword(
+                    if (userEditViewModel.validateDate(
+                            name = name,
                             password = password,
-                            confirmPassword = confirmPassword,
+                            confirmPassWord = confirmPassword,
                         )
-                    if (usernameError == null && passwordError == null && confirmPasswordError == null) {
-                        userEditViewModel.editUser(
-                            name = username,
-                            password = password,
-                            navController = navController,
-                        )
+                    ) {
+                        userEditViewModel.editUser(name, password, navController)
                     }
                 },
             ) {
@@ -178,6 +157,13 @@ fun UserEditScreen(
                     "Guardar cambios",
                 )
             }
+        }
+
+        val context = LocalContext.current
+
+        if (!message.isNullOrBlank()) {
+            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            userEditViewModel.clearMessage()
         }
     }
 }
