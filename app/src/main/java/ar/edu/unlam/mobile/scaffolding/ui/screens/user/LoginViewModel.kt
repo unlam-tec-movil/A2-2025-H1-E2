@@ -6,11 +6,14 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
+import ar.edu.unlam.mobile.scaffolding.domain.Authentication
+import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,6 +24,53 @@ class LoginViewModel
         private val userRepository: UserRepository,
     ) : ViewModel() {
         private var loginUserJob: Job? = null
+
+        private var _email = MutableStateFlow("")
+        var email: StateFlow<String> = _email
+
+        private var _password = MutableStateFlow("")
+        var password: StateFlow<String> = _password
+
+        // MESSAGE
+        private var _emailError = MutableStateFlow<String?>(null)
+        var emailError: StateFlow<String?> = _emailError
+
+        private var _passwordError = MutableStateFlow<String?>(null)
+        var passwordError: StateFlow<String?> = _passwordError
+
+        private var _message = MutableStateFlow<String?>(null)
+        var message: StateFlow<String?> = _message
+
+        fun onEmailChange(email: String) {
+            _emailError.value = null
+            _email.value = email
+        }
+
+        fun onPassWordChange(password: String) {
+            _passwordError.value = null
+            _password.value = password
+        }
+
+        fun onEmailFocusLost(email: String) {
+            if (email.isNotBlank()) {
+                _emailError.value = FormValidator.isValidEmail(email)
+            }
+        }
+
+        fun onPassWordFocusLost(password: String) {
+            if (password.isNotBlank()) {
+                _passwordError.value = FormValidator.isValidText(password, specialCharacters = true)
+            }
+        }
+
+        fun validateDate(
+            email: String,
+            password: String,
+        ): Boolean {
+            _emailError.value = FormValidator.isValidEmail(email = email)
+            _passwordError.value = FormValidator.isValidText(text = password, specialCharacters = true)
+            return _emailError.value == null && _passwordError.value == null
+        }
 
         fun loginUser(
             email: String,
@@ -34,6 +84,8 @@ class LoginViewModel
                         userRepository.loginUser(email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
+                                    _message.value =
+                                        Authentication.messageApi(result.message, isLoginOrigin = true)
                                     navController.navigate("feed") {
                                         popUpTo("login") {
                                             inclusive = true
@@ -42,11 +94,16 @@ class LoginViewModel
                                 }
 
                                 is Resource.Error -> {
+                                    _message.value = Authentication.messageApi(result.message)
                                     Log.e("API call", result.message ?: "Error 400 - Bad Request")
                                 }
                             }
                         }
                     }
             }
+        }
+
+        fun clearMessage() {
+            _message.value = null
         }
     }

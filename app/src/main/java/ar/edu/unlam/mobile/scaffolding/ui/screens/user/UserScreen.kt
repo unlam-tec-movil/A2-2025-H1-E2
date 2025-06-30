@@ -42,10 +42,7 @@ fun UserScreen(
     navController: NavController,
 ) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Avatar
@@ -113,16 +110,11 @@ fun OptionCard(
     color: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Card(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
     ) {
         Row(
-            modifier =
-                Modifier
-                    .padding(16.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
