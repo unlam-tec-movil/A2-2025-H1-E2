@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -13,12 +13,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -28,7 +27,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
@@ -37,16 +35,21 @@ fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val email by loginViewModel.email.collectAsState()
+    val password by loginViewModel.password.collectAsState()
+    val emailError by loginViewModel.emailError.collectAsState()
+    val passwordError by loginViewModel.passwordError.collectAsState()
+    val message by loginViewModel.message.collectAsState()
 
-    var emailError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+
+    if (!message.isNullOrBlank()) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        loginViewModel.clearMessage()
+    }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column(
@@ -69,18 +72,15 @@ fun LoginScreen(
                 label = stringResource(R.string.labelEmail),
                 text = email,
                 onTextChange = {
-                    email = it
-                    emailError = null
+                    loginViewModel.onEmailChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldEmail),
                 onFocusLost = {
-                    if (email.isNotBlank()) {
-                        emailError =
-                            FormValidator.isValidEmail(email = email)
-                    }
+                    loginViewModel.onEmailFocusLost(email)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 errorMessage = emailError,
+//                errorMessage = emailError,
             )
 
             // PASSWORD
@@ -88,16 +88,12 @@ fun LoginScreen(
                 label = stringResource(R.string.labelPassword),
                 password = password,
                 onPasswordChange = {
-                    password = it
-                    passwordError = null
+                    loginViewModel.onPassWordChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldPassword),
                 errorMessage = passwordError,
                 onFocusLost = {
-                    if (password.isNotBlank()) {
-                        passwordError =
-                            FormValidator.isValidText(text = password, specialCharacters = true)
-                    }
+                    loginViewModel.onPassWordFocusLost(password)
                 },
             )
 
@@ -109,11 +105,7 @@ fun LoginScreen(
                         contentColor = MaterialTheme.colorScheme.onBackground,
                     ),
                 onClick = {
-                    emailError = FormValidator.isValidEmail(email = email)
-                    passwordError =
-                        FormValidator.isValidText(text = password, specialCharacters = true)
-                    if (emailError == null && passwordError == null) {
-                        Log.d("AppEstado", "La app pasó por aquí correctamente.")
+                    if (loginViewModel.validateDate(email = email, password = password)) {
                         loginViewModel.loginUser(
                             email = email,
                             password = password,
