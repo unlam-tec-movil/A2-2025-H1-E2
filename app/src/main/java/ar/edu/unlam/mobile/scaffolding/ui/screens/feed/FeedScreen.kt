@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,6 +46,19 @@ fun FeedScreen(
         feedViewModel.refreshPosts()
     }
 
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+    val refreshFeed =
+        savedStateHandle
+            ?.getLiveData<Boolean>("refresh_feed")
+            ?.observeAsState()
+
+    LaunchedEffect(refreshFeed?.value) {
+        if (refreshFeed?.value == true) {
+            onRefresh()
+            savedStateHandle["refresh_feed"] = false
+        }
+    }
+
     LaunchedEffect(Unit) {
         feedViewModel.navigationEvent.collect { postId ->
             navController.navigate("postDetail/$postId")
@@ -57,22 +71,6 @@ fun FeedScreen(
     ) {
         feedViewModel.isLikePost(id, liked)
     }
-
-    /*val lifecycleOwner = LocalLifecycleOwner.current
-    DisposableEffect(lifecycleOwner) {
-        val observer =
-            LifecycleEventObserver { _, event ->
-                if (event == Lifecycle.Event.ON_RESUME) {
-                    feedViewModel.refreshPosts(false)
-                }
-            }
-
-        lifecycleOwner.lifecycle.addObserver(observer)
-
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-    }*/
 
     Scaffold(
         topBar = { TopBar(stringResource(R.string.feedName), null) },
@@ -99,6 +97,7 @@ fun FeedScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = 8.dp),
                     ) {
+
                         items(state.posts) { post ->
                             PostView(
                                 post = post,

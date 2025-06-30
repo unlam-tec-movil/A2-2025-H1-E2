@@ -171,7 +171,7 @@ fun PostView(
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.baseline_bookmark_24),
-                        contentDescription = "Comments",
+                        contentDescription = "Bookmark",
                         tint = tintSaveUser,
                     )
                 }

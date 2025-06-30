@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,12 +11,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -25,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 
@@ -34,21 +34,26 @@ fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
+    val name by signUpViewModel.name.collectAsState()
+    val email by signUpViewModel.email.collectAsState()
+    val password by signUpViewModel.password.collectAsState()
+    val confirmPassword by signUpViewModel.confirmPassword.collectAsState()
 
-    var usernameError by remember { mutableStateOf<String?>(null) }
-    var passwordError by remember { mutableStateOf<String?>(null) }
+    val nameError by signUpViewModel.nameError.collectAsState()
+    val emailError by signUpViewModel.emailError.collectAsState()
+    val passwordError by signUpViewModel.passwordError.collectAsState()
+    val confirmPasswordError by signUpViewModel.confirmPasswordError.collectAsState()
+    val message by signUpViewModel.message.collectAsState()
 
-    var confirmPasswordError by remember { mutableStateOf<String?>(null) }
-    var emailError by remember { mutableStateOf<String?>(null) }
+    val context = LocalContext.current
+
+    if (!message.isNullOrBlank()) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+        signUpViewModel.clearMessage()
+    }
 
     Column(
-        modifier =
-            Modifier
-                .fillMaxSize(),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceAround,
     ) {
@@ -65,19 +70,15 @@ fun SignUpScreen(
             // NAME
             FormField(
                 label = stringResource(R.string.labelName),
-                text = username,
+                text = name,
                 onTextChange = {
-                    username = it
-                    usernameError = null
+                    signUpViewModel.onNameChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldName),
                 onFocusLost = {
-                    if (username.isNotBlank()) {
-                        usernameError =
-                            FormValidator.isValidText(text = username)
-                    }
+                    signUpViewModel.onNameFocusLost(name)
                 },
-                errorMessage = usernameError,
+                errorMessage = nameError,
             )
 
             // EMAIL
@@ -85,15 +86,11 @@ fun SignUpScreen(
                 label = stringResource(R.string.labelEmail),
                 text = email,
                 onTextChange = {
-                    email = it
-                    emailError = null
+                    signUpViewModel.onEmailChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldEmail),
                 onFocusLost = {
-                    if (email.isNotBlank()) {
-                        emailError =
-                            FormValidator.isValidEmail(email = email)
-                    }
+                    signUpViewModel.onEmailFocusLost(email)
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 errorMessage = emailError,
@@ -104,16 +101,12 @@ fun SignUpScreen(
                 label = stringResource(R.string.labelPassword),
                 password = password,
                 onPasswordChange = {
-                    password = it
-                    passwordError = null
+                    signUpViewModel.onPassWordChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldPassword),
                 errorMessage = passwordError,
                 onFocusLost = {
-                    if (password.isNotBlank()) {
-                        passwordError =
-                            FormValidator.isValidText(text = password, specialCharacters = true)
-                    }
+                    signUpViewModel.onPassWordFocusLost(password)
                 },
             )
 
@@ -122,19 +115,12 @@ fun SignUpScreen(
                 label = stringResource(R.string.labelConfirmPassword),
                 password = confirmPassword,
                 onPasswordChange = {
-                    confirmPassword = it
-                    confirmPasswordError = null
+                    signUpViewModel.onConfirmPassWordChange(it)
                 },
                 placeholder = stringResource(R.string.phFieldConfirmPassword),
                 errorMessage = confirmPasswordError,
                 onFocusLost = {
-                    if (password.isNotBlank()) {
-                        confirmPasswordError =
-                            FormValidator.isValidPassword(
-                                password = password,
-                                confirmPassword = confirmPassword,
-                            )
-                    }
+                    signUpViewModel.onConfirmPassWordFocusLost(password, confirmPassword)
                 },
             )
         }
@@ -147,17 +133,9 @@ fun SignUpScreen(
                     contentColor = MaterialTheme.colorScheme.onBackground,
                 ),
             onClick = {
-                usernameError = FormValidator.isValidText(text = username)
-                emailError = FormValidator.isValidEmail(email = email)
-                passwordError = FormValidator.isValidText(text = password, specialCharacters = true)
-                confirmPasswordError =
-                    FormValidator.isValidPassword(
-                        password = password,
-                        confirmPassword = confirmPassword,
-                    )
-                if (usernameError == null && emailError == null && passwordError == null && confirmPasswordError == null) {
+                if (signUpViewModel.validateDate(name, email, password, confirmPassword)) {
                     signUpViewModel.signUpUser(
-                        name = username,
+                        name = name,
                         email = email,
                         password = password,
                         navController = navController,
