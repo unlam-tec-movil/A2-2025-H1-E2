@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +19,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
@@ -72,11 +77,15 @@ private fun PostDetailContent(
         LazyColumn(
             modifier =
                 modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp),
+                    .fillMaxWidth(),
         ) {
             item {
-                Column {
+                Column(
+                    modifier =
+                        Modifier.background(
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                        ),
+                ) {
                     PostView(
                         post = post,
                         onInsertClick = {
@@ -85,6 +94,10 @@ private fun PostDetailContent(
                                 avatarUrl = post.avatarUrl,
                             )
                         },
+                    )
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+                        thickness = 1.dp,
                     )
                     ReplyTextField(onReply = { message ->
                         onReply(message)
@@ -108,7 +121,7 @@ private fun PostDetailContent(
     }
 
     Scaffold(
-        topBar = { TopBar("Post", onNavigateBack = onBack) },
+        topBar = { TopBar(stringResource(R.string.postScreenName), onNavigateBack = onBack) },
         modifier = Modifier.fillMaxWidth(),
     ) { paddingValues ->
         when (val result = postResource) {
