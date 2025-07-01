@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +35,7 @@ import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostView
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FeedScreen(
@@ -111,9 +114,11 @@ fun FeedScreen(
                             text = state.message,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
-                        Button(onClick = {
-                            feedViewModel.refreshPosts(reloadScreen = true)
-                        }) {
+                        Button(
+                            onClick = {
+                                feedViewModel.refreshPosts(reloadScreen = true)
+                            },
+                        ) {
                             Text("Reintentar")
                         }
                     }
@@ -123,6 +128,7 @@ fun FeedScreen(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun FeedScreenPreview() {

@@ -38,7 +38,7 @@ class PostCreateViewModel
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
-        private val _isLoading = MutableStateFlow<Boolean>(false)
+        private val _isLoading = MutableStateFlow(false)
         val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
         private val _currentUserState = MutableStateFlow(UserProfileModel())
@@ -57,12 +57,12 @@ class PostCreateViewModel
         }
 
         @Suppress("ktlint:standard:backing-property-naming")
-        private var _draftId: Long? = null
+        private var draftId: Long? = null
         private var newPostJob: Job? = null
 
         fun setInitialContent(draftId: Long) {
             viewModelScope.launch {
-                _draftId = draftId
+                this@PostCreateViewModel.draftId = draftId
                 val post = database.getPostDao().getById(draftId)
                 myMessage = post.content
             }
@@ -91,7 +91,7 @@ class PostCreateViewModel
                                     _statusMessage.value = result.data!!
                                     Log.d("API call", result.data)
 
-                                    _draftId?.let { deleteDraft(it) }
+                                    draftId?.let { deleteDraft(it) }
                                 }
 
                                 is Resource.Error -> {
