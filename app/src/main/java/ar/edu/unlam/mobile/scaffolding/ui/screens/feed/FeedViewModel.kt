@@ -57,11 +57,14 @@ class FeedViewModel
         private var getFeedJob: Job? = null
 
         init {
-            fetchPosts(initialLoad = true)
+            fetchPosts(reloadScreen = true)
         }
 
-        fun refreshPosts(pullToRefresh: Boolean = true) {
-            fetchPosts(pullToRefresh = pullToRefresh)
+        fun refreshPosts(
+            reloadScreen: Boolean = false,
+            pullToRefresh: Boolean = false,
+        ) {
+            fetchPosts(reloadScreen, pullToRefresh)
         }
 
         fun insertUserFav(
@@ -78,26 +81,26 @@ class FeedViewModel
         }
 
         private fun fetchPosts(
-            initialLoad: Boolean = false,
+            reloadScreen: Boolean = false,
             pullToRefresh: Boolean = false,
         ) {
             getFeedJob?.cancel()
             getFeedJob =
                 viewModelScope.launch {
-                    if (initialLoad) {
-                        // Solo para la carga inicial
+                    if (reloadScreen) {
+                        // Usar "reloadScreen = true" mostrara la pantalla de carga
                         _uiState.update {
                             it.copy(
                                 messageState = MessageUIState.Loading,
                             )
                         }
                     } else if (pullToRefresh) {
-                        // Usar refreshPosts(true) activa la animación del pull to refresh
+                        // Usar "pullToRefresh = true" activa la animación del pull to refresh
                         _uiState.update {
                             it.copy(isRefreshing = true)
                         }
                     }
-                    // Llamar a refreshPosts(false) para el resto de casos
+                    // Llamar a refreshPosts() para el resto de casos
                     feedRepository.getFeed(
                         1,
                         false,

@@ -43,7 +43,7 @@ fun FeedScreen(
 
     val onRefresh = {
         Log.d("FeedScreen", "Refreshing feed")
-        feedViewModel.refreshPosts()
+        feedViewModel.refreshPosts(pullToRefresh = true)
     }
 
     val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
@@ -63,13 +63,6 @@ fun FeedScreen(
         feedViewModel.navigationEvent.collect { postId ->
             navController.navigate("postDetail/$postId")
         }
-    }
-
-    fun onLikePost(
-        id: Int,
-        liked: Boolean,
-    ) {
-        feedViewModel.isLikePost(id, liked)
     }
 
     Scaffold(
@@ -97,11 +90,10 @@ fun FeedScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = 8.dp),
                     ) {
-
                         items(state.posts) { post ->
                             PostView(
                                 post = post,
-                                onLikeClick = { onLikePost(post.id, post.liked) },
+                                onLikeClick = { feedViewModel.isLikePost(post.id, post.liked) },
                                 onClickAction = { feedViewModel.goToDetail(post.id) },
                                 onInsertClick = {
                                     feedViewModel.insertUserFav(
@@ -120,7 +112,7 @@ fun FeedScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(onClick = {
-                            feedViewModel.refreshPosts(false)
+                            feedViewModel.refreshPosts(reloadScreen = true)
                         }) {
                             Text("Reintentar")
                         }

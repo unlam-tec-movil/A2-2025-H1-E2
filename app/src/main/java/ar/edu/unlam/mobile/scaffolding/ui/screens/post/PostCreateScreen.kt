@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -28,14 +25,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostTextField
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
+import coil.compose.AsyncImage
 
 @Composable
 fun PostCreateScreen(
@@ -44,6 +44,7 @@ fun PostCreateScreen(
 ) {
     val statusMessage by viewModel.statusMessage.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
+    val user by viewModel.currentUserState.collectAsState()
 
     fun refreshFeed() {
         navController.previousBackStackEntry
@@ -73,7 +74,7 @@ fun PostCreateScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .padding(top = 12.dp),
+                    .padding(bottom = 12.dp),
             horizontalArrangement = Arrangement.End,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -88,7 +89,7 @@ fun PostCreateScreen(
                     ),
             ) {
                 Text(
-                    text = "Borradores",
+                    text = stringResource(R.string.postDraft),
                     color =
                         if (viewModel.myMessage.isNotEmpty()) {
                             MaterialTheme.colorScheme.primary
@@ -101,7 +102,7 @@ fun PostCreateScreen(
             }
 
             PostButton(
-                text = "Publicar",
+                text = stringResource(R.string.newPost),
                 onTap = { viewModel.createPost() },
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 8.dp),
                 enabled = viewModel.myMessage.isNotEmpty(),
@@ -116,25 +117,22 @@ fun PostCreateScreen(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
-                    .padding(bottom = 12.dp),
+                    .padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.Start),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            // TODO: Cambiar por un AsyncImage para mostrar el avatar del usuario
-            Image(
-                imageVector = Icons.Rounded.AccountCircle,
+            AsyncImage(
+                model = user.avatarURL,
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .size(44.dp)
+                        .size(40.dp)
                         .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.secondary)
-                        .padding(3.dp),
+                        .background(MaterialTheme.colorScheme.secondary),
             )
 
             Text(
-                text = "Usuario(Tu)",
-                // nombre del usuario logeado
+                text = "${user.name} (Tu)",
                 color = MaterialTheme.colorScheme.onSurface,
                 modifier =
                     Modifier
@@ -145,7 +143,7 @@ fun PostCreateScreen(
     }
 
     Scaffold(
-        topBar = { TopBar("Nuevo Post", back()) },
+        topBar = { TopBar(stringResource(R.string.postCreateName), back()) },
         modifier = Modifier.fillMaxWidth(),
     ) { paddingValues ->
         Box(
@@ -160,10 +158,8 @@ fun PostCreateScreen(
                         .background(color = MaterialTheme.colorScheme.background)
                         .padding(paddingValues = paddingValues),
             ) {
-                ButtonsView()
-
                 UserView()
-
+                ButtonsView()
                 Card(
                     shape = RoundedCornerShape(4.dp),
                     modifier =
@@ -178,7 +174,6 @@ fun PostCreateScreen(
                     )
                 }
             }
-
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),

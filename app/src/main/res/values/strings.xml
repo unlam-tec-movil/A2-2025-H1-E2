@@ -4,6 +4,11 @@
     <!-- title TopAppBar-->
     <string name="tittleUserFav">Usuarios guardados</string>
     <string name="feedName">Feed</string>
+    <string name="postCreateName">Nuevo Post</string>
+
+    <!-- PostScreen -->
+    <string name="newPost">"Publicar"</string>
+    <string name="postDraft">Borradores</string>
 
     <!-- UserFavScreen-->
     <string name="userFvEmpty">Aun no hay usuarios guardados</string>
