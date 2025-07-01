@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -49,6 +50,7 @@ fun PostDetailScreen(
     PostDetailContent(
         navController = navController,
         postResource = postResource,
+        viewModel = viewModel,
         repliesResource = repliesResource,
         onBack = onBack,
         onReply = { message ->
@@ -64,6 +66,7 @@ private fun PostDetailContent(
     repliesResource: Resource<List<Post>>,
     onBack: () -> Unit = {},
     onReply: (String) -> Unit = {},
+    viewModel: PostDetailViewModel,
 ) {
     @Composable
     fun PostReplies(
@@ -77,10 +80,25 @@ private fun PostDetailContent(
                     .fillMaxWidth(),
         ) {
             item {
-                Column(modifier = Modifier.background(
-                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f,))
+                Column(
+                    modifier =
+                        Modifier.background(
+                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                        ),
                 ) {
-                    PostView(post = post)
+                    PostView(
+                        post = post,
+                        onInsertClick = {
+                            viewModel.insertUserFav(
+                                author = post.author,
+                                avatarUrl = post.avatarUrl,
+                            )
+                        },
+                    )
+                    HorizontalDivider(
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+                        thickness = 1.dp,
+                    )
                     ReplyTextField(onReply = { message ->
                         onReply(message)
                     })
@@ -90,6 +108,12 @@ private fun PostDetailContent(
                 PostView(
                     post = reply,
                     modifier = Modifier.scale(0.9f),
+                    onInsertClick = {
+                        viewModel.insertUserFav(
+                            author = reply.author,
+                            avatarUrl = reply.avatarUrl,
+                        )
+                    },
                     onClickAction = { navController.navigate("postDetail/${reply.id}") },
                 )
             }
@@ -106,14 +130,20 @@ private fun PostDetailContent(
                     CircularProgressIndicator()
                 }
             }
+
             is Resource.Success -> {
                 result.data?.let { post ->
                     when (repliesResource) {
                         is Resource.Success -> {
                             repliesResource.data?.let { replies ->
-                                PostReplies(post, replies, modifier = Modifier.padding(paddingValues))
+                                PostReplies(
+                                    post,
+                                    replies,
+                                    modifier = Modifier.padding(paddingValues),
+                                )
                             }
                         }
+
                         is Resource.Error -> {
                             Text(
                                 text = repliesResource.message ?: "Error desconocido",
@@ -123,6 +153,7 @@ private fun PostDetailContent(
                     }
                 }
             }
+
             is Resource.Error -> {
                 Text(
                     text = result.message ?: "Error desconocido",
@@ -148,5 +179,6 @@ fun PostDetailContentPreview() {
                     Post(3, "Segundo reply", 1, "Ana", "", 1, false, "3-1-2023"),
                 ),
             ),
+        viewModel = hiltViewModel(),
     )
 }

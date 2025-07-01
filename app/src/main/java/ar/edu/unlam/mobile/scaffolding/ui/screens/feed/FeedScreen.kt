@@ -116,9 +116,11 @@ fun FeedScreen(
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Button(
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.onPrimary,
-                                contentColor = MaterialTheme.colorScheme.background),
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                                    contentColor = MaterialTheme.colorScheme.background,
+                                ),
                             onClick = {
                                 feedViewModel.refreshPosts(reloadScreen = true)
                             },

@@ -22,41 +22,44 @@ import ar.edu.unlam.mobile.scaffolding.R
 fun ReplyTextField(onReply: (String) -> Unit = {}) {
     var replyText by remember { mutableStateOf("") }
 
-        Row(
-            modifier =
-                Modifier
-                    .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f))
-                    .fillMaxWidth()
-                    .padding(horizontal = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            TextField(
-                value = replyText,
-                onValueChange = { replyText = it },
-                modifier = Modifier.weight(1f),
-                shape = RoundedCornerShape(9.dp),
-                placeholder = { Text(stringResource(R.string.reply)) },
-                colors = TextFieldDefaults.colors(
+    Row(
+        modifier =
+            Modifier
+                .background(MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f))
+                .fillMaxWidth()
+                .padding(horizontal = 5.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        TextField(
+            value = replyText,
+            onValueChange = { replyText = it },
+            modifier = Modifier.weight(1f),
+            shape = RoundedCornerShape(9.dp),
+            placeholder = { Text(stringResource(R.string.reply)) },
+            colors =
+                TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
                     unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent
-                )
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimary,
-                        contentColor = Color.White,
-                    ),
-                onClick = {
-                    onReply(replyText)
-                    replyText = ""
-                },
-            ) {
-                Text("Enviar")
-            }
-
+                    disabledContainerColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Button(
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.onPrimary,
+                    contentColor = Color.White,
+                ),
+            onClick = {
+                onReply(replyText)
+                replyText = ""
+            },
+        ) {
+            Text("Enviar")
+        }
     }
 }
 

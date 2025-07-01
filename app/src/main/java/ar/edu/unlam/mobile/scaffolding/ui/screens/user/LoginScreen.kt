@@ -50,6 +50,7 @@ fun LoginScreen(
 
     Column(
         modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly,
     ) {
         Column(
@@ -80,7 +81,6 @@ fun LoginScreen(
                 },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 errorMessage = emailError,
-//                errorMessage = emailError,
             )
 
             // PASSWORD

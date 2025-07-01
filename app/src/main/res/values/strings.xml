@@ -13,24 +13,24 @@
     <string name="postDraft">Borradores</string>
 
     <!-- UserFavScreen-->
-    <string name="userFvEmpty">Aun no hay usuarios guardados</string>
+    <string name="userFvEmpty">Aún no hay usuarios guardados</string>
     <string name="userFvTtMenu">Borrar todos los favoritos</string>
-    <string name="userFvDialog">Quieres borrar todos los elementos guardados esta accion es irreversible?</string>
+    <string name="userFvDialog">¿Quieres borrar todos los elementos guardados? Esta acción es irreversible</string>
     <string name="userFvDgAccept">Borrar</string>
     <string name="userFvDgCancel">Cancelar</string>
 
 
     <!-- authentication-->
-    <string name="createAccount">Crea tu cuenta</string>
+    <string name="createAccount">Creá tu cuenta</string>
     <string name="singUp">Registrarse</string>
-    <string name="logIn">Iniciar Sesion</string>
+    <string name="logIn">Iniciar Sesión</string>
 
 
     <!-- formField label-->
-    <string name="labelName">Name</string>
+    <string name="labelName">Nombre</string>
     <string name="labelEmail">Email</string>
-    <string name="labelPassword">Password</string>
-    <string name="labelConfirmPassword">Confirm Password</string>
+    <string name="labelPassword">Contraseña</string>
+    <string name="labelConfirmPassword">Confirmar contraseña</string>
     <!-- formField place holder -->
     <string name="phFieldName">Ingrese un nombre</string>
     <string name="phFieldEmail">Ingrese un email</string>
