@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,10 @@ import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun PostView(
@@ -50,7 +55,10 @@ fun PostView(
     val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
     var click by remember { mutableStateOf(false) }
     var tintSaveUser by remember { mutableStateOf(color) }
-
+    val postTime =
+        remember(post.date) {
+            getTimeInterval(post.date)
+        }
     Card(
         shape = RoundedCornerShape(9.dp),
         colors =
@@ -64,9 +72,7 @@ fun PostView(
             modifier
                 .padding(2.dp)
                 .fillMaxWidth(),
-        onClick = {
-            onClickAction()
-        },
+        onClick = { onClickAction() },
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -96,7 +102,7 @@ fun PostView(
                             .padding(top = 8.dp),
                 )
                 Text(
-                    text = post.date,
+                    text = postTime,
                     fontSize = 12.sp,
                     color = Color.Gray,
                     modifier =
@@ -146,7 +152,7 @@ fun PostView(
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
                             .size(23.dp),
-                    onClick = {},
+                    onClick = { onClickAction() },
                 ) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_chat_bubble),
@@ -185,6 +191,29 @@ fun PostView(
                 }
             }
         }
+    }
+}
+
+fun getTimeInterval(postDate: String): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT)
+    // Convierte el string de postDate en formato de fecha estándar
+    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+    // Hace que el String se interprete como una fecha en UTC
+    return try {
+        val date: Date? = dateFormat.parse(postDate)
+        date?.let {
+            val timeInMillis = it.time // Fecha actual en milisegundos
+            val now = System.currentTimeMillis()
+            // DateUtils hace el calculo del tiempo que paso desde la fecha dada a now
+            DateUtils.getRelativeTimeSpanString(
+                timeInMillis,
+                now,
+                DateUtils.SECOND_IN_MILLIS,
+            ).toString()
+        } ?: postDate // Si el parseo de postDate devuelve null
+    } catch (e: Exception) {
+        e.printStackTrace()
+        postDate // Devulve el valor original en caso de error
     }
 }
 

@@ -9,7 +9,9 @@ import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.PostEntity
+import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +25,7 @@ class PostCreateViewModel
     @Inject
     constructor(
         private val postRepository: PostRepository,
+        private val userRepository: UserRepository,
         private val database: AppDatabase,
     ) : ViewModel() {
         var myMessage by mutableStateOf("")
@@ -35,16 +38,31 @@ class PostCreateViewModel
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
-        private val _isLoading = MutableStateFlow<Boolean>(false)
+        private val _isLoading = MutableStateFlow(false)
         val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
 
+        private val _currentUserState = MutableStateFlow(UserProfileModel())
+        val currentUserState: StateFlow<UserProfileModel> = _currentUserState
+
+        init {
+            viewModelScope.launch {
+                userRepository.getCurrentUser().collect { result ->
+                    _currentUserState.value =
+                        currentUserState.value.copy(
+                            name = result.data?.name ?: "",
+                            avatarURL = result.data?.avatarURL ?: "",
+                        )
+                }
+            }
+        }
+
         @Suppress("ktlint:standard:backing-property-naming")
-        private var _draftId: Long? = null
+        private var draftId: Long? = null
         private var newPostJob: Job? = null
 
         fun setInitialContent(draftId: Long) {
             viewModelScope.launch {
-                _draftId = draftId
+                this@PostCreateViewModel.draftId = draftId
                 val post = database.getPostDao().getById(draftId)
                 myMessage = post.content
             }
@@ -73,7 +91,7 @@ class PostCreateViewModel
                                     _statusMessage.value = result.data!!
                                     Log.d("API call", result.data)
 
-                                    _draftId?.let { deleteDraft(it) }
+                                    draftId?.let { deleteDraft(it) }
                                 }
 
                                 is Resource.Error -> {
