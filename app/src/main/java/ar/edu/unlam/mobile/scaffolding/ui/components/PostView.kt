@@ -1,8 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import android.os.Build
 import android.text.format.DateUtils
-import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -41,9 +39,11 @@ import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
 import kotlinx.coroutines.delay
-import java.time.Instant
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun PostView(
     modifier: Modifier = Modifier,
@@ -55,7 +55,7 @@ fun PostView(
     val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
     var click by remember { mutableStateOf(false) }
     var tintSaveUser by remember { mutableStateOf(color) }
-    val time =
+    val postTime =
         remember(post.date) {
             getTimeInterval(post.date)
         }
@@ -102,7 +102,7 @@ fun PostView(
                             .padding(top = 8.dp),
                 )
                 Text(
-                    text = time,
+                    text = postTime,
                     fontSize = 12.sp,
                     color = Color.Gray,
                     modifier =
@@ -194,26 +194,29 @@ fun PostView(
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 fun getTimeInterval(postDate: String): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT)
+    // Convierte el string de postDate en formato de fecha estándar
+    dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+    // Hace que el String se interprete como una fecha en UTC
     return try {
-        val instant = Instant.parse(postDate) // Convierte un texto de fecha/hora a instant
-        val timeInMillis = instant.toEpochMilli() // Luego se pasa a milisegundos
-        val now = System.currentTimeMillis() // Fecha actual en milisegundos
-
-        // DateUtils hace el calculo del tiempo que paso desde la fecha dada
-        DateUtils.getRelativeTimeSpanString(
-            timeInMillis,
-            now,
-            DateUtils.SECOND_IN_MILLIS,
-        ).toString()
+        val date: Date? = dateFormat.parse(postDate)
+        date?.let {
+            val timeInMillis = it.time // Fecha actual en milisegundos
+            val now = System.currentTimeMillis()
+            // DateUtils hace el calculo del tiempo que paso desde la fecha dada a now
+            DateUtils.getRelativeTimeSpanString(
+                timeInMillis,
+                now,
+                DateUtils.SECOND_IN_MILLIS,
+            ).toString()
+        } ?: postDate // Si el parseo de postDate devuelve null
     } catch (e: Exception) {
         e.printStackTrace()
         postDate // Devulve el valor original en caso de error
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun PostViewPreview() {
