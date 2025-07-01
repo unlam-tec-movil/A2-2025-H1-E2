@@ -9,6 +9,7 @@ import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
+import ar.edu.unlam.mobile.scaffolding.domain.Authentication
 import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -151,6 +152,7 @@ class UserEditViewModel
                                     }
 
                                     is Resource.Error -> {
+                                        _message.value = Authentication.messageApi(result.message)
                                         Log.e(
                                             "API call",
                                             result.message ?: "Ocurrió un error inesperado",
