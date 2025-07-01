@@ -120,6 +120,7 @@ class UserEditViewModel
                                         email = "",
                                         avatarURL = result.data?.avatarURL ?: "",
                                     )
+                                _name.value = result.data?.name ?: ""
                             }
 
                             is Resource.Error ->

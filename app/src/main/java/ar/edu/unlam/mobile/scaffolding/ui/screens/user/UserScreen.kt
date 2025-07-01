@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 
 @Composable
 fun UserScreen(
@@ -46,14 +46,15 @@ fun UserScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         // Avatar
-        Image(
-            painter = rememberAsyncImagePainter(userViewModel.currentUserState.value.avatarURL),
-            contentDescription = "User Avatar",
+        AsyncImage(
             modifier =
                 Modifier
                     .size(100.dp)
                     .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondary)
                     .border(2.dp, Color.Gray, CircleShape),
+            model = userViewModel.currentUserState.value.avatarURL,
+            contentDescription = null,
         )
 
         Spacer(modifier = Modifier.height(12.dp))
