@@ -3,11 +3,13 @@
 
     <!-- title TopAppBar-->
     <string name="tittleUserFav">Usuarios guardados</string>
-    <string name="feedName">Feed</string>
+    <string name="feedScreenName">Feed</string>
     <string name="postCreateName">Nuevo Post</string>
+    <string name="postScreenName">Post</string>
 
     <!-- PostScreen -->
     <string name="newPost">"Publicar"</string>
+    <string name="reply">Responder</string>
     <string name="postDraft">Borradores</string>
 
     <!-- UserFavScreen-->

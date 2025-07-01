@@ -121,7 +121,8 @@ class FeedViewModel
                             }
                             is Resource.Error -> {
                                 delay(1000)
-                                val errorMsg = result.message ?: "Error 400 - Bad Request"
+                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                                val errorMsg = "No fue posible conectarse a Internet, revise su conección."
                                 _uiState.update {
                                     it.copy(
                                         isRefreshing = false,
