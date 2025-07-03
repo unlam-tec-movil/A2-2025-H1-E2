@@ -15,15 +15,22 @@
     <!-- UserFavScreen-->
     <string name="userFvEmpty">Aún no hay usuarios guardados</string>
     <string name="userFvTtMenu">Borrar todos los favoritos</string>
-    <string name="userFvDialog">¿Quieres borrar todos los elementos guardados? Esta acción es irreversible</string>
+    <string name="ufTitleDialog">Atencion acción es irreversible</string>
+    <string name="ufTextDialog">¿Quieres borrar todos los elementos guardados?</string>
     <string name="userFvDgAccept">Borrar</string>
-    <string name="userFvDgCancel">Cancelar</string>
 
+    <!-- AlertDialogDefault-->
+    <string name="titleDialog">ups</string>
+    <string name="acceptDialog">Aceptar</string>
+    <string name="cancelDialog">Cancelar</string>
 
     <!-- authentication-->
     <string name="createAccount">Creá tu cuenta</string>
     <string name="singUp">Registrarse</string>
     <string name="logIn">Iniciar Sesión</string>
+    <string name="loginButton">Inciar Sesión</string>
+    <string name="singUpButton">Registrarse</string>
+    <string name="notRegistered">¿Todavía no estás registrado</string>
 
 
     <!-- formField label-->
@@ -31,9 +38,11 @@
     <string name="labelEmail">Email</string>
     <string name="labelPassword">Contraseña</string>
     <string name="labelConfirmPassword">Confirmar contraseña</string>
+
     <!-- formField place holder -->
     <string name="phFieldName">Ingrese un nombre</string>
     <string name="phFieldEmail">Ingrese un email</string>
     <string name="phFieldPassword">Ingrese una contraseña</string>
     <string name="phFieldConfirmPassword">Confirme su contraseña</string>
+
 </resources>

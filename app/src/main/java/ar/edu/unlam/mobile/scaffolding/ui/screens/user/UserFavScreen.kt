@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.AlertMessage
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.UserFavView
 
@@ -58,34 +57,17 @@ fun UserFavScreen(
                     textMenu = stringResource(R.string.userFvTtMenu),
                 )
                 if (showDialog) {
-                    AlertDialog(
-                        title = {
-                            Text(
-                                text = stringResource(R.string.userFvDialog),
-                                fontSize = 16.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                            )
-                        },
-                        onDismissRequest = { showDialog = false },
+                    AlertMessage(
+                        title = stringResource(R.string.ufTitleDialog),
+                        dismissRequest = { showDialog = false },
+                        text = stringResource(R.string.ufTextDialog),
                         confirmButton = {
-                            TextButton(onClick = {
-                                userFavViewModel.deleteAllUser()
-                                showDialog = false
-                            }) {
-                                Text(
-                                    text = stringResource(R.string.userFvDgAccept),
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
+                            userFavViewModel.deleteAllUser()
+                            showDialog = false
                         },
-                        dismissButton = {
-                            TextButton(onClick = { showDialog = false }) {
-                                Text(
-                                    text = stringResource(R.string.userFvDgCancel),
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                )
-                            }
-                        },
+                        cancelButton = { showDialog = false },
+                        confirmText = stringResource(R.string.userFvDgAccept),
+                        cancelText = stringResource(R.string.cancelDialog),
                     )
                 }
             },

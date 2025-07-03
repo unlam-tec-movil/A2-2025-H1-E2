@@ -21,9 +21,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,7 +36,6 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -52,9 +49,6 @@ fun PostView(
     onClickAction: () -> Unit = {},
     onInsertClick: (() -> Unit?)? = null,
 ) {
-    val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
-    var click by remember { mutableStateOf(false) }
-    var tintSaveUser by remember { mutableStateOf(color) }
     val postTime =
         remember(post.date) {
             getTimeInterval(post.date)
@@ -161,34 +155,6 @@ fun PostView(
                     )
                 }
                 Spacer(modifier = Modifier.padding(end = 20.dp))
-
-                IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(23.dp),
-                    onClick = {
-                        if (onInsertClick != null) {
-                            onInsertClick()
-                        }
-                        tintSaveUser = Color.Red
-                        click = true
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
-                        contentDescription = "Bookmark",
-                        tint = tintSaveUser,
-                    )
-                }
-
-                if (click) {
-                    LaunchedEffect(Unit) {
-                        delay(1500)
-                        tintSaveUser = color
-                        click = false
-                    }
-                }
             }
         }
     }
@@ -205,11 +171,12 @@ fun getTimeInterval(postDate: String): String {
             val timeInMillis = it.time // Fecha actual en milisegundos
             val now = System.currentTimeMillis()
             // DateUtils hace el calculo del tiempo que paso desde la fecha dada a now
-            DateUtils.getRelativeTimeSpanString(
-                timeInMillis,
-                now,
-                DateUtils.SECOND_IN_MILLIS,
-            ).toString()
+            DateUtils
+                .getRelativeTimeSpanString(
+                    timeInMillis,
+                    now,
+                    DateUtils.SECOND_IN_MILLIS,
+                ).toString()
         } ?: postDate // Si el parseo de postDate devuelve null
     } catch (e: Exception) {
         e.printStackTrace()

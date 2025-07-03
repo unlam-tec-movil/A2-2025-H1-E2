@@ -1,10 +1,12 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -21,8 +23,8 @@ class HomeViewModel
         private val _isUserLogged = MutableStateFlow(false)
         val isUserLogged: StateFlow<Boolean> = _isUserLogged
 
-        private val _isLoading = MutableStateFlow(true)
-        val isLoading: StateFlow<Boolean> = _isLoading
+        private val _isLoading = mutableStateOf(true)
+        val isLoading = _isLoading
 
         init {
             isLogged()
@@ -30,9 +32,10 @@ class HomeViewModel
 
         private fun isLogged() {
             loginUserJob?.cancel()
-
             loginUserJob =
+
                 viewModelScope.launch {
+                    delay(2000)
                     _isUserLogged.value = userRepository.isUserLogged()
                     _isLoading.value = false
                 }

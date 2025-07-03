@@ -1,13 +1,20 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
-import ar.edu.unlam.mobile.scaffolding.domain.Authentication
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.FormState
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateConfirmPassword
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateEmail
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateName
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidatePassword
+import ar.edu.unlam.mobile.scaffolding.ui.util.MessageFromApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,102 +29,107 @@ class SignUpViewModel
     @Inject
     constructor(
         private val userRepository: UserRepository,
+        private val validateName: ValidateName,
+        private val validateEmail: ValidateEmail,
+        private val validatePassword: ValidatePassword,
+        private val validateConfirmPassword: ValidateConfirmPassword,
+        private val messageFromApi: MessageFromApi,
     ) : ViewModel() {
         private var userJob: Job? = null
+        private var error: String? = null
 
-        private var _name = MutableStateFlow("")
-        var name: StateFlow<String> = _name
+        private var _state = MutableStateFlow(FormState())
+        var state: StateFlow<FormState> = _state
 
-        private var _email = MutableStateFlow("")
-        var email: StateFlow<String> = _email
+        private val _validation = mutableStateOf(false)
+        val validation = _validation
 
-        private var _password = MutableStateFlow("")
-        var password: StateFlow<String> = _password
+        private val _showErrorDialog = mutableStateOf<String?>(null)
+        val showErrorDialog = _showErrorDialog
 
-        private var _confirmPassword = MutableStateFlow("")
-        var confirmPassword: StateFlow<String> = _confirmPassword
-
-        // MESSAGE
-        private var _nameError = MutableStateFlow<String?>(null)
-        var nameError: StateFlow<String?> = _nameError
-
-        private var _emailError = MutableStateFlow<String?>(null)
-        var emailError: StateFlow<String?> = _emailError
-
-        private var _passwordError = MutableStateFlow<String?>(null)
-        var passwordError: StateFlow<String?> = _passwordError
-
-        private var _confirmPasswordError = MutableStateFlow<String?>(null)
-        var confirmPasswordError: StateFlow<String?> = _confirmPasswordError
-
-        private var _message = MutableStateFlow<String?>(null)
-        var message: StateFlow<String?> = _message
-
-        // Onchange
-        fun onNameChange(name: String) {
-            _nameError.value = null
-            _name.value = name
+        // onChanged
+        fun onNameChanged(name: String) {
+            _state.value = _state.value.copy(name = name, nameError = null)
         }
 
-        fun onEmailChange(email: String) {
-            _emailError.value = null
-            _email.value = email
+        fun onEmailChanged(email: String) {
+            _state.value = _state.value.copy(email = email, emailError = null)
         }
 
-        fun onPassWordChange(password: String) {
-            _passwordError.value = null
-            _password.value = password
+        fun onPassWordChanged(password: String) {
+            _state.value = _state.value.copy(password = password, passwordError = null)
         }
 
-        fun onConfirmPassWordChange(confirmPassWord: String) {
-            _confirmPasswordError.value = null
-            _confirmPassword.value = confirmPassWord
+        fun onConfirmPasswordChanged(confirmPassword: String) {
+            _state.value =
+                _state.value.copy(confirmPassword = confirmPassword, confirmPasswordError = null)
         }
 
         // onFocusLost
-
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {
-                _nameError.value = FormValidator.isValidText(name)
+                error = validateName.validateName(name).errorMessage
+                _state.value = _state.value.copy(nameError = error)
             }
         }
 
         fun onEmailFocusLost(email: String) {
             if (email.isNotBlank()) {
-                _emailError.value = FormValidator.isValidEmail(email)
+                error = validateEmail.validateEmail(email).errorMessage
+                _state.value = _state.value.copy(emailError = error)
             }
         }
 
-        fun onPassWordFocusLost(password: String) {
+        fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                _passwordError.value = FormValidator.isValidText(password, specialCharacters = true)
+                error = validatePassword.validatePassword(password).errorMessage
+                _state.value = _state.value.copy(passwordError = error)
             }
         }
 
-        fun onConfirmPassWordFocusLost(
-            password: String,
-            confirmPassWord: String,
-        ) {
-            if (confirmPassWord.isNotBlank()) {
-                _confirmPasswordError.value = FormValidator.isValidPassword(password, confirmPassWord)
+        fun onConfirmPasswordFocusLost(confirmPassword: String) {
+            if (confirmPassword.isNotBlank()) {
+                error =
+                    validateConfirmPassword
+                        .validateConfirmPassword(
+                            _state.value.password,
+                            confirmPassword,
+                        ).errorMessage
+                _state.value = _state.value.copy(confirmPasswordError = error)
             }
         }
 
-        fun validateDate(
-            name: String,
-            email: String,
-            password: String,
-            confirmPassWord: String,
-        ): Boolean {
-            _nameError.value = FormValidator.isValidText(text = name)
-            _emailError.value = FormValidator.isValidEmail(email = email)
-            _passwordError.value = FormValidator.isValidText(text = password, specialCharacters = true)
-            _confirmPasswordError.value = FormValidator.isValidPassword(password, confirmPassWord)
+        fun submitData() {
+            val nameResult = validateName.validateName(_state.value.name)
+            val emailResult = validateEmail.validateEmail(_state.value.email)
+            val passwordResult = validatePassword.validatePassword(_state.value.password)
+            val confirmPassword =
+                validateConfirmPassword.validateConfirmPassword(
+                    _state.value.password,
+                    _state.value.confirmPassword,
+                )
 
-            return _nameError.value == null &&
-                _emailError.value == null &&
-                _passwordError.value == null &&
-                _confirmPasswordError.value == null
+            val isError =
+                listOf(
+                    nameResult,
+                    emailResult,
+                    passwordResult,
+                    confirmPassword,
+                ).any { !it.successful }
+
+            if (isError) {
+                _state.value =
+                    _state.value.copy(
+                        nameError = nameResult.errorMessage,
+                        emailError = emailResult.errorMessage,
+                        passwordError = passwordResult.errorMessage,
+                        confirmPasswordError = confirmPassword.errorMessage,
+                    )
+                return
+            } else {
+                _validation.value = true
+                return
+            }
         }
 
         fun signUpUser(
@@ -133,8 +145,6 @@ class SignUpViewModel
                         userRepository.signUpUser(name, email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
-                                    _message.value =
-                                        Authentication.messageApi(result.message, isSingUpOrigin = true)
                                     navController.navigate("feed") {
                                         popUpTo("login") {
                                             inclusive = true
@@ -143,7 +153,7 @@ class SignUpViewModel
                                 }
 
                                 is Resource.Error -> {
-                                    _message.value = Authentication.messageApi(result.message)
+                                    result.message?.let { errorMessage(it) }
                                     Log.e("API call", result.message ?: "Error 400 - Bad Request")
                                 }
                             }
@@ -152,7 +162,11 @@ class SignUpViewModel
             }
         }
 
-        fun clearMessage() {
-            _message.value = null
+        fun dismissRequest() {
+            _showErrorDialog.value = null
+        }
+
+        private fun errorMessage(message: String) {
+            _showErrorDialog.value = messageFromApi.errorMessage(message)
         }
     }
