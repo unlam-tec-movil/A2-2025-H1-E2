@@ -47,79 +47,6 @@ fun PostDetailScreen(
         viewModel.getPostReplies(postId)
     }
 
-    PostDetailContent(
-        navController = navController,
-        postResource = postResource,
-        viewModel = viewModel,
-        repliesResource = repliesResource,
-        onBack = onBack,
-        onReply = { message ->
-            viewModel.sendReply(postId, message)
-        },
-    )
-}
-
-@Composable
-private fun PostDetailContent(
-    navController: NavController = rememberNavController(),
-    postResource: Resource<Post>?,
-    repliesResource: Resource<List<Post>>,
-    onBack: () -> Unit = {},
-    onReply: (String) -> Unit = {},
-    viewModel: PostDetailViewModel,
-) {
-    @Composable
-    fun PostReplies(
-        post: Post,
-        replies: List<Post>,
-        modifier: Modifier = Modifier,
-    ) {
-        LazyColumn(
-            modifier =
-                modifier
-                    .fillMaxWidth(),
-        ) {
-            item {
-                Column(
-                    modifier =
-                        Modifier.background(
-                            MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                        ),
-                ) {
-                    PostView(
-                        post = post,
-                        onInsertClick = {
-                            viewModel.insertUserFav(
-                                author = post.author,
-                                avatarUrl = post.avatarUrl,
-                            )
-                        },
-                    )
-                    HorizontalDivider(
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-                        thickness = 1.dp,
-                    )
-                    ReplyTextField(onReply = { message ->
-                        onReply(message)
-                    })
-                }
-            }
-            items(replies) { reply ->
-                PostView(
-                    post = reply,
-                    modifier = Modifier.scale(0.9f),
-                    onInsertClick = {
-                        viewModel.insertUserFav(
-                            author = reply.author,
-                            avatarUrl = reply.avatarUrl,
-                        )
-                    },
-                    onClickAction = { navController.navigate("postDetail/${reply.id}") },
-                )
-            }
-        }
-    }
-
     Scaffold(
         topBar = { TopBar(stringResource(R.string.postScreenName), onNavigateBack = onBack) },
         modifier = Modifier.fillMaxWidth(),
@@ -130,17 +57,20 @@ private fun PostDetailContent(
                     CircularProgressIndicator()
                 }
             }
-
             is Resource.Success -> {
                 result.data?.let { post ->
                     when (repliesResource) {
                         is Resource.Success -> {
                             repliesResource.data?.let { replies ->
-                                PostReplies(
-                                    post,
-                                    replies,
-                                    modifier = Modifier.padding(paddingValues),
-                                )
+                                Box(modifier = Modifier.padding(paddingValues)) {
+                                    PostDetailContent(
+                                        post = postResource.data,
+                                        replies = repliesResource.data,
+                                        navController = navController,
+                                        onReply = { message -> viewModel.sendReply(post.id, message) },
+                                        viewModel = hiltViewModel(),
+                                    )
+                                }
                             }
                         }
 
@@ -164,21 +94,85 @@ private fun PostDetailContent(
     }
 }
 
+@Composable
+fun PostDetailContent(
+    post: Post,
+    replies: List<Post>,
+    navController: NavController,
+    onReply: (String) -> Unit = {},
+    viewModel: PostDetailViewModel,
+) {
+    val userFav: (author: String, avatarUrl: String) -> Unit = { author, avatarUrl ->
+        viewModel.insertUserFav(
+            author,
+            avatarUrl,
+        )
+    }
+    Column {
+        Column(
+            modifier =
+                Modifier.background(
+                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                ),
+        ) {
+            PostView(
+                post = post,
+                onLikeClick = {
+                    viewModel.isLikePost(
+                        postLikeId = post.id,
+                        isLiked = post.liked,
+                    )
+                },
+                onInsertClick = { userFav(post.author, post.avatarUrl) },
+            )
+            HorizontalDivider(
+                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+                thickness = 1.dp,
+            )
+            ReplyTextField(onReply = { message ->
+                onReply(message)
+            })
+        }
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxWidth(),
+        ) {
+            items(replies) { reply ->
+                PostView(
+                    post = reply,
+                    modifier = Modifier.scale(scale = 0.9f),
+                    onLikeClick = {
+                        viewModel.isLikePost(
+                            postLikeId = reply.id,
+                            isLiked = reply.liked,
+                            mainPost = post.id,
+                        )
+                    },
+                    onInsertClick = { userFav(reply.author, reply.avatarUrl) },
+                    onClickAction = { navController.navigate("postDetail/${reply.id}") },
+                )
+            }
+        }
+    }
+}
+
+// No quite esto por si alguien despues quiere hacerlo funcionar
+// Pero habria que crear unas verciones de los composable sin que llamen a hiltViewModel
 @Preview
 @Composable
 fun PostDetailContentPreview() {
+    val post = Post(id = 1, "Este es un post de prueba", 1, "Juliana", "", 1, false, "1-1-2023")
+    val list =
+        listOf(
+            Post(id = 2, "Primer reply", 1, "Carlos", "", 1, false, "2-1-2023"),
+            Post(id = 3, "Segundo reply", 1, "Ana", "", 1, false, "3-1-2023"),
+        )
     PostDetailContent(
-        postResource =
-            Resource.Success(
-                Post(1, "Este es un post de prueba", 1, "Juliana", "", 1, false, "1-1-2023"),
-            ),
-        repliesResource =
-            Resource.Success(
-                listOf(
-                    Post(2, "Primer reply", 1, "Carlos", "", 1, false, "2-1-2023"),
-                    Post(3, "Segundo reply", 1, "Ana", "", 1, false, "3-1-2023"),
-                ),
-            ),
+        post = post,
+        replies = list,
+        navController = rememberNavController(),
+        onReply = {},
         viewModel = hiltViewModel(),
     )
 }
