@@ -27,11 +27,13 @@ interface UserRepository {
         password: String,
     ): Flow<Resource<String>>
 
+    fun getEmailLogged(): String
+
     fun logoutUser(): Flow<Resource<Boolean>>
 
-    fun getFavUser(): Flow<List<UserFavEntity>>
+    fun getFavUser(email: String): Flow<List<UserFavEntity>>
 
     suspend fun deleteUserFav(userFavEntity: UserFavEntity)
 
-    suspend fun deleteAllUserFav()
+    suspend fun deleteAllUserFavByOwner(email: String)
 }

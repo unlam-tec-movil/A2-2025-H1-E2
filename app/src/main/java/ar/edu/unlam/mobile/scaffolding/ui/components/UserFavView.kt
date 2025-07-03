@@ -120,5 +120,5 @@ fun UserFavViewPreview() {
             date = "2023-10-01",
         )
 
-    val user = UserFavEntity(author = tuit.author, avatarUrl = tuit.avatarUrl)
+    val user = UserFavEntity(author = tuit.author, avatarUrl = tuit.avatarUrl, userOwnerEmail = "previe@gmail.com")
 }

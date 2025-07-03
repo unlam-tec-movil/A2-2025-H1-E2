@@ -97,8 +97,8 @@ fun FeedScreen(
                                 post = post,
                                 onLikeClick = { feedViewModel.isLikePost(post.id, post.liked) },
                                 onClickAction = { feedViewModel.goToDetail(post.id) },
-                                onInsertClick = {
-                                    feedViewModel.insertUserFav(
+                                onFollowClick = {
+                                    feedViewModel.followUserFav(
                                         author = post.author,
                                         avatarUrl = post.avatarUrl,
                                     )

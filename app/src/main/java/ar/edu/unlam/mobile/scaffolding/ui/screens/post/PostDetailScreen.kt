@@ -88,7 +88,7 @@ private fun PostDetailContent(
                 ) {
                     PostView(
                         post = post,
-                        onInsertClick = {
+                        onFollowClick = {
                             viewModel.insertUserFav(
                                 author = post.author,
                                 avatarUrl = post.avatarUrl,
@@ -108,7 +108,7 @@ private fun PostDetailContent(
                 PostView(
                     post = reply,
                     modifier = Modifier.scale(0.9f),
-                    onInsertClick = {
+                    onFollowClick = {
                         viewModel.insertUserFav(
                             author = reply.author,
                             avatarUrl = reply.avatarUrl,

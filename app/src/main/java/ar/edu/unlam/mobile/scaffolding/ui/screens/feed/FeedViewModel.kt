@@ -8,6 +8,7 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -47,6 +48,7 @@ class FeedViewModel
     constructor(
         private val feedRepository: FeedRepository,
         private val postRepository: PostRepository,
+        private val userRepository: UserRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(FeedUIState())
         val uiState: StateFlow<FeedUIState> = _uiState.asStateFlow()
@@ -67,12 +69,19 @@ class FeedViewModel
             fetchPosts(reloadScreen, pullToRefresh)
         }
 
-        fun insertUserFav(
+        fun followUserFav(
             author: String,
             avatarUrl: String,
         ) {
             if (author.isBlank() || avatarUrl.isBlank()) return
-            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
+            val userOwnerEmail = userRepository.getEmailLogged()
+            if (author == userOwnerEmail) return
+            val userFav =
+                UserFavEntity(
+                    author = author,
+                    avatarUrl = avatarUrl,
+                    userOwnerEmail = userOwnerEmail,
+                )
             getFeedJob?.cancel()
             getFeedJob =
                 viewModelScope.launch {
@@ -101,37 +110,39 @@ class FeedViewModel
                         }
                     }
                     // Llamar a refreshPosts() para el resto de casos
-                    feedRepository.getFeed(
-                        1,
-                        false,
-                    ).collect {
-                            result: Resource<List<Post>> ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _uiState.update {
-                                    it.copy(
-                                        isRefreshing = false,
-                                        messageState =
-                                            MessageUIState.Success(
-                                                "Success",
-                                                result.data!!,
-                                            ),
-                                    )
+                    feedRepository
+                        .getFeed(
+                            1,
+                            false,
+                        ).collect { result: Resource<List<Post>> ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _uiState.update {
+                                        it.copy(
+                                            isRefreshing = false,
+                                            messageState =
+                                                MessageUIState.Success(
+                                                    "Success",
+                                                    result.data!!,
+                                                ),
+                                        )
+                                    }
                                 }
-                            }
-                            is Resource.Error -> {
-                                delay(1000)
-                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
-                                val errorMsg = "No fue posible conectarse a Internet, revise su conección."
-                                _uiState.update {
-                                    it.copy(
-                                        isRefreshing = false,
-                                        messageState = MessageUIState.Error(errorMsg),
-                                    )
+
+                                is Resource.Error -> {
+                                    delay(1000)
+                                    Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                                    val errorMsg =
+                                        "No fue posible conectarse a Internet, revise su conección."
+                                    _uiState.update {
+                                        it.copy(
+                                            isRefreshing = false,
+                                            messageState = MessageUIState.Error(errorMsg),
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
                 }
         }
 
@@ -147,18 +158,20 @@ class FeedViewModel
             isLiked: Boolean,
         ) {
             viewModelScope.launch {
-                postRepository.likePost(
-                    postId = postId,
-                    liked = isLiked,
-                ).collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            fetchPosts()
+                postRepository
+                    .likePost(
+                        postId = postId,
+                        liked = isLiked,
+                    ).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                fetchPosts()
+                            }
+
+                            is Resource.Error ->
+                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
                         }
-                        is Resource.Error ->
-                            Log.e("API call", result.message ?: "Error 400 - Bad Request")
                     }
-                }
             }
         }
 

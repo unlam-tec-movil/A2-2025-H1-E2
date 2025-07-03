@@ -11,4 +11,5 @@ data class Post(
     val likes: Long,
     val liked: Boolean,
     val date: String,
+    val follow: Boolean = false,
 )

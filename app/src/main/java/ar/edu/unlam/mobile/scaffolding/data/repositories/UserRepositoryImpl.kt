@@ -192,14 +192,19 @@ class UserRepositoryImpl
 
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 
+        override fun getEmailLogged(): String = userDao.getEmail()
+
         // metodos de usuarios guardados
-        override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
+        override fun getFavUser(email: String): Flow<List<UserFavEntity>> =
+            userFavDao.getAll(
+                userOwnerEmail = email,
+            )
 
         override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
             userFavDao.deleteUserFav(userFavEntity)
         }
 
-        override suspend fun deleteAllUserFav() {
-            userFavDao.deleteAllUserFav()
+        override suspend fun deleteAllUserFavByOwner(email: String) {
+            userFavDao.deleteAllUserFavByOwner(email)
         }
     }

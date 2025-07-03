@@ -14,6 +14,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -47,7 +49,8 @@ fun PostView(
     post: Post,
     onLikeClick: () -> Unit = {},
     onClickAction: () -> Unit = {},
-    onInsertClick: (() -> Unit?)? = null,
+    onFollowClick: (() -> Unit?)? = null,
+    isFollowable: Boolean = true,
 ) {
     val postTime =
         remember(post.date) {
@@ -95,66 +98,80 @@ fun PostView(
                             .alignByBaseline()
                             .padding(top = 8.dp),
                 )
-                Text(
-                    text = postTime,
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    modifier =
-                        Modifier
-                            .alignByBaseline()
-                            .padding(start = 3.dp),
+                Spacer(modifier = Modifier.weight(1f)) // Empuja el botón a la derecha
+
+                if (isFollowable) {
+                    Button(
+                        modifier =
+                            Modifier
+                                .alignByBaseline(),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.onPrimary,
+                                contentColor = MaterialTheme.colorScheme.onBackground,
+                            ),
+                        onClick = {
+                            if (onFollowClick != null) {
+                                onFollowClick()
+                            }
+                        },
+                    ) {
+                        Text(
+                            text = if (post.follow) "Seguido" else "Seguir",
+                            fontSize = 14.sp,
+                        )
+                    }
+                }
+            }
+        }
+
+        Text(
+            text = post.message,
+            color = MaterialTheme.colorScheme.onSurface,
+            fontSize = 16.sp,
+        )
+
+        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+            IconButton(
+                modifier =
+                    Modifier
+                        .align(alignment = Alignment.CenterVertically)
+                        .size(24.dp),
+                onClick = { onLikeClick() },
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Favorite,
+                    contentDescription = "Likes",
+                    tint =
+                        if (post.liked) {
+                            Color.Red
+                        } else {
+                            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
+                        },
                 )
             }
-
             Text(
-                text = post.message,
-                color = MaterialTheme.colorScheme.onSurface,
+                text = post.likes.toString(),
                 fontSize = 16.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier =
+                    Modifier
+                        .width(50.dp)
+                        .align(alignment = Alignment.CenterVertically)
+                        .padding(end = 12.dp),
             )
-
-            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-                IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(24.dp),
-                    onClick = { onLikeClick() },
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Favorite,
-                        contentDescription = "Likes",
-                        tint =
-                            if (post.liked) {
-                                Color.Red
-                            } else {
-                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
-                            },
-                    )
-                }
-                Text(
-                    text = post.likes.toString(),
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier =
-                        Modifier
-                            .width(50.dp)
-                            .align(alignment = Alignment.CenterVertically)
-                            .padding(end = 12.dp),
+            IconButton(
+                modifier =
+                    Modifier
+                        .align(alignment = Alignment.CenterVertically)
+                        .size(23.dp),
+                onClick = { onClickAction() },
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chat_bubble),
+                    contentDescription = "Comments",
+                    tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
                 )
-                IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(23.dp),
-                    onClick = { onClickAction() },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_chat_bubble),
-                        contentDescription = "Comments",
-                        tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
-                    )
-                }
-                Spacer(modifier = Modifier.padding(end = 20.dp))
             }
         }
     }

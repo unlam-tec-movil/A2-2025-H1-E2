@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.components.Button
+import ar.edu.unlam.mobile.scaffolding.ui.components.ButtonDesign
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 import coil.compose.AsyncImage
@@ -124,7 +124,7 @@ fun UserEditScreen(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Button(
+            ButtonDesign(
                 text = "Guardar cambios",
                 fontSize = 17,
                 onClickButton = {

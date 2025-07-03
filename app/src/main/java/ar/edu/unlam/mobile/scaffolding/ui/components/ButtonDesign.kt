@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun Button(
+fun ButtonDesign(
     text: String,
     onClickButton: () -> Unit = {},
     fontSize: Int = 20,

@@ -24,7 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.AlertMessage
-import ar.edu.unlam.mobile.scaffolding.ui.components.Button
+import ar.edu.unlam.mobile.scaffolding.ui.components.ButtonDesign
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.TitleText
@@ -84,7 +84,7 @@ fun LoginScreen(
                 onFocusLost = { loginViewModel.onPasswordFocusLost(state.password) },
             )
 
-            Button(
+            ButtonDesign(
                 text = stringResource(R.string.loginButton),
                 onClickButton = {
                     loginViewModel.submitData()
@@ -107,7 +107,7 @@ fun LoginScreen(
                     color = MaterialTheme.colorScheme.onSurface,
                 )
 
-                Button(
+                ButtonDesign(
                     text = stringResource(R.string.singUpButton),
                     onClickButton = { navController.navigate("signUp") },
                 )

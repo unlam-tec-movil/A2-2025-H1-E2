@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.AlertMessage
-import ar.edu.unlam.mobile.scaffolding.ui.components.Button
+import ar.edu.unlam.mobile.scaffolding.ui.components.ButtonDesign
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.TitleText
@@ -94,7 +94,7 @@ fun SignUpScreen(
             )
         }
 
-        Button(
+        ButtonDesign(
             text = stringResource(R.string.singUp),
             onClickButton = {
                 signUpViewModel.submitData()

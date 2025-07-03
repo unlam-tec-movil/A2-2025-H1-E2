@@ -23,6 +23,7 @@ class UserFavViewModel
 
         private var userFavJob: Job? = null
         private var getFavJob: Job? = null
+        private var userEmail: String = ""
 
         init {
             getUsers()
@@ -32,7 +33,7 @@ class UserFavViewModel
             userFavJob?.cancel()
             userFavJob =
                 viewModelScope.launch {
-                    repository.deleteAllUserFav()
+                    repository.deleteAllUserFavByOwner(userEmail)
                 }
         }
 
@@ -48,7 +49,8 @@ class UserFavViewModel
             getFavJob?.cancel()
             getFavJob =
                 viewModelScope.launch {
-                    repository.getFavUser().collect { result ->
+                    userEmail = repository.getEmailLogged()
+                    repository.getFavUser(email = userEmail).collect { result ->
                         _userFavState.value = result
                     }
                 }

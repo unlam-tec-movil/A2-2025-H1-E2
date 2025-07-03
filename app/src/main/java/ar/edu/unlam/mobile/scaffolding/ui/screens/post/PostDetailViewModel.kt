@@ -6,6 +6,7 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -20,6 +21,7 @@ class PostDetailViewModel
     constructor(
         private val repository: PostRepository,
         private val feedRepository: FeedRepository,
+        private val userRepository: UserRepository,
     ) : ViewModel() {
         private val _post = MutableStateFlow<Resource<Post>?>(null)
         val post: StateFlow<Resource<Post>?> = _post
@@ -33,7 +35,10 @@ class PostDetailViewModel
             avatarUrl: String,
         ) {
             if (author.isBlank() || avatarUrl.isBlank()) return
-            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
+            val userOwnerEmail = userRepository.getEmailLogged()
+            if (author == userOwnerEmail) return
+            val userFav =
+                UserFavEntity(author = author, avatarUrl = avatarUrl, userOwnerEmail = userOwnerEmail)
             insertJob?.cancel()
             insertJob =
                 viewModelScope.launch {
