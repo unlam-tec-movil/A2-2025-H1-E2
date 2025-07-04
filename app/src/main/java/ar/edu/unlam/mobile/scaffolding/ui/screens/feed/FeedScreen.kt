@@ -42,6 +42,7 @@ fun FeedScreen(
     navController: NavController,
 ) {
     val uiState by feedViewModel.uiState.collectAsState()
+    val userName = feedViewModel.getUserName()
 
     val onRefresh = {
         Log.d("FeedScreen", "Refreshing feed")
@@ -85,6 +86,7 @@ fun FeedScreen(
                         modifier = Modifier.align(Alignment.Center),
                     )
                 }
+
                 is MessageUIState.Success -> {
                     LazyColumn(
                         modifier =
@@ -95,18 +97,21 @@ fun FeedScreen(
                         items(state.posts) { post ->
                             PostView(
                                 post = post,
+                                isFollowable = post.author != (userName),
                                 onLikeClick = { feedViewModel.isLikePost(post.id, post.liked) },
                                 onClickAction = { feedViewModel.goToDetail(post.id) },
                                 onFollowClick = {
-                                    feedViewModel.followUserFav(
+                                    feedViewModel.insertUserFav(
                                         author = post.author,
                                         avatarUrl = post.avatarUrl,
+                                        post.id,
                                     )
                                 },
                             )
                         }
                     }
                 }
+
                 is MessageUIState.Error -> {
                     Column(modifier = Modifier.padding(6.dp)) {
                         Text(

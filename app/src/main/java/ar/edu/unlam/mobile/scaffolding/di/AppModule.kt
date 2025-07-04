@@ -8,6 +8,8 @@ import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepositoryImpl
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepositoryImpl
 import dagger.Module
@@ -77,4 +79,11 @@ object AppModule {
         api: UNLaMSocialApi,
         db: AppDatabase,
     ): PostRepository = PostRepositoryImpl(api, db.getUserDao())
+
+    @Provides
+    @Singleton
+    fun provideUserFavRepository(
+        api: UNLaMSocialApi,
+        db: AppDatabase,
+    ): UserFavRepository = UserFavRepositoryImpl(db.getUserFavDao())
 }

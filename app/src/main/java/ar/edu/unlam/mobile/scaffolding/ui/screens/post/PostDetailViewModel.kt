@@ -3,9 +3,11 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +24,7 @@ class PostDetailViewModel
         private val repository: PostRepository,
         private val feedRepository: FeedRepository,
         private val userRepository: UserRepository,
+        private val userFavRepository: UserFavRepository,
     ) : ViewModel() {
         private val _post = MutableStateFlow<Resource<Post>?>(null)
         val post: StateFlow<Resource<Post>?> = _post
@@ -29,20 +32,41 @@ class PostDetailViewModel
         val replies: StateFlow<Resource<List<Post>>> = _replies
 
         private var insertJob: Job? = null
+        private var getUserJob: Job? = null
+        private val user = MutableStateFlow<UserEntity?>(null)
+
+        fun getUserName(): String = user.value?.name ?: ""
+
+        init {
+            getUser()
+        }
+
+        private fun getUser() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    user.value = userRepository.getUserFromDataBase()
+                }
+        }
 
         fun insertUserFav(
+            idPost: Int,
             author: String,
             avatarUrl: String,
         ) {
-            if (author.isBlank() || avatarUrl.isBlank()) return
-            val userOwnerEmail = userRepository.getEmailLogged()
-            if (author == userOwnerEmail) return
-            val userFav =
-                UserFavEntity(author = author, avatarUrl = avatarUrl, userOwnerEmail = userOwnerEmail)
+            if (author.isBlank() || avatarUrl.isBlank() || user.value == null) return
             insertJob?.cancel()
             insertJob =
                 viewModelScope.launch {
-                    feedRepository.insertFavUser(userFav)
+                    val userFav =
+                        UserFavEntity(
+                            author = author,
+                            avatarUrl = avatarUrl,
+                            userOwnerEmail =
+                                user.value!!
+                                    .email,
+                        )
+                    userFavRepository.insertFavUser(userFav, user.value!!.email, idPost)
                 }
         }
 

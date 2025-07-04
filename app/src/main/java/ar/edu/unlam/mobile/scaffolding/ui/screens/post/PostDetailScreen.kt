@@ -41,6 +41,7 @@ fun PostDetailScreen(
 ) {
     val postResource = viewModel.post.collectAsState().value
     val repliesResource = viewModel.replies.collectAsState().value
+    val userName = viewModel.getUserName()
 
     LaunchedEffect(postId) {
         viewModel.getPost(postId)
@@ -50,6 +51,7 @@ fun PostDetailScreen(
     PostDetailContent(
         navController = navController,
         postResource = postResource,
+        userName = userName,
         viewModel = viewModel,
         repliesResource = repliesResource,
         onBack = onBack,
@@ -67,6 +69,7 @@ private fun PostDetailContent(
     onBack: () -> Unit = {},
     onReply: (String) -> Unit = {},
     viewModel: PostDetailViewModel,
+    userName: String,
 ) {
     @Composable
     fun PostReplies(
@@ -88,10 +91,12 @@ private fun PostDetailContent(
                 ) {
                     PostView(
                         post = post,
+                        isFollowable = post.author != userName,
                         onFollowClick = {
                             viewModel.insertUserFav(
                                 author = post.author,
                                 avatarUrl = post.avatarUrl,
+                                idPost = post.id,
                             )
                         },
                     )
@@ -108,10 +113,12 @@ private fun PostDetailContent(
                 PostView(
                     post = reply,
                     modifier = Modifier.scale(0.9f),
+                    isFollowable = post.author != userName,
                     onFollowClick = {
                         viewModel.insertUserFav(
                             author = reply.author,
                             avatarUrl = reply.avatarUrl,
+                            idPost = post.id,
                         )
                     },
                     onClickAction = { navController.navigate("postDetail/${reply.id}") },
@@ -180,5 +187,6 @@ fun PostDetailContentPreview() {
                 ),
             ),
         viewModel = hiltViewModel(),
+        userName = "",
     )
 }

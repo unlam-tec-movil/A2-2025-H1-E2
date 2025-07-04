@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -86,5 +87,6 @@ fun UserFavScreen(
                 }
             }
         }
+        Log.e("UserFavScreen", "se cargo la screen")
     }
 }

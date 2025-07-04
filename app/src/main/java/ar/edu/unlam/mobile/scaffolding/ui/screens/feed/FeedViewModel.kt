@@ -5,9 +5,11 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,6 +51,7 @@ class FeedViewModel
         private val feedRepository: FeedRepository,
         private val postRepository: PostRepository,
         private val userRepository: UserRepository,
+        private val userFavRepository: UserFavRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(FeedUIState())
         val uiState: StateFlow<FeedUIState> = _uiState.asStateFlow()
@@ -56,10 +59,45 @@ class FeedViewModel
         private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
         val navigationEvent: SharedFlow<Int> = _navigationEvent
 
+        private val user = MutableStateFlow<UserEntity?>(null)
+
         private var getFeedJob: Job? = null
+        private var getUserJob: Job? = null
+        private var insertJob: Job? = null
 
         init {
+            getUser()
             fetchPosts(reloadScreen = true)
+        }
+
+        // User case
+        fun getUserName(): String = user.value?.name ?: ""
+
+        private fun getUser() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    user.value = userRepository.getUserFromDataBase()
+                }
+        }
+
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+            idPost: Int,
+        ) {
+            if (author.isBlank() || avatarUrl.isBlank() || user.value == null) return
+            insertJob?.cancel()
+            insertJob =
+                viewModelScope.launch {
+                    val userFav =
+                        UserFavEntity(
+                            author = author,
+                            avatarUrl = avatarUrl,
+                            userOwnerEmail = user.value!!.email,
+                        )
+                    userFavRepository.insertFavUser(userFav, user.value!!.email, idPost)
+                }
         }
 
         fun refreshPosts(
@@ -69,25 +107,7 @@ class FeedViewModel
             fetchPosts(reloadScreen, pullToRefresh)
         }
 
-        fun followUserFav(
-            author: String,
-            avatarUrl: String,
-        ) {
-            if (author.isBlank() || avatarUrl.isBlank()) return
-            val userOwnerEmail = userRepository.getEmailLogged()
-            if (author == userOwnerEmail) return
-            val userFav =
-                UserFavEntity(
-                    author = author,
-                    avatarUrl = avatarUrl,
-                    userOwnerEmail = userOwnerEmail,
-                )
-            getFeedJob?.cancel()
-            getFeedJob =
-                viewModelScope.launch {
-                    feedRepository.insertFavUser(userFav)
-                }
-        }
+        // Feed case
 
         private fun fetchPosts(
             reloadScreen: Boolean = false,

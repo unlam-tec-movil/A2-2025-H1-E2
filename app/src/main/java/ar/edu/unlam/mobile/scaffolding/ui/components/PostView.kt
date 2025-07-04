@@ -4,6 +4,7 @@ import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,9 +51,11 @@ fun PostView(
     post: Post,
     onLikeClick: () -> Unit = {},
     onClickAction: () -> Unit = {},
-    onFollowClick: (() -> Unit?)? = null,
+    onFollowClick: () -> Unit = {},
     isFollowable: Boolean = true,
 ) {
+    var follow by remember { mutableStateOf(post.follow) }
+
     val postTime =
         remember(post.date) {
             getTimeInterval(post.date)
@@ -98,79 +102,88 @@ fun PostView(
                             .alignByBaseline()
                             .padding(top = 8.dp),
                 )
-                Spacer(modifier = Modifier.weight(1f)) // Empuja el botón a la derecha
+
+                Spacer(modifier = Modifier.weight(1f))
 
                 if (isFollowable) {
                     Button(
                         modifier =
                             Modifier
                                 .alignByBaseline(),
+                        contentPadding = PaddingValues(horizontal = 15.dp),
                         colors =
                             ButtonDefaults.buttonColors(
                                 containerColor = MaterialTheme.colorScheme.onPrimary,
                                 contentColor = MaterialTheme.colorScheme.onBackground,
                             ),
                         onClick = {
-                            if (onFollowClick != null) {
-                                onFollowClick()
-                            }
+                            onFollowClick()
+                            follow = !follow
                         },
                     ) {
                         Text(
-                            text = if (post.follow) "Seguido" else "Seguir",
+                            text = if (follow) "dejar de seguir" else "Seguir",
                             fontSize = 14.sp,
                         )
                     }
                 }
             }
-        }
 
-        Text(
-            text = post.message,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 16.sp,
-        )
-
-        Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-            IconButton(
-                modifier =
-                    Modifier
-                        .align(alignment = Alignment.CenterVertically)
-                        .size(24.dp),
-                onClick = { onLikeClick() },
-            ) {
-                Icon(
-                    imageVector = Icons.Outlined.Favorite,
-                    contentDescription = "Likes",
-                    tint =
-                        if (post.liked) {
-                            Color.Red
-                        } else {
-                            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
-                        },
-                )
-            }
             Text(
-                text = post.likes.toString(),
-                fontSize = 16.sp,
+                text = post.message,
                 color = MaterialTheme.colorScheme.onSurface,
-                modifier =
-                    Modifier
-                        .width(50.dp)
-                        .align(alignment = Alignment.CenterVertically)
-                        .padding(end = 12.dp),
+                fontSize = 16.sp,
             )
-            IconButton(
-                modifier =
-                    Modifier
-                        .align(alignment = Alignment.CenterVertically)
-                        .size(23.dp),
-                onClick = { onClickAction() },
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_chat_bubble),
-                    contentDescription = "Comments",
-                    tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
+
+            Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+                IconButton(
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(24.dp),
+                    onClick = { onLikeClick() },
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Favorite,
+                        contentDescription = "Likes",
+                        tint =
+                            if (post.liked) {
+                                Color.Red
+                            } else {
+                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
+                            },
+                    )
+                }
+                Text(
+                    text = post.likes.toString(),
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier =
+                        Modifier
+                            .width(50.dp)
+                            .align(alignment = Alignment.CenterVertically)
+                            .padding(end = 12.dp),
+                )
+                IconButton(
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(23.dp),
+                    onClick = { onClickAction() },
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_chat_bubble),
+                        contentDescription = "Comments",
+                        tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
+
+                Text(
+                    text = postTime,
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.align(Alignment.Bottom),
                 )
             }
         }

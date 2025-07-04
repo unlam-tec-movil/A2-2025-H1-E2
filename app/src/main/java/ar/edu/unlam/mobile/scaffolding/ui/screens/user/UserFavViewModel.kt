@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class UserFavViewModel
     @Inject
     constructor(
-        private val repository: UserRepository,
+        private val repository: UserFavRepository,
+        private val userRepository: UserRepository,
     ) : ViewModel() {
         private val _userFavState = MutableStateFlow<List<UserFavEntity>>(emptyList())
         val userFavState: StateFlow<List<UserFavEntity>> = _userFavState.asStateFlow()
@@ -49,8 +51,8 @@ class UserFavViewModel
             getFavJob?.cancel()
             getFavJob =
                 viewModelScope.launch {
-                    userEmail = repository.getEmailLogged()
-                    repository.getFavUser(email = userEmail).collect { result ->
+                    userEmail = userRepository.getEmailLogged()
+                    repository.getAllFavUser(email = userEmail).collect { result ->
                         _userFavState.value = result
                     }
                 }

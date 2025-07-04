@@ -5,7 +5,6 @@ import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
@@ -192,19 +191,7 @@ class UserRepositoryImpl
 
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 
-        override fun getEmailLogged(): String = userDao.getEmail()
+        override suspend fun getUserFromDataBase(): UserEntity? = userDao.getUser()
 
-        // metodos de usuarios guardados
-        override fun getFavUser(email: String): Flow<List<UserFavEntity>> =
-            userFavDao.getAll(
-                userOwnerEmail = email,
-            )
-
-        override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
-            userFavDao.deleteUserFav(userFavEntity)
-        }
-
-        override suspend fun deleteAllUserFavByOwner(email: String) {
-            userFavDao.deleteAllUserFavByOwner(email)
-        }
+        override suspend fun getEmailLogged(): String = userDao.getEmail()
     }

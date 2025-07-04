@@ -12,7 +12,7 @@ interface UserDao {
     suspend fun getUser(): UserEntity?
 
     @Query("SELECT email FROM user_table WHERE id = 1")
-    fun getEmail(): String
+    suspend fun getEmail(): String
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)

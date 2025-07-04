@@ -10,19 +10,28 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserFavDao {
-    @Query("SELECT * FROM userFav_table WHERE owner_email = :userOwnerEmail")
+    @Query("SELECT * FROM userFav_table WHERE user_owner_email= :userOwnerEmail")
     fun getAll(userOwnerEmail: String): Flow<List<UserFavEntity>>
 
-//    @Query("SELECT EXISTS(SELECT 1 FROM userFav_table WHERE author = :author AND owner_email = :ownerEmail)")
-//    suspend fun existsByAuthor(
-//        author: String,
-//        ownerEmail: String,
-//    ): Boolean
+    @Query("SELECT * FROM userFav_table WHERE author = :author AND user_owner_email = :userOwnerEmail")
+    suspend fun getUserFav(
+        author: String,
+        userOwnerEmail: String,
+    ): UserFavEntity?
+
+    @Query("SELECT author FROM userFav_table WHERE user_owner_email= :userOwnerEmail")
+    suspend fun getNameUserFav(userOwnerEmail: String): List<String>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM userFav_table WHERE author = :author AND user_owner_email = :userOwnerEmail)")
+    suspend fun existsUserFav(
+        author: String,
+        userOwnerEmail: String,
+    ): Boolean
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUserFav(userFavEntity: UserFavEntity)
 
-    @Query("DELETE FROM userFav_table WHERE owner_email = :userOwnerEmail")
+    @Query("DELETE FROM userFav_table WHERE user_owner_email = :userOwnerEmail")
     suspend fun deleteAllUserFavByOwner(userOwnerEmail: String)
 
     @Delete
