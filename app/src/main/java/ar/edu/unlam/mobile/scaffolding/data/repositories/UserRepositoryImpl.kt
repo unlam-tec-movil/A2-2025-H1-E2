@@ -189,6 +189,8 @@ class UserRepositoryImpl
                 emit(result)
             }
 
+        override suspend fun getNameLogged(): String = userDao.getUser()!!.name
+
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 
         override suspend fun getUserFromDataBase(): UserEntity? = userDao.getUser()

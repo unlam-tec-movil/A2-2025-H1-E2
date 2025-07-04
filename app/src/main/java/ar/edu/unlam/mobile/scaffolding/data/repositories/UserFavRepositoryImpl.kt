@@ -26,7 +26,6 @@ class UserFavRepositoryImpl
         override suspend fun insertFavUser(
             userFavEntity: UserFavEntity,
             userOwnerEmail: String,
-            idPost: Int,
         ) {
             val userExist = getUserFav(userFavEntity.author, userOwnerEmail)
             if (userExist != null) {

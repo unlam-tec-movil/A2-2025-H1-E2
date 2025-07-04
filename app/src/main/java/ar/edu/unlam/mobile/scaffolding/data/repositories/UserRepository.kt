@@ -31,5 +31,7 @@ interface UserRepository {
 
     fun logoutUser(): Flow<Resource<Boolean>>
 
+    suspend fun getNameLogged(): String
+
     suspend fun getEmailLogged(): String
 }

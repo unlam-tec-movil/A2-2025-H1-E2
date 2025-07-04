@@ -7,7 +7,6 @@ interface UserFavRepository {
     suspend fun insertFavUser(
         userFavEntity: UserFavEntity,
         userOwnerEmail: String,
-        idPost: Int,
     )
 
     fun getAllFavUser(email: String): Flow<List<UserFavEntity>>

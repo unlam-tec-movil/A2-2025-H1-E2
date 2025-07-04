@@ -42,7 +42,7 @@ fun FeedScreen(
     navController: NavController,
 ) {
     val uiState by feedViewModel.uiState.collectAsState()
-    val userName = feedViewModel.getUserName()
+    val userName = feedViewModel.userName.collectAsState()
 
     val onRefresh = {
         Log.d("FeedScreen", "Refreshing feed")
@@ -95,16 +95,16 @@ fun FeedScreen(
                                 .padding(horizontal = 8.dp),
                     ) {
                         items(state.posts) { post ->
+                            Log.e("API call", "${post.author != userName.value} y userName es ${userName.value}")
                             PostView(
                                 post = post,
-                                isFollowable = post.author != (userName),
+                                isFollowable = post.author != userName.value,
                                 onLikeClick = { feedViewModel.isLikePost(post.id, post.liked) },
                                 onClickAction = { feedViewModel.goToDetail(post.id) },
                                 onFollowClick = {
                                     feedViewModel.insertUserFav(
                                         author = post.author,
                                         avatarUrl = post.avatarUrl,
-                                        post.id,
                                     )
                                 },
                             )

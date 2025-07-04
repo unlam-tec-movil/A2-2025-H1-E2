@@ -96,7 +96,6 @@ private fun PostDetailContent(
                             viewModel.insertUserFav(
                                 author = post.author,
                                 avatarUrl = post.avatarUrl,
-                                idPost = post.id,
                             )
                         },
                     )
@@ -118,7 +117,6 @@ private fun PostDetailContent(
                         viewModel.insertUserFav(
                             author = reply.author,
                             avatarUrl = reply.avatarUrl,
-                            idPost = post.id,
                         )
                     },
                     onClickAction = { navController.navigate("postDetail/${reply.id}") },

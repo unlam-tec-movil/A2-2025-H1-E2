@@ -50,7 +50,6 @@ class PostDetailViewModel
         }
 
         fun insertUserFav(
-            idPost: Int,
             author: String,
             avatarUrl: String,
         ) {
@@ -66,7 +65,7 @@ class PostDetailViewModel
                                 user.value!!
                                     .email,
                         )
-                    userFavRepository.insertFavUser(userFav, user.value!!.email, idPost)
+                    userFavRepository.insertFavUser(userFav, user.value!!.email)
                 }
         }
 
