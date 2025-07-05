@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
@@ -20,9 +21,10 @@ import javax.inject.Inject
 class PostDetailViewModel
     @Inject
     constructor(
-        private val repository: PostRepository,
         private val userRepository: UserRepository,
         private val userFavRepository: UserFavRepository,
+        private val postRepository: PostRepository,
+
     ) : ViewModel() {
         private val _post = MutableStateFlow<Resource<Post>?>(null)
         val post: StateFlow<Resource<Post>?> = _post
@@ -88,9 +90,10 @@ class PostDetailViewModel
                 }
         }
 
+
         fun getPost(id: Int) {
             viewModelScope.launch {
-                repository.getPost(id).collect {
+                postRepository.getPost(id).collect {
                     _post.value = it
                 }
             }
@@ -98,7 +101,7 @@ class PostDetailViewModel
 
         fun getPostReplies(postId: Int) {
             viewModelScope.launch {
-                repository.getPostReplies(postId).collect {
+                postRepository.getPostReplies(postId).collect {
                     _replies.value = it
                 }
             }
@@ -109,9 +112,42 @@ class PostDetailViewModel
             message: String,
         ) {
             viewModelScope.launch {
-                repository.sendReply(postId, message).collect { result ->
+                postRepository.sendReply(postId, message).collect { result ->
                     if (result is Resource.Success) {
                         getPostReplies(postId)
+                    }
+                }
+            }
+        }
+
+        fun isLikePost(
+            postLikeId: Int,
+            isLiked: Boolean,
+            mainPost: Int? = null,
+        ) {
+            likePost(postLikeId, isLiked, mainPost)
+        }
+
+        private fun likePost(
+            postLikeId: Int,
+            isLiked: Boolean,
+            mainPost: Int? = null,
+        ) {
+            viewModelScope.launch {
+                postRepository.likePost(
+                    postId = postLikeId,
+                    liked = isLiked,
+                ).collect { result ->
+                    when (result) {
+                        is Resource.Success -> {
+                            if (mainPost != null) {
+                                getPostReplies(mainPost)
+                            } else {
+                                getPost(postLikeId)
+                            }
+                        }
+                        is Resource.Error ->
+                            Log.e("API call", result.message ?: "Error 400 - Bad Request")
                     }
                 }
             }

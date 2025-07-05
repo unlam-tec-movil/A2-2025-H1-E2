@@ -35,7 +35,7 @@ fun ReplyTextField(onReply: (String) -> Unit = {}) {
             onValueChange = { replyText = it },
             modifier = Modifier.weight(1f),
             shape = RoundedCornerShape(9.dp),
-            placeholder = { Text(stringResource(R.string.reply)) },
+            placeholder = { Text(stringResource(R.string.replyField)) },
             colors =
                 TextFieldDefaults.colors(
                     focusedContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f),
@@ -46,20 +46,20 @@ fun ReplyTextField(onReply: (String) -> Unit = {}) {
                     disabledIndicatorColor = Color.Transparent,
                 ),
         )
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = Color.White,
-                ),
-            onClick = {
+        Spacer(modifier = Modifier.width(5.dp))
+        PostButton(
+            text = stringResource(R.string.replyButton),
+            enabled = replyText.isNotBlank(),
+            onTap = {
                 onReply(replyText)
                 replyText = ""
             },
-        ) {
-            Text("Enviar")
-        }
+            contentPadding =
+                androidx.compose.foundation.layout.PaddingValues(
+                    horizontal = 16.dp,
+                    vertical = 10.dp,
+                ),
+        )
     }
 }
 

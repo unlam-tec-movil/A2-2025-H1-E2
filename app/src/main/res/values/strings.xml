@@ -7,10 +7,11 @@
     <string name="postCreateName">Nuevo Post</string>
     <string name="postScreenName">Post</string>
 
-    <!-- PostScreen -->
+    <!-- PostScreens -->
     <string name="newPost">"Publicar"</string>
-    <string name="reply">Responder</string>
     <string name="postDraft">Borradores</string>
+    <string name="replyField">Escribe una respuesta</string>
+    <string name="replyButton">Responder</string>
 
     <!-- UserFavScreen-->
     <string name="userFvEmpty">Aún no hay usuarios guardados</string>
