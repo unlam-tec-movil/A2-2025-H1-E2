@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -31,7 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -55,6 +59,10 @@ fun PostView(
     val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
     var click by remember { mutableStateOf(false) }
     var tintSaveUser by remember { mutableStateOf(color) }
+
+    var isExpanded by remember { mutableStateOf(false) }
+    var visualOverflow by remember { mutableStateOf(false) }
+
     val postTime =
         remember(post.date) {
             getTimeInterval(post.date)
@@ -116,7 +124,29 @@ fun PostView(
                 text = post.message,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
+                maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+                overflow = TextOverflow.Ellipsis,
+                // Si el texto supera las 5 lineas lo corta y le pone tres puntos al final
+                onTextLayout = { textLayout: TextLayoutResult ->
+                    // onTextLayout proporciona información detallada sobre cómo se ha renderizado el texto,
+                    if (!isExpanded) {
+                        visualOverflow = textLayout.didOverflowHeight
+                        // didOverflowHeight te da el dato si el texto se corto
+                    }
+                },
             )
+            if (visualOverflow) {
+                TextButton(
+                    onClick = { isExpanded = !isExpanded },
+                ) {
+                    Text(
+                        text = if (isExpanded) "Mostrar menos" else "Mostrar mas",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp,
+                        textDecoration = TextDecoration.Underline,
+                    )
+                }
+            }
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
@@ -184,7 +214,7 @@ fun PostView(
 
                 if (click) {
                     LaunchedEffect(Unit) {
-                        delay(1500)
+                        delay(timeMillis = 1500)
                         tintSaveUser = color
                         click = false
                     }
