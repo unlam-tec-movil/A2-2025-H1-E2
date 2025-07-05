@@ -108,51 +108,52 @@ fun PostDetailContent(
             avatarUrl,
         )
     }
-    Column {
-        Column(
-            modifier =
-                Modifier.background(
-                    MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
-                ),
-        ) {
-            PostView(
-                post = post,
-                onLikeClick = {
-                    viewModel.isLikePost(
-                        postLikeId = post.id,
-                        isLiked = post.liked,
-                    )
-                },
-                onInsertClick = { userFav(post.author, post.avatarUrl) },
-            )
-            HorizontalDivider(
-                color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
-                thickness = 1.dp,
-            )
-            ReplyTextField(onReply = { message ->
-                onReply(message)
-            })
-        }
-        LazyColumn(
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
-        ) {
-            items(replies) { reply ->
+    LazyColumn(
+        modifier =
+            Modifier
+                .fillMaxWidth(),
+    ) {
+        item {
+            Column(
+                modifier =
+                    Modifier.background(
+                        MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
+                    ),
+            ) {
                 PostView(
-                    post = reply,
-                    modifier = Modifier.scale(scale = 0.9f),
+                    post = post,
                     onLikeClick = {
                         viewModel.isLikePost(
-                            postLikeId = reply.id,
-                            isLiked = reply.liked,
-                            mainPost = post.id,
+                            postLikeId = post.id,
+                            isLiked = post.liked,
                         )
                     },
-                    onInsertClick = { userFav(reply.author, reply.avatarUrl) },
-                    onClickAction = { navController.navigate("postDetail/${reply.id}") },
+                    onInsertClick = { userFav(post.author, post.avatarUrl) },
                 )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
+                    thickness = 1.dp,
+                )
+                ReplyTextField(onReply = { message ->
+                    onReply(message)
+                })
             }
+        }
+
+        items(replies) { reply ->
+            PostView(
+                post = reply,
+                modifier = Modifier.scale(scale = 0.9f),
+                onLikeClick = {
+                    viewModel.isLikePost(
+                        postLikeId = reply.id,
+                        isLiked = reply.liked,
+                        mainPost = post.id,
+                    )
+                },
+                onInsertClick = { userFav(reply.author, reply.avatarUrl) },
+                onClickAction = { navController.navigate("postDetail/${reply.id}") },
+            )
         }
     }
 }
