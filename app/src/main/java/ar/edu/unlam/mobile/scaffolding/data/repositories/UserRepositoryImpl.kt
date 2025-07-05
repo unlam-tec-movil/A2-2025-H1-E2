@@ -3,7 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
@@ -23,7 +22,6 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
-        private val userFavDao: UserFavDao,
     ) : UserRepository {
         override fun signUpUser(
             name: String,
@@ -189,7 +187,7 @@ class UserRepositoryImpl
                 emit(result)
             }
 
-        override suspend fun getNameLogged(): String = userDao.getUser()!!.name
+        override suspend fun getNameLogged(): String = userDao.getName()
 
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 

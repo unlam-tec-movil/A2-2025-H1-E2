@@ -60,8 +60,13 @@ class FeedViewModel
         val navigationEvent: SharedFlow<Int> = _navigationEvent
 
         private val user = MutableStateFlow<UserEntity?>(null)
+
         private val _userName = MutableStateFlow<String?>(null)
+
         val userName: StateFlow<String?> = _userName
+
+        private val _usersFavName = MutableStateFlow<List<String>>(emptyList())
+        val usersFavName: StateFlow<List<String>> = _usersFavName
 
         private var getFeedJob: Job? = null
         private var getUserJob: Job? = null
@@ -79,7 +84,22 @@ class FeedViewModel
             getUserJob =
                 viewModelScope.launch {
                     user.value = userRepository.getUserFromDataBase()
-                    _userName.value = userRepository.getNameLogged()
+                    _userName.value = user.value?.name
+//                    _userName.value = userRepository.getNameLogged()
+                    getUserFavName()
+                }
+        }
+
+        private fun getUserFavName() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    val email = user.value?.email
+                    if (email != null) {
+                        userFavRepository.getAllNameUserFav(email).collect { result ->
+                            _usersFavName.value = result
+                        }
+                    }
                 }
         }
 
@@ -95,7 +115,7 @@ class FeedViewModel
                         UserFavEntity(
                             author = author,
                             avatarUrl = avatarUrl,
-                            userOwnerEmail = user.value!!.email,
+                            emailLogged = user.value!!.email,
                         )
                     userFavRepository.insertFavUser(userFav, user.value!!.email)
                 }

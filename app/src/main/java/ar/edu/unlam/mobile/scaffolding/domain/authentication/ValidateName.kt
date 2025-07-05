@@ -10,6 +10,10 @@ class ValidateName
 
         fun validateName(name: String): ValidationResult {
             when {
+                name.contains(" ") -> {
+                    return ValidationResult(successful = false, "El nombre no puede contener espacios")
+                }
+
                 name.isBlank() -> {
                     return ValidationResult(
                         successful = false,

@@ -10,29 +10,29 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserFavDao {
-    @Query("SELECT * FROM userFav_table WHERE user_owner_email= :userOwnerEmail")
-    fun getAll(userOwnerEmail: String): Flow<List<UserFavEntity>>
+    @Query("SELECT * FROM userFav_table WHERE email_logged = :emailLogged")
+    fun getAll(emailLogged: String): Flow<List<UserFavEntity>>
 
-    @Query("SELECT * FROM userFav_table WHERE author = :author AND user_owner_email = :userOwnerEmail")
+    @Query("SELECT * FROM userFav_table WHERE author = :author AND email_logged = :emailLogged")
     suspend fun getUserFav(
         author: String,
-        userOwnerEmail: String,
+        emailLogged: String,
     ): UserFavEntity?
 
-    @Query("SELECT author FROM userFav_table WHERE user_owner_email= :userOwnerEmail")
-    suspend fun getNameUserFav(userOwnerEmail: String): List<String>
+    @Query("SELECT author FROM userFav_table WHERE email_Logged= :emailLogged")
+    fun getNameUserFav(emailLogged: String): Flow<List<String>>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM userFav_table WHERE author = :author AND user_owner_email = :userOwnerEmail)")
+    @Query("SELECT EXISTS(SELECT 1 FROM userFav_table WHERE author = :author AND email_logged = :emailLogged)")
     suspend fun existsUserFav(
         author: String,
-        userOwnerEmail: String,
+        emailLogged: String,
     ): Boolean
 
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUserFav(userFavEntity: UserFavEntity)
 
-    @Query("DELETE FROM userFav_table WHERE user_owner_email = :userOwnerEmail")
-    suspend fun deleteAllUserFavByOwner(userOwnerEmail: String)
+    @Query("DELETE FROM userFav_table WHERE email_logged = :emailLogged")
+    suspend fun deleteAllUserFavByOwner(emailLogged: String)
 
     @Delete
     suspend fun deleteUserFav(userFavEntity: UserFavEntity)

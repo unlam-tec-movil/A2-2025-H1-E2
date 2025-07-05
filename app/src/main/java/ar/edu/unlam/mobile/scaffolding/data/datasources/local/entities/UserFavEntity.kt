@@ -12,5 +12,5 @@ data class UserFavEntity(
     @ColumnInfo(name = "id") val id: Int = 0,
     @ColumnInfo(name = "author") val author: String,
     @ColumnInfo(name = "avatar_url") val avatarUrl: String,
-    @ColumnInfo(name = "user_owner_email") val userOwnerEmail: String,
+    @ColumnInfo(name = "email_logged") val emailLogged: String,
 )

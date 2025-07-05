@@ -10,6 +10,13 @@ class ValidatePassword
 
         fun validatePassword(password: String): ValidationResult {
             when {
+                password.contains(" ") -> {
+                    return ValidationResult(
+                        successful = false,
+                        errorMessage = "La contraseña no puede contener espacios en blanco",
+                    )
+                }
+
                 password.isBlank() -> {
                     return ValidationResult(
                         successful = false,

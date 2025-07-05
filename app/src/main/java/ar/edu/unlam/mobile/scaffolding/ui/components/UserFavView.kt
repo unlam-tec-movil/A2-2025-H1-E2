@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -58,7 +59,7 @@ fun UserFavView(
                             Modifier
                                 .size(36.dp)
                                 .clip(CircleShape)
-                                .background(Color.DarkGray),
+                                .background(MaterialTheme.colorScheme.secondary),
                     )
                 } else {
                     Icon(
@@ -75,25 +76,28 @@ fun UserFavView(
                     text = userFav.author,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier =
                         Modifier
                             .alignByBaseline()
                             .padding(top = 8.dp),
                 )
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 IconButton(
                     modifier =
                         Modifier
                             .align(alignment = Alignment.CenterVertically)
-                            .size(20.dp),
+                            .size(30.dp),
                     onClick = {
                         onDeleteClick()
                     },
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.baseline_bookmark_remove_24),
+                        painter = painterResource(id = R.drawable.baseline_remove_24),
                         contentDescription = "save",
-                        tint = Color.Black,
+                        tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
                     )
                 }
             }
@@ -120,5 +124,11 @@ fun UserFavViewPreview() {
             date = "2023-10-01",
         )
 
-    val user = UserFavEntity(author = tuit.author, avatarUrl = tuit.avatarUrl, userOwnerEmail = "previe@gmail.com")
+    val user =
+        UserFavEntity(
+            author = tuit.author,
+            avatarUrl = tuit.avatarUrl,
+            emailLogged = "previe@gmail.com",
+        )
+    UserFavView(userFav = user) {}
 }

@@ -10,33 +10,35 @@ class UserFavRepositoryImpl
     constructor(
         private val userFavDao: UserFavDao,
     ) : UserFavRepository {
-        override fun getAllFavUser(email: String): Flow<List<UserFavEntity>> =
+        override fun getAllFavUser(emailLogged: String): Flow<List<UserFavEntity>> =
             userFavDao.getAll(
-                userOwnerEmail = email,
+                emailLogged = emailLogged,
             )
 
         override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
             userFavDao.deleteUserFav(userFavEntity)
         }
 
-        override suspend fun deleteAllUserFavByOwner(email: String) {
-            userFavDao.deleteAllUserFavByOwner(email)
+        override suspend fun deleteAllUserFavByOwner(emailLogged: String) {
+            userFavDao.deleteAllUserFavByOwner(emailLogged)
         }
 
         override suspend fun insertFavUser(
             userFavEntity: UserFavEntity,
-            userOwnerEmail: String,
+            emailLogged: String,
         ) {
-            val userExist = getUserFav(userFavEntity.author, userOwnerEmail)
+            val userExist = getUserFav(userFavEntity.author, emailLogged)
             if (userExist != null) {
-                userFavDao.deleteUserFav(userExist)
+                deleteUserFav(userExist)
             } else {
                 userFavDao.insertUserFav(userFavEntity)
             }
         }
 
+        override fun getAllNameUserFav(emailLogged: String): Flow<List<String>> = userFavDao.getNameUserFav(emailLogged)
+
         private suspend fun getUserFav(
             author: String,
-            userOwnerEmail: String,
-        ): UserFavEntity? = userFavDao.getUserFav(author, userOwnerEmail)
+            emailLogged: String,
+        ): UserFavEntity? = userFavDao.getUserFav(author, emailLogged)
     }

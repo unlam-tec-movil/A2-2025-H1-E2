@@ -6,12 +6,14 @@ import kotlinx.coroutines.flow.Flow
 interface UserFavRepository {
     suspend fun insertFavUser(
         userFavEntity: UserFavEntity,
-        userOwnerEmail: String,
+        emailLogged: String,
     )
 
-    fun getAllFavUser(email: String): Flow<List<UserFavEntity>>
+    fun getAllNameUserFav(emailLogged: String): Flow<List<String>>
+
+    fun getAllFavUser(emailLogged: String): Flow<List<UserFavEntity>>
 
     suspend fun deleteUserFav(userFavEntity: UserFavEntity)
 
-    suspend fun deleteAllUserFavByOwner(email: String)
+    suspend fun deleteAllUserFavByOwner(emailLogged: String)
 }

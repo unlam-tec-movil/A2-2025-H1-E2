@@ -3,7 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
@@ -11,7 +10,6 @@ import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
-import java.io.IOException
 import javax.inject.Inject
 
 class FeedRepositoryImpl
@@ -19,7 +17,6 @@ class FeedRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
-        private val userFavDao: UserFavDao,
     ) : FeedRepository {
         override fun getFeed(
             page: Int,
@@ -28,9 +25,7 @@ class FeedRepositoryImpl
             flow {
                 val response: Resource<List<Post>> =
                     try {
-                        val currentUser = userDao.getUser()
-                        val currentUserToken = currentUser!!.userToken
-                        val usersFav = currentUser.let { userFavDao.getNameUserFav(it.email) }
+                        val currentUserToken = userDao.getUser()!!.userToken
                         if (currentUserToken.isBlank()) {
                             Resource.Error(
                                 data = null,
@@ -43,7 +38,6 @@ class FeedRepositoryImpl
                                     page = page,
                                     onlyParents = onlyParents,
                                 )
-                            data.forEach { it.follow = usersFav.contains(it.author) }
                             Resource.Success(data)
                         }
                     } catch (e: HttpException) {

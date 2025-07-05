@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,7 +42,9 @@ fun PostDetailScreen(
 ) {
     val postResource = viewModel.post.collectAsState().value
     val repliesResource = viewModel.replies.collectAsState().value
-    val userName = viewModel.getUserName()
+    val userName = viewModel.userName
+    val usersFavName = viewModel.usersFavName.collectAsState().value
+    Log.e("API call", "la cantidad de usuariso es ${usersFavName.size}")
 
     LaunchedEffect(postId) {
         viewModel.getPost(postId)
@@ -51,7 +54,8 @@ fun PostDetailScreen(
     PostDetailContent(
         navController = navController,
         postResource = postResource,
-        userName = userName,
+        userName = userName.value ?: "",
+        usersFavName = usersFavName,
         viewModel = viewModel,
         repliesResource = repliesResource,
         onBack = onBack,
@@ -70,6 +74,7 @@ private fun PostDetailContent(
     onReply: (String) -> Unit = {},
     viewModel: PostDetailViewModel,
     userName: String,
+    usersFavName: List<String>,
 ) {
     @Composable
     fun PostReplies(
@@ -89,9 +94,12 @@ private fun PostDetailContent(
                             MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                         ),
                 ) {
+                    val follow = post.author in usersFavName
+
                     PostView(
                         post = post,
                         isFollowable = post.author != userName,
+                        follow = follow,
                         onFollowClick = {
                             viewModel.insertUserFav(
                                 author = post.author,
@@ -109,9 +117,12 @@ private fun PostDetailContent(
                 }
             }
             items(replies) { reply ->
+                val follow = reply.author in usersFavName
+
                 PostView(
                     post = reply,
                     modifier = Modifier.scale(0.9f),
+                    follow = follow,
                     isFollowable = post.author != userName,
                     onFollowClick = {
                         viewModel.insertUserFav(
@@ -186,5 +197,6 @@ fun PostDetailContentPreview() {
             ),
         viewModel = hiltViewModel(),
         userName = "",
+        usersFavName = emptyList(),
     )
 }

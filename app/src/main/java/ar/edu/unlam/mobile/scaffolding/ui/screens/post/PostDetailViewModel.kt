@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
-import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
@@ -22,7 +21,6 @@ class PostDetailViewModel
     @Inject
     constructor(
         private val repository: PostRepository,
-        private val feedRepository: FeedRepository,
         private val userRepository: UserRepository,
         private val userFavRepository: UserFavRepository,
     ) : ViewModel() {
@@ -31,11 +29,17 @@ class PostDetailViewModel
         private val _replies = MutableStateFlow<Resource<List<Post>>>(Resource.Success(emptyList()))
         val replies: StateFlow<Resource<List<Post>>> = _replies
 
-        private var insertJob: Job? = null
-        private var getUserJob: Job? = null
         private val user = MutableStateFlow<UserEntity?>(null)
 
-        fun getUserName(): String = user.value?.name ?: ""
+        private val _userName = MutableStateFlow<String?>(null)
+
+        val userName: StateFlow<String?> = _userName
+
+        private val _usersFavName = MutableStateFlow<List<String>>(emptyList())
+        val usersFavName: StateFlow<List<String>> = _usersFavName
+
+        private var getUserJob: Job? = null
+        private var insertJob: Job? = null
 
         init {
             getUser()
@@ -46,6 +50,23 @@ class PostDetailViewModel
             getUserJob =
                 viewModelScope.launch {
                     user.value = userRepository.getUserFromDataBase()
+                    _userName.value = user.value?.name
+
+//                    _userName.value = userRepository.getNameLogged()
+                    getUserFavName()
+                }
+        }
+
+        private fun getUserFavName() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    val email = user.value?.email
+                    if (email != null) {
+                        userFavRepository.getAllNameUserFav(email).collect { result ->
+                            _usersFavName.value = result
+                        }
+                    }
                 }
         }
 
@@ -61,9 +82,7 @@ class PostDetailViewModel
                         UserFavEntity(
                             author = author,
                             avatarUrl = avatarUrl,
-                            userOwnerEmail =
-                                user.value!!
-                                    .email,
+                            emailLogged = user.value!!.email,
                         )
                     userFavRepository.insertFavUser(userFav, user.value!!.email)
                 }

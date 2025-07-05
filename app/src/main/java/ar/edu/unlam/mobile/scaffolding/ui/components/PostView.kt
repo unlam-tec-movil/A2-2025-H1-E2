@@ -25,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -53,9 +52,8 @@ fun PostView(
     onClickAction: () -> Unit = {},
     onFollowClick: () -> Unit = {},
     isFollowable: Boolean = true,
+    follow: Boolean = false,
 ) {
-    var follow by remember { mutableStateOf(post.follow) }
-
     val postTime =
         remember(post.date) {
             getTimeInterval(post.date)
@@ -118,12 +116,11 @@ fun PostView(
                             ),
                         onClick = {
                             onFollowClick()
-                            follow = !follow
                         },
                     ) {
                         Text(
                             text = if (follow) "dejar de seguir" else "Seguir",
-                            fontSize = 14.sp,
+                            fontSize = 13.sp,
                         )
                     }
                 }
