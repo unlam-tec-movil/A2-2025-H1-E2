@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -58,11 +59,11 @@ fun PostView(
     isFollowable: Boolean = true,
     follow: Boolean = false,
 ) {
-  val postTime = remember(post.date) { getTimeInterval(post.date) }
+    val postTime = remember(post.date) { getTimeInterval(post.date) }
 
     var isExpanded by remember { mutableStateOf(false) }
     var visualOverflow by remember { mutableStateOf(false) }
-   
+
     Card(
         shape = RoundedCornerShape(9.dp),
         colors =
@@ -72,10 +73,7 @@ fun PostView(
                         alpha = 0.8f,
                     ),
             ),
-        modifier =
-            modifier
-                .padding(2.dp)
-                .fillMaxWidth(),
+        modifier = modifier.padding(2.dp).fillMaxWidth(),
         onClick = { onClickAction() },
     ) {
         Column(
@@ -100,19 +98,14 @@ fun PostView(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier =
-                        Modifier
-                            .alignByBaseline()
-                            .padding(top = 8.dp),
+                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 if (isFollowable) {
                     Button(
-                        modifier =
-                            Modifier
-                                .alignByBaseline(),
+                        modifier = Modifier.alignByBaseline(),
                         contentPadding = PaddingValues(horizontal = 15.dp),
                         colors =
                             ButtonDefaults.buttonColors(
@@ -161,10 +154,7 @@ fun PostView(
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(24.dp),
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically).size(24.dp),
                     onClick = { onLikeClick() },
                 ) {
                     Icon(
@@ -189,10 +179,7 @@ fun PostView(
                             .padding(end = 12.dp),
                 )
                 IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(23.dp),
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically).size(23.dp),
                     onClick = { onClickAction() },
                 ) {
                     Icon(

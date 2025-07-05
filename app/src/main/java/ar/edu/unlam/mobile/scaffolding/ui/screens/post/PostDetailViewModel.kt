@@ -24,7 +24,6 @@ class PostDetailViewModel
         private val userRepository: UserRepository,
         private val userFavRepository: UserFavRepository,
         private val postRepository: PostRepository,
-
     ) : ViewModel() {
         private val _post = MutableStateFlow<Resource<Post>?>(null)
         val post: StateFlow<Resource<Post>?> = _post
@@ -53,7 +52,6 @@ class PostDetailViewModel
                 viewModelScope.launch {
                     user.value = userRepository.getUserFromDataBase()
                     _userName.value = user.value?.name
-
 //                    _userName.value = userRepository.getNameLogged()
                     getUserFavName()
                 }
@@ -89,7 +87,6 @@ class PostDetailViewModel
                     userFavRepository.insertFavUser(userFav, user.value!!.email)
                 }
         }
-
 
         fun getPost(id: Int) {
             viewModelScope.launch {
@@ -134,22 +131,24 @@ class PostDetailViewModel
             mainPost: Int? = null,
         ) {
             viewModelScope.launch {
-                postRepository.likePost(
-                    postId = postLikeId,
-                    liked = isLiked,
-                ).collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            if (mainPost != null) {
-                                getPostReplies(mainPost)
-                            } else {
-                                getPost(postLikeId)
+                postRepository
+                    .likePost(
+                        postId = postLikeId,
+                        liked = isLiked,
+                    ).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                if (mainPost != null) {
+                                    getPostReplies(mainPost)
+                                } else {
+                                    getPost(postLikeId)
+                                }
                             }
+
+                            is Resource.Error ->
+                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
                         }
-                        is Resource.Error ->
-                            Log.e("API call", result.message ?: "Error 400 - Bad Request")
                     }
-                }
             }
         }
     }
