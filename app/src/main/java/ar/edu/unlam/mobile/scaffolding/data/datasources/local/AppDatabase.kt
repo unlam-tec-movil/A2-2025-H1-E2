@@ -9,7 +9,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.PostEntit
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 
-@Database(entities = [UserEntity::class, UserFavEntity::class, PostEntity::class], version = 4)
+@Database(entities = [UserEntity::class, UserFavEntity::class, PostEntity::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getUserDao(): UserDao
 

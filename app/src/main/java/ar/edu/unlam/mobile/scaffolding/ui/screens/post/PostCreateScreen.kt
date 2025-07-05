@@ -45,6 +45,7 @@ fun PostCreateScreen(
     val statusMessage by viewModel.statusMessage.collectAsState()
     val isLoading by viewModel.isLoading.collectAsState()
     val user by viewModel.currentUserState.collectAsState()
+    val showDraftsButton by viewModel.showDraftsButton.collectAsState()
 
     fun refreshFeed() {
         navController.previousBackStackEntry
@@ -88,17 +89,19 @@ fun PostCreateScreen(
                         vertical = 8.dp,
                     ),
             ) {
-                Text(
-                    text = stringResource(R.string.postDraft),
-                    color =
-                        if (viewModel.myMessage.isNotEmpty()) {
-                            MaterialTheme.colorScheme.primary
-                        } else {
-                            MaterialTheme.colorScheme.onSurface.copy(
-                                alpha = 0.38f,
-                            )
-                        },
-                )
+                if (showDraftsButton) {
+                    Text(
+                        text = stringResource(R.string.postDraft),
+                        color =
+                            if (viewModel.myMessage.isNotEmpty()) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface.copy(
+                                    alpha = 0.38f,
+                                )
+                            },
+                    )
+                }
             }
 
             PostButton(
