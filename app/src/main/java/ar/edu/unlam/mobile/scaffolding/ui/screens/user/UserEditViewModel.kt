@@ -9,8 +9,10 @@ import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
-import ar.edu.unlam.mobile.scaffolding.domain.Authentication
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.FormState
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateConfirmPassword
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateName
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidatePassword
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,86 +27,93 @@ class UserEditViewModel
     @Inject
     constructor(
         private val userRepository: UserRepository,
+        private val validateName: ValidateName,
+        private val validatePassword: ValidatePassword,
+        private val validateConfirmPassword: ValidateConfirmPassword,
     ) : ViewModel() {
         private val _currentUserState = mutableStateOf(UserProfileModel())
         val currentUserState: State<UserProfileModel> = _currentUserState
 
+        private var error: String? = null
         private var editUserJob: Job? = null
         private var getCurrentUserJob: Job? = null
 
-        private var _name = MutableStateFlow("")
-        var name: StateFlow<String> = _name
+        private val _state = MutableStateFlow(FormState())
+        val state: StateFlow<FormState> = _state
 
-        private var _password = MutableStateFlow("")
-        var password: StateFlow<String> = _password
+        private val _validation = mutableStateOf(false)
+        val validation = _validation
 
-        private var _confirmPassword = MutableStateFlow("")
-        var confirmPassword: StateFlow<String> = _confirmPassword
-
-        // MESSAGE
-        private var _nameError = MutableStateFlow<String?>(null)
-        var nameError: StateFlow<String?> = _nameError
-
-        private var _passwordError = MutableStateFlow<String?>(null)
-        var passwordError: StateFlow<String?> = _passwordError
-
-        private var _confirmPasswordError = MutableStateFlow<String?>(null)
-        var confirmPasswordError: StateFlow<String?> = _confirmPasswordError
-
-        private var _message = MutableStateFlow<String?>(null)
-        var message: StateFlow<String?> = _message
-
-        // Onchange
-        fun onNameChange(name: String) {
-            _nameError.value = null
-            _name.value = name
+        // OnChanged
+        fun onNameChanged(name: String) {
+            _state.value = _state.value.copy(name = name, nameError = null)
         }
 
-        fun onPassWordChange(password: String) {
-            _passwordError.value = null
-            _password.value = password
+        fun onPasswordChanged(password: String) {
+            _state.value = _state.value.copy(password = password, passwordError = null)
         }
 
-        fun onConfirmPassWordChange(confirmPassWord: String) {
-            _confirmPasswordError.value = null
-            _confirmPassword.value = confirmPassWord
+        fun onConfirmPasswordChanged(confirmPassword: String) {
+            _state.value =
+                _state.value.copy(confirmPassword = confirmPassword, confirmPasswordError = null)
         }
 
         // onFocusLost
 
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {
-                _nameError.value = FormValidator.isValidText(name)
+                error = validateName.validateName(name).errorMessage
+                _state.value = _state.value.copy(nameError = error)
             }
         }
 
-        fun onPassWordFocusLost(password: String) {
+        fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                _passwordError.value = FormValidator.isValidText(password, specialCharacters = true)
+                error = validatePassword.validatePassword(password).errorMessage
+                _state.value = _state.value.copy(passwordError = error)
             }
         }
 
-        fun onConfirmPassWordFocusLost(
-            password: String,
-            confirmPassWord: String,
-        ) {
+        fun onConfirmPasswordFocusLost(confirmPassWord: String) {
             if (confirmPassWord.isNotBlank()) {
-                _confirmPasswordError.value = FormValidator.isValidPassword(password, confirmPassWord)
+                error =
+                    validateConfirmPassword
+                        .validateConfirmPassword(
+                            _state.value.password,
+                            confirmPassWord,
+                        ).errorMessage
+                _state.value = _state.value.copy(confirmPasswordError = error)
             }
         }
 
-        fun validateDate(
-            name: String,
-            password: String,
-            confirmPassWord: String,
-        ): Boolean {
-            _nameError.value = FormValidator.isValidText(text = name)
-            _passwordError.value = FormValidator.isValidText(text = password, specialCharacters = true)
-            _confirmPasswordError.value = FormValidator.isValidPassword(password, confirmPassWord)
+        fun submitData() {
+            val nameResult = validateName.validateName(_state.value.name)
+            val passwordResult = validatePassword.validatePassword(_state.value.password)
+            val confirmPassword =
+                validateConfirmPassword.validateConfirmPassword(
+                    _state.value.password,
+                    _state.value.confirmPassword,
+                )
 
-            return _nameError.value == null &&
-                _passwordError.value == null &&
-                _confirmPasswordError.value == null
+            val isError =
+                listOf(
+                    nameResult,
+                    passwordResult,
+                    confirmPassword,
+                ).any { !it.successful }
+
+            if (isError) {
+                _state.value =
+                    _state.value.copy(
+                        nameError = nameResult.errorMessage,
+                        passwordError = passwordResult.errorMessage,
+                        confirmPasswordError = confirmPassword.errorMessage,
+                    )
+                return
+            } else {
+                _validation.value = true
+                return
+            }
         }
 
         init {
@@ -121,7 +130,8 @@ class UserEditViewModel
                                         email = "",
                                         avatarURL = result.data?.avatarURL ?: "",
                                     )
-                                _name.value = result.data?.name ?: ""
+                                val name = result.data?.name ?: ""
+                                _state.value = _state.value.copy(name = name)
                             }
 
                             is Resource.Error ->
@@ -152,7 +162,6 @@ class UserEditViewModel
                                     }
 
                                     is Resource.Error -> {
-                                        _message.value = Authentication.messageApi(result.message)
                                         Log.e(
                                             "API call",
                                             result.message ?: "Ocurrió un error inesperado",
@@ -162,9 +171,5 @@ class UserEditViewModel
                             }
                     }
             }
-        }
-
-        fun clearMessage() {
-            _message.value = null
         }
     }

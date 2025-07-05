@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -23,12 +20,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.ButtonDesign
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
 import coil.compose.AsyncImage
@@ -38,28 +35,25 @@ fun UserEditScreen(
     userEditViewModel: UserEditViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val name by userEditViewModel.name.collectAsState()
-    val password by userEditViewModel.password.collectAsState()
-    val confirmPassword by userEditViewModel.confirmPassword.collectAsState()
-
-    val nameError by userEditViewModel.nameError.collectAsState()
-    val passwordError by userEditViewModel.passwordError.collectAsState()
-    val confirmPasswordError by userEditViewModel.confirmPasswordError.collectAsState()
-    val message by userEditViewModel.message.collectAsState()
+    val state by userEditViewModel.state.collectAsState()
+    val validation by userEditViewModel.validation
 
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
         ) {
             AsyncImage(
                 modifier =
                     Modifier
-                        .size(300.dp)
+                        .size(150.dp)
                         .clip(CircleShape)
                         .background(MaterialTheme.colorScheme.secondary),
                 model = userEditViewModel.currentUserState.value.avatarURL,
@@ -76,48 +70,43 @@ fun UserEditScreen(
             // NAME
             FormField(
                 label = stringResource(R.string.labelName),
-                text = name,
-                onTextChange = {
-                    userEditViewModel.onNameChange(it)
-                },
+                text = state.name,
+                onTextChange = { userEditViewModel.onNameChanged(it) },
                 placeholder = userEditViewModel.currentUserState.value.name,
-                onFocusLost = {
-                    userEditViewModel.onNameFocusLost(name)
-                },
-                errorMessage = nameError,
+                onFocusLost = { userEditViewModel.onNameFocusLost(state.name) },
+                errorMessage = state.nameError,
             )
 
             // PASSWORD
             PasswordFormField(
                 label = stringResource(R.string.labelPassword),
-                password = password,
-                onPasswordChange = {
-                    userEditViewModel.onPassWordChange(it)
-                },
+                password = state.password,
+                onPasswordChange = { userEditViewModel.onPasswordChanged(it) },
                 placeholder = stringResource(R.string.phFieldPassword),
-                errorMessage = passwordError,
-                onFocusLost = {
-                    userEditViewModel.onPassWordFocusLost(password)
-                },
+                errorMessage = state.passwordError,
+                onFocusLost = { userEditViewModel.onPasswordFocusLost(state.password) },
             )
 
             // CONFIRM PASSWORD
             PasswordFormField(
                 label = stringResource(R.string.labelConfirmPassword),
-                password = confirmPassword,
-                onPasswordChange = {
-                    userEditViewModel.onConfirmPassWordChange(it)
-                },
+                password = state.confirmPassword,
+                onPasswordChange = { userEditViewModel.onConfirmPasswordChanged(it) },
                 placeholder = stringResource(R.string.phFieldConfirmPassword),
-                errorMessage = confirmPasswordError,
+                errorMessage = state.confirmPasswordError,
                 onFocusLost = {
-                    userEditViewModel.onConfirmPassWordFocusLost(password, confirmPassword)
+                    userEditViewModel.onConfirmPasswordFocusLost(
+                        state.confirmPassword,
+                    )
                 },
             )
         }
         // Botones
         Row(
-            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -135,35 +124,16 @@ fun UserEditScreen(
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Button(
-                modifier = Modifier.weight(1f),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.onPrimary,
-                        contentColor = MaterialTheme.colorScheme.onBackground,
-                    ),
-                onClick = {
-                    if (userEditViewModel.validateDate(
-                            name = name,
-                            password = password,
-                            confirmPassWord = confirmPassword,
-                        )
-                    ) {
-                        userEditViewModel.editUser(name, password, navController)
+            ButtonDesign(
+                text = "Guardar cambios",
+                fontSize = 17,
+                onClickButton = {
+                    userEditViewModel.submitData()
+                    if (validation) {
+                        userEditViewModel.editUser(state.name, state.password, navController)
                     }
                 },
-            ) {
-                Text(
-                    "Guardar cambios",
-                )
-            }
-        }
-
-        val context = LocalContext.current
-
-        if (!message.isNullOrBlank()) {
-            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-            userEditViewModel.clearMessage()
+            )
         }
     }
 }

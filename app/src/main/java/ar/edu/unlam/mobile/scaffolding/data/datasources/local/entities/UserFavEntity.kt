@@ -4,10 +4,13 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "userFav_table")
+@Entity(
+    tableName = "userFav_table",
+)
 data class UserFavEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Int = 0,
     @ColumnInfo(name = "author") val author: String,
     @ColumnInfo(name = "avatar_url") val avatarUrl: String,
+    @ColumnInfo(name = "email_logged") val emailLogged: String,
 )

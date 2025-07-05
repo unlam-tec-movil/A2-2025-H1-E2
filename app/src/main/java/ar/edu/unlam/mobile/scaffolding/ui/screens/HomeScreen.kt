@@ -20,14 +20,14 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val userLogged by homeViewModel.isUserLogged.collectAsState()
-    val isLoading by homeViewModel.isLoading.collectAsState()
+    val isLoading by homeViewModel.isLoading
 
     when {
         isLoading -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(64.dp),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         }

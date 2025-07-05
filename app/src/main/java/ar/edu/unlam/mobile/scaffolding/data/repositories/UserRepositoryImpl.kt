@@ -1,21 +1,20 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
+import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.EditUserRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.LoginRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.request.SignUpRequest
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
-import coil.network.HttpException
 import com.google.gson.Gson
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import okio.IOException
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class UserRepositoryImpl
@@ -23,7 +22,6 @@ class UserRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
-        private val userFavDao: UserFavDao,
     ) : UserRepository {
         override fun signUpUser(
             name: String,
@@ -50,7 +48,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -89,7 +87,8 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
+                                Log.e("API call", errorBody ?: "Error 400 - Bad Request")
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -121,7 +120,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -159,7 +158,7 @@ class UserRepositoryImpl
                     } catch (e: HttpException) {
                         val errorMessage =
                             try {
-                                val errorBody = e.response.body.string()
+                                val errorBody = e.response()?.errorBody()?.string()
                                 val gson = Gson()
                                 gson.fromJson(errorBody, ErrorResponse::class.java).message
                             } catch (e: Exception) {
@@ -188,16 +187,11 @@ class UserRepositoryImpl
                 emit(result)
             }
 
+        override suspend fun getNameLogged(): String = userDao.getName()
+
         override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
 
-        // metodos de usuarios guardados
-        override fun getFavUser(): Flow<List<UserFavEntity>> = userFavDao.getAll()
+        override suspend fun getUserFromDataBase(): UserEntity? = userDao.getUser()
 
-        override suspend fun deleteUserFav(userFavEntity: UserFavEntity) {
-            userFavDao.deleteUserFav(userFavEntity)
-        }
-
-        override suspend fun deleteAllUserFav() {
-            userFavDao.deleteAllUserFav()
-        }
+        override suspend fun getEmailLogged(): String = userDao.getEmail()
     }

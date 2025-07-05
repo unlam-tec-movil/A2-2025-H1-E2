@@ -1,7 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
 import ar.edu.unlam.mobile.scaffolding.data.Resource
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.model.UserProfileModel
 import kotlinx.coroutines.flow.Flow
 
@@ -21,6 +21,8 @@ interface UserRepository {
 
     suspend fun isUserLogged(): Boolean
 
+    suspend fun getUserFromDataBase(): UserEntity?
+
     fun editUser(
         name: String,
         avatarURL: String,
@@ -29,9 +31,7 @@ interface UserRepository {
 
     fun logoutUser(): Flow<Resource<Boolean>>
 
-    fun getFavUser(): Flow<List<UserFavEntity>>
+    suspend fun getNameLogged(): String
 
-    suspend fun deleteUserFav(userFavEntity: UserFavEntity)
-
-    suspend fun deleteAllUserFav()
+    suspend fun getEmailLogged(): String
 }

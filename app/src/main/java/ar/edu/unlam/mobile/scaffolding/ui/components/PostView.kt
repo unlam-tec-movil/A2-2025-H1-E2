@@ -4,6 +4,7 @@ import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -22,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +44,6 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import coil.compose.AsyncImage
-import kotlinx.coroutines.delay
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -54,19 +55,15 @@ fun PostView(
     post: Post,
     onLikeClick: () -> Unit = {},
     onClickAction: () -> Unit = {},
-    onInsertClick: (() -> Unit?)? = null,
+    onFollowClick: () -> Unit = {},
+    isFollowable: Boolean = true,
+    follow: Boolean = false,
 ) {
-    val color = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f)
-    var click by remember { mutableStateOf(false) }
-    var tintSaveUser by remember { mutableStateOf(color) }
+    val postTime = remember(post.date) { getTimeInterval(post.date) }
 
     var isExpanded by remember { mutableStateOf(false) }
     var visualOverflow by remember { mutableStateOf(false) }
 
-    val postTime =
-        remember(post.date) {
-            getTimeInterval(post.date)
-        }
     Card(
         shape = RoundedCornerShape(9.dp),
         colors =
@@ -76,10 +73,7 @@ fun PostView(
                         alpha = 0.8f,
                     ),
             ),
-        modifier =
-            modifier
-                .padding(2.dp)
-                .fillMaxWidth(),
+        modifier = modifier.padding(2.dp).fillMaxWidth(),
         onClick = { onClickAction() },
     ) {
         Column(
@@ -104,20 +98,30 @@ fun PostView(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onPrimary,
-                    modifier =
-                        Modifier
-                            .alignByBaseline()
-                            .padding(top = 8.dp),
+                    modifier = Modifier.alignByBaseline().padding(top = 8.dp),
                 )
-                Text(
-                    text = postTime,
-                    fontSize = 12.sp,
-                    color = Color.Gray,
-                    modifier =
-                        Modifier
-                            .alignByBaseline()
-                            .padding(start = 3.dp),
-                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                if (isFollowable) {
+                    Button(
+                        modifier = Modifier.alignByBaseline(),
+                        contentPadding = PaddingValues(horizontal = 15.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.onPrimary,
+                                contentColor = MaterialTheme.colorScheme.onBackground,
+                            ),
+                        onClick = {
+                            onFollowClick()
+                        },
+                    ) {
+                        Text(
+                            text = if (follow) "dejar de seguir" else "Seguir",
+                            fontSize = 13.sp,
+                        )
+                    }
+                }
             }
 
             Text(
@@ -150,10 +154,7 @@ fun PostView(
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(24.dp),
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically).size(24.dp),
                     onClick = { onLikeClick() },
                 ) {
                     Icon(
@@ -178,10 +179,7 @@ fun PostView(
                             .padding(end = 12.dp),
                 )
                 IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(23.dp),
+                    modifier = Modifier.align(alignment = Alignment.CenterVertically).size(23.dp),
                     onClick = { onClickAction() },
                 ) {
                     Icon(
@@ -190,35 +188,14 @@ fun PostView(
                         tint = MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.7f),
                     )
                 }
-                Spacer(modifier = Modifier.padding(end = 20.dp))
+                Spacer(modifier = Modifier.weight(1f))
 
-                IconButton(
-                    modifier =
-                        Modifier
-                            .align(alignment = Alignment.CenterVertically)
-                            .size(23.dp),
-                    onClick = {
-                        if (onInsertClick != null) {
-                            onInsertClick()
-                        }
-                        tintSaveUser = Color.Red
-                        click = true
-                    },
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_bookmark_24),
-                        contentDescription = "Bookmark",
-                        tint = tintSaveUser,
-                    )
-                }
-
-                if (click) {
-                    LaunchedEffect(Unit) {
-                        delay(timeMillis = 1500)
-                        tintSaveUser = color
-                        click = false
-                    }
-                }
+                Text(
+                    text = postTime,
+                    fontSize = 12.sp,
+                    color = Color.Gray,
+                    modifier = Modifier.align(Alignment.Bottom),
+                )
             }
         }
     }
@@ -235,11 +212,12 @@ fun getTimeInterval(postDate: String): String {
             val timeInMillis = it.time // Fecha actual en milisegundos
             val now = System.currentTimeMillis()
             // DateUtils hace el calculo del tiempo que paso desde la fecha dada a now
-            DateUtils.getRelativeTimeSpanString(
-                timeInMillis,
-                now,
-                DateUtils.SECOND_IN_MILLIS,
-            ).toString()
+            DateUtils
+                .getRelativeTimeSpanString(
+                    timeInMillis,
+                    now,
+                    DateUtils.SECOND_IN_MILLIS,
+                ).toString()
         } ?: postDate // Si el parseo de postDate devuelve null
     } catch (e: Exception) {
         e.printStackTrace()

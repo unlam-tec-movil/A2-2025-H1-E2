@@ -5,9 +5,12 @@ import androidx.compose.runtime.Immutable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.Resource
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -47,6 +50,8 @@ class FeedViewModel
     constructor(
         private val feedRepository: FeedRepository,
         private val postRepository: PostRepository,
+        private val userRepository: UserRepository,
+        private val userFavRepository: UserFavRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(FeedUIState())
         val uiState: StateFlow<FeedUIState> = _uiState.asStateFlow()
@@ -54,10 +59,66 @@ class FeedViewModel
         private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
         val navigationEvent: SharedFlow<Int> = _navigationEvent
 
+        private val user = MutableStateFlow<UserEntity?>(null)
+
+        private val _userName = MutableStateFlow<String?>(null)
+
+        val userName: StateFlow<String?> = _userName
+
+        private val _usersFavName = MutableStateFlow<List<String>>(emptyList())
+        val usersFavName: StateFlow<List<String>> = _usersFavName
+
         private var getFeedJob: Job? = null
+        private var getUserJob: Job? = null
+        private var insertJob: Job? = null
 
         init {
+            getUser()
             fetchPosts(reloadScreen = true)
+        }
+
+        // User case
+
+        private fun getUser() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    user.value = userRepository.getUserFromDataBase()
+                    _userName.value = user.value?.name
+//                    _userName.value = userRepository.getNameLogged()
+                    getUserFavName()
+                }
+        }
+
+        private fun getUserFavName() {
+            getUserJob?.cancel()
+            getUserJob =
+                viewModelScope.launch {
+                    val email = user.value?.email
+                    if (email != null) {
+                        userFavRepository.getAllNameUserFav(email).collect { result ->
+                            _usersFavName.value = result
+                        }
+                    }
+                }
+        }
+
+        fun insertUserFav(
+            author: String,
+            avatarUrl: String,
+        ) {
+            if (author.isBlank() || avatarUrl.isBlank() || user.value == null) return
+            insertJob?.cancel()
+            insertJob =
+                viewModelScope.launch {
+                    val userFav =
+                        UserFavEntity(
+                            author = author,
+                            avatarUrl = avatarUrl,
+                            emailLogged = user.value!!.email,
+                        )
+                    userFavRepository.insertFavUser(userFav, user.value!!.email)
+                }
         }
 
         fun refreshPosts(
@@ -67,18 +128,7 @@ class FeedViewModel
             fetchPosts(reloadScreen, pullToRefresh)
         }
 
-        fun insertUserFav(
-            author: String,
-            avatarUrl: String,
-        ) {
-            if (author.isBlank() || avatarUrl.isBlank()) return
-            val userFav = UserFavEntity(author = author, avatarUrl = avatarUrl)
-            getFeedJob?.cancel()
-            getFeedJob =
-                viewModelScope.launch {
-                    feedRepository.insertFavUser(userFav)
-                }
-        }
+        // Feed case
 
         private fun fetchPosts(
             reloadScreen: Boolean = false,
@@ -101,37 +151,39 @@ class FeedViewModel
                         }
                     }
                     // Llamar a refreshPosts() para el resto de casos
-                    feedRepository.getFeed(
-                        1,
-                        false,
-                    ).collect {
-                            result: Resource<List<Post>> ->
-                        when (result) {
-                            is Resource.Success -> {
-                                _uiState.update {
-                                    it.copy(
-                                        isRefreshing = false,
-                                        messageState =
-                                            MessageUIState.Success(
-                                                "Success",
-                                                result.data!!,
-                                            ),
-                                    )
+                    feedRepository
+                        .getFeed(
+                            1,
+                            false,
+                        ).collect { result: Resource<List<Post>> ->
+                            when (result) {
+                                is Resource.Success -> {
+                                    _uiState.update {
+                                        it.copy(
+                                            isRefreshing = false,
+                                            messageState =
+                                                MessageUIState.Success(
+                                                    "Success",
+                                                    result.data!!,
+                                                ),
+                                        )
+                                    }
                                 }
-                            }
-                            is Resource.Error -> {
-                                delay(1000)
-                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
-                                val errorMsg = "No fue posible conectarse a Internet, revise su conección."
-                                _uiState.update {
-                                    it.copy(
-                                        isRefreshing = false,
-                                        messageState = MessageUIState.Error(errorMsg),
-                                    )
+
+                                is Resource.Error -> {
+                                    delay(1000)
+                                    Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                                    val errorMsg =
+                                        "No fue posible conectarse a Internet, revise su conección."
+                                    _uiState.update {
+                                        it.copy(
+                                            isRefreshing = false,
+                                            messageState = MessageUIState.Error(errorMsg),
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
                 }
         }
 
@@ -147,18 +199,20 @@ class FeedViewModel
             isLiked: Boolean,
         ) {
             viewModelScope.launch {
-                postRepository.likePost(
-                    postId = postId,
-                    liked = isLiked,
-                ).collect { result ->
-                    when (result) {
-                        is Resource.Success -> {
-                            fetchPosts()
+                postRepository
+                    .likePost(
+                        postId = postId,
+                        liked = isLiked,
+                    ).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                fetchPosts()
+                            }
+
+                            is Resource.Error ->
+                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
                         }
-                        is Resource.Error ->
-                            Log.e("API call", result.message ?: "Error 400 - Bad Request")
                     }
-                }
             }
         }
 

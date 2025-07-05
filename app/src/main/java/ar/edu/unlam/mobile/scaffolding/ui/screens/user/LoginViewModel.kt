@@ -1,13 +1,16 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
-import ar.edu.unlam.mobile.scaffolding.domain.Authentication
-import ar.edu.unlam.mobile.scaffolding.domain.FormValidator
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.FormState
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidateEmail
+import ar.edu.unlam.mobile.scaffolding.domain.authentication.ValidatePassword
+import ar.edu.unlam.mobile.scaffolding.ui.util.MessageFromApi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,54 +25,67 @@ class LoginViewModel
     @Inject
     constructor(
         private val userRepository: UserRepository,
+        private val validateEmail: ValidateEmail,
+        private val validatePassword: ValidatePassword,
+        private val messageFromApi: MessageFromApi,
     ) : ViewModel() {
         private var loginUserJob: Job? = null
+        private var error: String? = null
 
-        private var _email = MutableStateFlow("")
-        var email: StateFlow<String> = _email
+        private val _state = MutableStateFlow(FormState())
+        val state: StateFlow<FormState> = _state
 
-        private var _password = MutableStateFlow("")
-        var password: StateFlow<String> = _password
+        private val _validation = mutableStateOf(false)
+        val validation = _validation
 
-        // MESSAGE
-        private var _emailError = MutableStateFlow<String?>(null)
-        var emailError: StateFlow<String?> = _emailError
+        private val _showErrorDialog = mutableStateOf<String?>(null)
+        val showErrorDialog = _showErrorDialog
 
-        private var _passwordError = MutableStateFlow<String?>(null)
-        var passwordError: StateFlow<String?> = _passwordError
-
-        private var _message = MutableStateFlow<String?>(null)
-        var message: StateFlow<String?> = _message
-
-        fun onEmailChange(email: String) {
-            _emailError.value = null
-            _email.value = email
+        // onChanged
+        fun onEmailChanged(email: String) {
+            _state.value = _state.value.copy(email = email, emailError = null)
         }
 
-        fun onPassWordChange(password: String) {
-            _passwordError.value = null
-            _password.value = password
+        fun onPasswordChanged(password: String) {
+            _state.value = _state.value.copy(password = password, passwordError = null)
         }
 
+        // onFocusLost
         fun onEmailFocusLost(email: String) {
             if (email.isNotBlank()) {
-                _emailError.value = FormValidator.isValidEmail(email)
+                error = validateEmail.validateEmail(email).errorMessage
+                _state.value = _state.value.copy(emailError = error)
             }
         }
 
-        fun onPassWordFocusLost(password: String) {
+        fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                _passwordError.value = FormValidator.isValidText(password, specialCharacters = true)
+                error = validatePassword.validatePassword(password).errorMessage
+                _state.value = _state.value.copy(passwordError = error)
             }
         }
 
-        fun validateDate(
-            email: String,
-            password: String,
-        ): Boolean {
-            _emailError.value = FormValidator.isValidEmail(email = email)
-            _passwordError.value = FormValidator.isValidText(text = password, specialCharacters = true)
-            return _emailError.value == null && _passwordError.value == null
+        fun submitData() {
+            val emailResult = validateEmail.validateEmail(_state.value.email)
+            val passwordResult = validatePassword.validatePassword(_state.value.password)
+
+            val isError =
+                listOf(
+                    emailResult,
+                    passwordResult,
+                ).any { !it.successful }
+
+            if (isError) {
+                _state.value =
+                    _state.value.copy(
+                        emailError = emailResult.errorMessage,
+                        passwordError = passwordResult.errorMessage,
+                    )
+                return
+            } else {
+                _validation.value = true
+                return
+            }
         }
 
         fun loginUser(
@@ -84,8 +100,6 @@ class LoginViewModel
                         userRepository.loginUser(email, password).collect { result ->
                             when (result) {
                                 is Resource.Success -> {
-                                    _message.value =
-                                        Authentication.messageApi(result.message, isLoginOrigin = true)
                                     navController.navigate("feed") {
                                         popUpTo("login") {
                                             inclusive = true
@@ -94,7 +108,7 @@ class LoginViewModel
                                 }
 
                                 is Resource.Error -> {
-                                    _message.value = Authentication.messageApi(result.message)
+                                    result.message?.let { errorMessage(it) }
                                     Log.e("API call", result.message ?: "Error 400 - Bad Request")
                                 }
                             }
@@ -103,7 +117,11 @@ class LoginViewModel
             }
         }
 
-        fun clearMessage() {
-            _message.value = null
+        fun dismissRequest() {
+            _showErrorDialog.value = null
+        }
+
+        private fun errorMessage(message: String) {
+            _showErrorDialog.value = messageFromApi.errorMessage(message)
         }
     }

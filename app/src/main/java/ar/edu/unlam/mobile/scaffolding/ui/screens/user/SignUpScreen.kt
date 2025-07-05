@@ -1,55 +1,44 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.AlertMessage
+import ar.edu.unlam.mobile.scaffolding.ui.components.ButtonDesign
 import ar.edu.unlam.mobile.scaffolding.ui.components.FormField
 import ar.edu.unlam.mobile.scaffolding.ui.components.PasswordFormField
+import ar.edu.unlam.mobile.scaffolding.ui.components.TitleText
 
 @Composable
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    val name by signUpViewModel.name.collectAsState()
-    val email by signUpViewModel.email.collectAsState()
-    val password by signUpViewModel.password.collectAsState()
-    val confirmPassword by signUpViewModel.confirmPassword.collectAsState()
+    val state by signUpViewModel.state.collectAsState()
+    val validation by signUpViewModel.validation
 
-    val nameError by signUpViewModel.nameError.collectAsState()
-    val emailError by signUpViewModel.emailError.collectAsState()
-    val passwordError by signUpViewModel.passwordError.collectAsState()
-    val confirmPasswordError by signUpViewModel.confirmPasswordError.collectAsState()
-    val message by signUpViewModel.message.collectAsState()
+    val showDialog by signUpViewModel.showErrorDialog
 
-    val context = LocalContext.current
-
-    if (!message.isNullOrBlank()) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-        signUpViewModel.clearMessage()
+    if (showDialog != null) {
+        AlertMessage(
+            dismissRequest = { (signUpViewModel.dismissRequest()) },
+            title = stringResource(R.string.titleDialog),
+            text = showDialog!!,
+            confirmButton = { (signUpViewModel.dismissRequest()) },
+            confirmText = stringResource(R.string.acceptDialog),
+            cancelButton = {},
+        )
     }
 
     Column(
@@ -58,95 +47,66 @@ fun SignUpScreen(
         verticalArrangement = Arrangement.SpaceAround,
     ) {
         // Título
-        Text(
+        TitleText(
             text = stringResource(R.string.createAccount),
-            fontSize = 25.sp,
-            fontStyle = FontStyle.Normal,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onPrimary,
         )
 
         Column {
             // NAME
             FormField(
                 label = stringResource(R.string.labelName),
-                text = name,
-                onTextChange = {
-                    signUpViewModel.onNameChange(it)
-                },
+                text = state.name,
+                onTextChange = { signUpViewModel.onNameChanged(it) },
                 placeholder = stringResource(R.string.phFieldName),
-                onFocusLost = {
-                    signUpViewModel.onNameFocusLost(name)
-                },
-                errorMessage = nameError,
+                onFocusLost = { signUpViewModel.onNameFocusLost(state.name) },
+                errorMessage = state.nameError,
             )
 
             // EMAIL
             FormField(
                 label = stringResource(R.string.labelEmail),
-                text = email,
-                onTextChange = {
-                    signUpViewModel.onEmailChange(it)
-                },
+                text = state.email,
+                onTextChange = { signUpViewModel.onEmailChanged(it) },
                 placeholder = stringResource(R.string.phFieldEmail),
-                onFocusLost = {
-                    signUpViewModel.onEmailFocusLost(email)
-                },
+                onFocusLost = { signUpViewModel.onEmailFocusLost(state.email) },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                errorMessage = emailError,
+                errorMessage = state.emailError,
             )
 
             // PASSWORD
             PasswordFormField(
                 label = stringResource(R.string.labelPassword),
-                password = password,
-                onPasswordChange = {
-                    signUpViewModel.onPassWordChange(it)
-                },
+                password = state.password,
+                onPasswordChange = { signUpViewModel.onPassWordChanged(it) },
                 placeholder = stringResource(R.string.phFieldPassword),
-                errorMessage = passwordError,
-                onFocusLost = {
-                    signUpViewModel.onPassWordFocusLost(password)
-                },
+                errorMessage = state.passwordError,
+                onFocusLost = { signUpViewModel.onPasswordFocusLost(state.password) },
             )
 
             // CONFIRM PASSWORD
             PasswordFormField(
                 label = stringResource(R.string.labelConfirmPassword),
-                password = confirmPassword,
-                onPasswordChange = {
-                    signUpViewModel.onConfirmPassWordChange(it)
-                },
+                password = state.confirmPassword,
+                onPasswordChange = { signUpViewModel.onConfirmPasswordChanged(it) },
                 placeholder = stringResource(R.string.phFieldConfirmPassword),
-                errorMessage = confirmPasswordError,
-                onFocusLost = {
-                    signUpViewModel.onConfirmPassWordFocusLost(password, confirmPassword)
-                },
+                errorMessage = state.confirmPasswordError,
+                onFocusLost = { signUpViewModel.onConfirmPasswordFocusLost(state.confirmPassword) },
             )
         }
 
-        Button(
-            modifier = Modifier.padding(20.dp),
-            colors =
-                ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.onPrimary,
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                ),
-            onClick = {
-                if (signUpViewModel.validateDate(name, email, password, confirmPassword)) {
+        ButtonDesign(
+            text = stringResource(R.string.singUp),
+            onClickButton = {
+                signUpViewModel.submitData()
+                if (validation) {
                     signUpViewModel.signUpUser(
-                        name = name,
-                        email = email,
-                        password = password,
+                        name = state.name,
+                        email = state.email,
+                        password = state.password,
                         navController = navController,
                     )
                 }
             },
-        ) {
-            Text(
-                text = stringResource(R.string.singUp),
-                fontSize = 20.sp,
-            )
-        }
+        )
     }
 }

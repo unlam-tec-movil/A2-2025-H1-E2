@@ -41,6 +41,8 @@ fun PostDetailScreen(
 ) {
     val postResource = viewModel.post.collectAsState().value
     val repliesResource = viewModel.replies.collectAsState().value
+    val userName = viewModel.userName
+    val usersFavName = viewModel.usersFavName.collectAsState().value
 
     LaunchedEffect(postId) {
         viewModel.getPost(postId)
@@ -57,19 +59,29 @@ fun PostDetailScreen(
                     CircularProgressIndicator()
                 }
             }
+
             is Resource.Success -> {
                 result.data?.let { post ->
                     when (repliesResource) {
                         is Resource.Success -> {
                             repliesResource.data?.let { replies ->
                                 Box(modifier = Modifier.padding(paddingValues)) {
-                                    PostDetailContent(
-                                        post = postResource.data,
-                                        replies = repliesResource.data,
-                                        navController = navController,
-                                        onReply = { message -> viewModel.sendReply(post.id, message) },
-                                        viewModel = hiltViewModel(),
-                                    )
+                                    postResource.data?.let {
+                                        PostDetailContent(
+                                            post = it,
+                                            replies = repliesResource.data,
+                                            userName = userName.value ?: "",
+                                            usersFavName = usersFavName,
+                                            navController = navController,
+                                            onReply = { message ->
+                                                viewModel.sendReply(
+                                                    post.id,
+                                                    message,
+                                                )
+                                            },
+                                            viewModel = hiltViewModel(),
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -101,6 +113,8 @@ fun PostDetailContent(
     navController: NavController,
     onReply: (String) -> Unit = {},
     viewModel: PostDetailViewModel,
+    userName: String,
+    usersFavName: List<String>,
 ) {
     val userFav: (author: String, avatarUrl: String) -> Unit = { author, avatarUrl ->
         viewModel.insertUserFav(
@@ -109,9 +123,7 @@ fun PostDetailContent(
         )
     }
     LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         item {
             Column(
@@ -120,15 +132,19 @@ fun PostDetailContent(
                         MaterialTheme.colorScheme.onBackground.copy(alpha = 0.8f),
                     ),
             ) {
+                val follow = post.author in usersFavName
+
                 PostView(
                     post = post,
+                    isFollowable = post.author != userName,
+                    follow = follow,
                     onLikeClick = {
                         viewModel.isLikePost(
                             postLikeId = post.id,
                             isLiked = post.liked,
                         )
                     },
-                    onInsertClick = { userFav(post.author, post.avatarUrl) },
+                    onFollowClick = { userFav(post.author, post.avatarUrl) },
                 )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),
@@ -141,8 +157,12 @@ fun PostDetailContent(
         }
 
         items(replies) { reply ->
+            val follow = reply.author in usersFavName
+
             PostView(
                 post = reply,
+                isFollowable = post.author != userName,
+                follow = follow,
                 modifier = Modifier.scale(scale = 0.9f),
                 onLikeClick = {
                     viewModel.isLikePost(
@@ -151,7 +171,7 @@ fun PostDetailContent(
                         mainPost = post.id,
                     )
                 },
-                onInsertClick = { userFav(reply.author, reply.avatarUrl) },
+                onFollowClick = { userFav(reply.author, reply.avatarUrl) },
                 onClickAction = { navController.navigate("postDetail/${reply.id}") },
             )
         }
@@ -175,5 +195,7 @@ fun PostDetailContentPreview() {
         navController = rememberNavController(),
         onReply = {},
         viewModel = hiltViewModel(),
+        userName = "",
+        usersFavName = emptyList(),
     )
 }

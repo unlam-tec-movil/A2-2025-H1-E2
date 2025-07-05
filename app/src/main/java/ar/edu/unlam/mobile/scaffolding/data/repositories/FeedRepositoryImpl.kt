@@ -3,8 +3,6 @@ package ar.edu.unlam.mobile.scaffolding.data.repositories
 import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserDao
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.dao.UserFavDao
-import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.response.ErrorResponse
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
@@ -19,7 +17,6 @@ class FeedRepositoryImpl
     constructor(
         private val api: UNLaMSocialApi,
         private val userDao: UserDao,
-        private val userFavDao: UserFavDao,
     ) : FeedRepository {
         override fun getFeed(
             page: Int,
@@ -28,8 +25,8 @@ class FeedRepositoryImpl
             flow {
                 val response: Resource<List<Post>> =
                     try {
-                        val currentUserToken = userDao.getUser()?.userToken
-                        if (currentUserToken.isNullOrBlank()) {
+                        val currentUserToken = userDao.getUser()!!.userToken
+                        if (currentUserToken.isBlank()) {
                             Resource.Error(
                                 data = null,
                                 message = Log.e("API call", "Error: No hay token").toString(),
@@ -64,9 +61,4 @@ class FeedRepositoryImpl
                     }
                 emit(response)
             }
-
-        override suspend fun insertFavUser(userFavEntity: UserFavEntity) {
-            val exist = userFavDao.existsByAuthor(userFavEntity.author)
-            if (!exist) userFavDao.insertUserFav(userFavEntity)
-        }
     }
