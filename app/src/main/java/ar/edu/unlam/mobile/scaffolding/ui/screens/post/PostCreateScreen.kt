@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -22,9 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +53,15 @@ fun PostCreateScreen(
     val isLoading by viewModel.isLoading.collectAsState()
     val user by viewModel.currentUserState.collectAsState()
     val showDraftsButton by viewModel.showDraftsButton.collectAsState()
+    var showSaveDraftPopUp by remember { mutableStateOf(false) }
+
+    val buttonsColors =
+        ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+            disabledContainerColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.7f),
+            disabledContentColor = Color.Gray,
+        )
 
     fun refreshFeed() {
         navController.previousBackStackEntry
@@ -60,13 +76,13 @@ fun PostCreateScreen(
         }
     }
 
-    fun back(): () -> Unit =
-        {
-            if (viewModel.myMessage.isNotEmpty()) {
-                viewModel.saveDraft(viewModel.myMessage) // Guarda el borrador antes de salir
-            }
+    BackHandler(enabled = true) {
+        if (viewModel.myMessage.isNotEmpty()) {
+            showSaveDraftPopUp = true
+        } else {
             navController.popBackStack()
         }
+    }
 
     @Composable
     fun ButtonsView() {
@@ -146,7 +162,15 @@ fun PostCreateScreen(
     }
 
     Scaffold(
-        topBar = { TopBar(stringResource(R.string.postCreateName), back()) },
+        topBar = {
+            TopBar(stringResource(R.string.postCreateName), {
+                if (viewModel.myMessage.isNotEmpty()) {
+                    showSaveDraftPopUp = true
+                } else {
+                    navController.popBackStack()
+                }
+            })
+        },
         modifier = Modifier.fillMaxWidth(),
     ) { paddingValues ->
         Box(
@@ -180,6 +204,37 @@ fun PostCreateScreen(
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
+                )
+            }
+
+            if (showSaveDraftPopUp) {
+                AlertDialog(
+                    onDismissRequest = { showSaveDraftPopUp = false },
+                    title = { Text("¿Desea guardar el post?") },
+                    text = { Text("Puedes guardarlo y publicarlo más tarde desde tus borradores") },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                viewModel.saveDraft(viewModel.myMessage) // Guarda el borrador antes de salir
+                                showSaveDraftPopUp = false
+                                navController.popBackStack()
+                            },
+                            colors = buttonsColors,
+                        ) {
+                            Text("Guardar")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(
+                            onClick = {
+                                showSaveDraftPopUp = false
+                                navController.popBackStack()
+                            },
+                            colors = buttonsColors,
+                        ) {
+                            Text("Eliminar")
+                        }
+                    },
                 )
             }
         }

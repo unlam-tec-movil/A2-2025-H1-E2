@@ -58,6 +58,7 @@ fun PostView(
     onFollowClick: () -> Unit = {},
     isFollowable: Boolean = true,
     follow: Boolean = false,
+    forcedExpanded: Boolean = false,
 ) {
     val postTime = remember(post.date) { getTimeInterval(post.date) }
 
@@ -117,7 +118,7 @@ fun PostView(
                         },
                     ) {
                         Text(
-                            text = if (follow) "dejar de seguir" else "Seguir",
+                            text = if (follow) "Dejar de seguir" else "Seguir",
                             fontSize = 13.sp,
                         )
                     }
@@ -128,7 +129,7 @@ fun PostView(
                 text = post.message,
                 color = MaterialTheme.colorScheme.onSurface,
                 fontSize = 16.sp,
-                maxLines = if (isExpanded) Int.MAX_VALUE else 5,
+                maxLines = if (isExpanded || forcedExpanded) Int.MAX_VALUE else 5,
                 overflow = TextOverflow.Ellipsis,
                 // Si el texto supera las 5 lineas lo corta y le pone tres puntos al final
                 onTextLayout = { textLayout: TextLayoutResult ->
@@ -144,7 +145,7 @@ fun PostView(
                     onClick = { isExpanded = !isExpanded },
                 ) {
                     Text(
-                        text = if (isExpanded) "Mostrar menos" else "Mostrar mas",
+                        text = if (isExpanded) "Mostrar menos" else "Mostrar más",
                         color = MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp,
                         textDecoration = TextDecoration.Underline,
