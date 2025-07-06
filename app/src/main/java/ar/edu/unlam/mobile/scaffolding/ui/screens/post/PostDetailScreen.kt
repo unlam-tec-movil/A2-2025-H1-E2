@@ -145,6 +145,7 @@ fun PostDetailContent(
                         )
                     },
                     onFollowClick = { userFav(post.author, post.avatarUrl) },
+                    forcedExpanded = true,
                 )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.9f),

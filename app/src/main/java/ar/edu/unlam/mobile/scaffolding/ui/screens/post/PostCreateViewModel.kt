@@ -31,10 +31,6 @@ class PostCreateViewModel
         var myMessage by mutableStateOf("")
             private set
 
-        fun onDescriptionChange(newDescription: String) {
-            myMessage = newDescription
-        }
-
         private val _statusMessage = MutableStateFlow<String?>(null)
         val statusMessage: StateFlow<String?> = _statusMessage.asStateFlow()
 
@@ -43,6 +39,9 @@ class PostCreateViewModel
 
         private val _currentUserState = MutableStateFlow(UserProfileModel())
         val currentUserState: StateFlow<UserProfileModel> = _currentUserState
+
+        private val _showDraftsButton = MutableStateFlow(true)
+        val showDraftsButton: StateFlow<Boolean> = _showDraftsButton
 
         init {
             viewModelScope.launch {
@@ -59,6 +58,11 @@ class PostCreateViewModel
         @Suppress("ktlint:standard:backing-property-naming")
         private var draftId: Long? = null
         private var newPostJob: Job? = null
+
+        fun onDescriptionChange(newDescription: String) {
+            myMessage = newDescription
+            _showDraftsButton.value = newDescription.isEmpty()
+        }
 
         fun setInitialContent(draftId: Long) {
             viewModelScope.launch {

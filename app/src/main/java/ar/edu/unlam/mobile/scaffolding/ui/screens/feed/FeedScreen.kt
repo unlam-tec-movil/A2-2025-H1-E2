@@ -2,13 +2,14 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -95,8 +96,31 @@ fun FeedScreen(
                                 .fillMaxSize()
                                 .padding(horizontal = 8.dp),
                     ) {
-                        items(state.posts) { post ->
+                        val maxValue = 1_000_000 // Valor máximo para el bucle infinito
+                        val itemCount = if (uiState.finalPage) maxValue else uiState.posts.size
+
+                        items(itemCount) { index ->
+                            // Para repetir los ítems en bucle, usamos el operador % (módulo), que devuelve el resto de una división.
+                            // Ejemplo: si tengo 5 ítems y el índice es 7 → hago 7 % 5 = 2.
+                            // Entonces uso el ítem en posición 2.
+                            // Así, aunque el índice crezca, siempre vuelve a empezar desde el inicio de la lista.
+
+                            val realIndex =
+                                if (uiState.finalPage) {
+                                    // Si ya se llegó a la última página, habilitar el bucle
+                                    index % uiState.posts.size
+                                } else {
+                                    index // sino muestra el índice real
+                                }
+
+                            val post = uiState.posts[realIndex]
+
                             val follow = post.author in usersFav.value
+                            val index = uiState.posts.indexOf(post)
+                            if (index == uiState.posts.lastIndex && !uiState.isLoadingMore && !uiState.isRefreshing) {
+                                // Carga mas posts cuando se llega al final de la lista
+                                feedViewModel.loadMorePosts()
+                            }
                             PostView(
                                 post = post,
                                 isFollowable = post.author != userName.value,
@@ -110,6 +134,26 @@ fun FeedScreen(
                                     )
                                 },
                             )
+                        }
+
+                        // Mostrar un indicador de carga al final de la lista si se está cargando más
+                        item {
+                            if (uiState.isLoadingMore) {
+                                Box(
+                                    modifier =
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(16.dp),
+                                    contentAlignment = Alignment.Center,
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier =
+                                            Modifier
+                                                .padding(16.dp),
+                                        color = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
+                            }
                         }
                     }
                 }
