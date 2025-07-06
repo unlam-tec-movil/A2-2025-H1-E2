@@ -30,7 +30,6 @@ sealed interface MessageUIState {
 
     data class Success(
         val message: String,
-        val posts: List<Post>,
     ) : MessageUIState
 
     data class Error(
@@ -42,6 +41,8 @@ data class FeedUIState(
     val messageState: MessageUIState = MessageUIState.Loading,
     val posts: List<Post> = emptyList(),
     val isRefreshing: Boolean = false,
+    val isLoadingMore: Boolean = false,
+    val finalPage: Boolean = false,
 )
 
 @HiltViewModel
@@ -71,6 +72,8 @@ class FeedViewModel
         private var getFeedJob: Job? = null
         private var getUserJob: Job? = null
         private var insertJob: Job? = null
+
+        private var page = 1 // Variable para controlar la paginación
 
         init {
             getUser()
@@ -129,6 +132,30 @@ class FeedViewModel
         }
 
         // Feed case
+        fun loadMorePosts() {
+            // Si ya se llegó a la última página, no hacer nada
+            if (_uiState.value.finalPage) {
+                return
+            }
+            page++ // Incrementar la página para la próxima llamada
+            _uiState.update {
+                it.copy(
+                    isLoadingMore = true,
+                )
+            }
+            // Llamar a fetchPosts() con reloadScreen = false y pullToRefresh = false
+            fetchPosts()
+        }
+
+        private fun resetPosts() {
+            page = 1 // Reiniciar la página a 1
+            _uiState.update {
+                it.copy(
+                    posts = emptyList(),
+                    messageState = MessageUIState.Loading,
+                )
+            }
+        }
 
         private fun fetchPosts(
             reloadScreen: Boolean = false,
@@ -139,6 +166,7 @@ class FeedViewModel
                 viewModelScope.launch {
                     if (reloadScreen) {
                         // Usar "reloadScreen = true" mostrara la pantalla de carga
+                        resetPosts()
                         _uiState.update {
                             it.copy(
                                 messageState = MessageUIState.Loading,
@@ -146,6 +174,7 @@ class FeedViewModel
                         }
                     } else if (pullToRefresh) {
                         // Usar "pullToRefresh = true" activa la animación del pull to refresh
+                        resetPosts()
                         _uiState.update {
                             it.copy(isRefreshing = true)
                         }
@@ -153,19 +182,31 @@ class FeedViewModel
                     // Llamar a refreshPosts() para el resto de casos
                     feedRepository
                         .getFeed(
-                            1,
-                            false,
+                            page,
+                            true,
                         ).collect { result: Resource<List<Post>> ->
                             when (result) {
                                 is Resource.Success -> {
+                                    // Si llega al final de la página, no se cargan más posts
+                                    result.data?.size?.let { size ->
+                                        if (size < 20) {
+                                            _uiState.update {
+                                                it.copy(
+                                                    finalPage = true,
+                                                )
+                                            }
+                                        }
+                                    }
+
+                                    val newPosts = _uiState.value.posts + (result.data ?: emptyList())
                                     _uiState.update {
                                         it.copy(
                                             isRefreshing = false,
                                             messageState =
                                                 MessageUIState.Success(
                                                     "Success",
-                                                    result.data!!,
                                                 ),
+                                            posts = newPosts,
                                         )
                                     }
                                 }
@@ -182,6 +223,11 @@ class FeedViewModel
                                         )
                                     }
                                 }
+                            }
+                            _uiState.update {
+                                it.copy(
+                                    isLoadingMore = false,
+                                )
                             }
                         }
                 }
