@@ -86,10 +86,14 @@ class FeedViewModel
             getUserJob?.cancel()
             getUserJob =
                 viewModelScope.launch {
-                    user.value = userRepository.getUserFromDataBase()
-                    _userName.value = user.value?.name
-//                    _userName.value = userRepository.getNameLogged()
-                    getUserFavName()
+                    val userExist = userRepository.getUserFromDataBase()
+                    if (userExist != null) {
+                        user.value = userExist
+                        _userName.value = user.value?.name
+                        getUserFavName()
+                    } else {
+                        _usersFavName.value = emptyList()
+                    }
                 }
         }
 
@@ -120,7 +124,7 @@ class FeedViewModel
                             avatarUrl = avatarUrl,
                             emailLogged = user.value!!.email,
                         )
-                    userFavRepository.insertFavUser(userFav, user.value!!.email)
+                    userFavRepository.followUser(userFav, user.value!!.email)
                 }
         }
 

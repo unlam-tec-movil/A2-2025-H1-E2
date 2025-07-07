@@ -52,6 +52,14 @@ interface UNLaMSocialApi {
         @Query("only_parents") onlyParents: Boolean = false,
     ): List<Post>
 
+    @GET("me/feed")
+    suspend fun getFeedTest(
+        @Header("Authorization") userToken: String,
+        @Header("Application-Token") appToken: String = API_KEY,
+        @Query("page") page: Int,
+        @Query("only_parents") onlyParents: Boolean = true,
+    ): List<Post>
+
     @POST("me/tuits")
     suspend fun createPost(
         @Header("Authorization") userToken: String,

@@ -20,10 +20,9 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val userLogged by homeViewModel.isUserLogged.collectAsState()
-    val isLoading by homeViewModel.isLoading
 
-    when {
-        isLoading -> {
+    when (userLogged) {
+        null -> {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(64.dp),
@@ -32,19 +31,19 @@ fun HomeScreen(
             }
         }
 
-        else -> {
-            if (userLogged) {
-                navController.navigate("feed") {
-                    popUpTo("home") {
-                        // esto quitara a login del stack
-                        inclusive = true
-                    }
+        true -> {
+            navController.navigate("test") {
+                popUpTo("test") {
+                    // esto quitara a login del stack
+                    inclusive = true
                 }
-            } else {
-                navController.navigate("login") {
-                    popUpTo("home") {
-                        inclusive = true
-                    }
+            }
+        }
+
+        false -> {
+            navController.navigate("login") {
+                popUpTo("home") {
+                    inclusive = true
                 }
             }
         }

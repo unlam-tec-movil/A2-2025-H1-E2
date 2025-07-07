@@ -6,6 +6,8 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.UNLaMSocialApi
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryImpl
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryTest
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryTestImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepositoryImpl
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
@@ -83,4 +85,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideUserFavRepository(db: AppDatabase): UserFavRepository = UserFavRepositoryImpl(db.getUserFavDao())
+
+    @Provides
+    @Singleton
+    fun providesFeedRepositoryTest(
+        api: UNLaMSocialApi,
+        db: AppDatabase,
+    ): FeedRepositoryTest = FeedRepositoryTestImpl(api, db.getUserDao())
 }

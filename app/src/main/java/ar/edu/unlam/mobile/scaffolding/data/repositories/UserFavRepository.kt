@@ -4,7 +4,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEn
 import kotlinx.coroutines.flow.Flow
 
 interface UserFavRepository {
-    suspend fun insertFavUser(
+    suspend fun followUser(
         userFavEntity: UserFavEntity,
         emailLogged: String,
     )

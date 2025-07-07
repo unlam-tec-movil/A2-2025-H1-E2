@@ -187,11 +187,36 @@ class UserRepositoryImpl
                 emit(result)
             }
 
-        override suspend fun getNameLogged(): String = userDao.getName()
+        override suspend fun isUserLogged(): Boolean =
+            try {
+                userDao.getUserCount() > 0
+            } catch (e: Exception) {
+                Log.e(
+                    "Base de datos",
+                    e.message ?: "Error de la base de datos",
+                )
+                false
+            }
 
-        override suspend fun isUserLogged(): Boolean = userDao.getUserCount() > 0
+        override suspend fun getUserFromDataBase(): UserEntity? =
+            try {
+                userDao.getUser()
+            } catch (e: Exception) {
+                Log.e(
+                    "Base de datos",
+                    e.message ?: "Error de la base de datos",
+                )
+                null
+            }
 
-        override suspend fun getUserFromDataBase(): UserEntity? = userDao.getUser()
-
-        override suspend fun getEmailLogged(): String = userDao.getEmail()
+        override suspend fun getEmailLogged(): String =
+            try {
+                userDao.getEmail()
+            } catch (e: Exception) {
+                Log.e(
+                    "Base de datos",
+                    e.message ?: "Error de la base de datos",
+                )
+                ""
+            }
     }

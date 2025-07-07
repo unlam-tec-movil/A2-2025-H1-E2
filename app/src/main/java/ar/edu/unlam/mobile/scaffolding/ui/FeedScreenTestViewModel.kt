@@ -1,34 +1,39 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.post
+package ar.edu.unlam.mobile.scaffolding.ui
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
 import ar.edu.unlam.mobile.scaffolding.data.Resource
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserFavEntity
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FeedRepositoryTest
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserFavRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.UserRepository
 import ar.edu.unlam.mobile.scaffolding.domain.post.model.Post
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class PostDetailViewModel
+class FeedScreenTestViewModel
     @Inject
     constructor(
+        feedRepository: FeedRepositoryTest,
         private val userRepository: UserRepository,
         private val userFavRepository: UserFavRepository,
         private val postRepository: PostRepository,
     ) : ViewModel() {
-        private val _post = MutableStateFlow<Resource<Post>?>(null)
-        val post: StateFlow<Resource<Post>?> = _post
-        private val _replies = MutableStateFlow<Resource<List<Post>>>(Resource.Success(emptyList()))
-        val replies: StateFlow<Resource<List<Post>>> = _replies
+        val post: Flow<PagingData<Post>> = feedRepository.getFeed()
+        private val _navigationEvent = MutableSharedFlow<Int>() // ID del post
+        val navigationEvent: SharedFlow<Int> = _navigationEvent
 
         private val user = MutableStateFlow<UserEntity?>(null)
 
@@ -39,20 +44,30 @@ class PostDetailViewModel
         private val _usersFavName = MutableStateFlow<List<String>>(emptyList())
         val usersFavName: StateFlow<List<String>> = _usersFavName
 
+        private var getFeedJob: Job? = null
         private var getUserJob: Job? = null
         private var insertJob: Job? = null
+
+        private var page = 1 // Variable para controlar la paginación
 
         init {
             getUser()
         }
 
+        // User case
+
         private fun getUser() {
             getUserJob?.cancel()
             getUserJob =
                 viewModelScope.launch {
-                    user.value = userRepository.getUserFromDataBase()
-                    _userName.value = user.value?.name
-                    getUserFavName()
+                    val userExist = userRepository.getUserFromDataBase()
+                    if (userExist != null) {
+                        user.value = userExist
+                        _userName.value = user.value?.name
+                        getUserFavName()
+                    } else {
+                        _usersFavName.value = emptyList()
+                    }
                 }
         }
 
@@ -63,7 +78,6 @@ class PostDetailViewModel
                     val email = user.value?.email
                     if (email != null) {
                         userFavRepository.getAllNameUserFav(email).collect { result ->
-
                             _usersFavName.value = result
                         }
                     }
@@ -88,67 +102,37 @@ class PostDetailViewModel
                 }
         }
 
-        fun getPost(id: Int) {
-            viewModelScope.launch {
-                postRepository.getPost(id).collect {
-                    _post.value = it
-                }
-            }
-        }
-
-        fun getPostReplies(postId: Int) {
-            viewModelScope.launch {
-                postRepository.getPostReplies(postId).collect {
-                    _replies.value = it
-                }
-            }
-        }
-
-        fun sendReply(
-            postId: Int,
-            message: String,
-        ) {
-            viewModelScope.launch {
-                postRepository.sendReply(postId, message).collect { result ->
-                    if (result is Resource.Success) {
-                        getPostReplies(postId)
-                    }
-                }
-            }
-        }
-
         fun isLikePost(
-            postLikeId: Int,
+            postId: Int,
             isLiked: Boolean,
-            mainPost: Int? = null,
         ) {
-            likePost(postLikeId, isLiked, mainPost)
+            likePost(postId, isLiked)
         }
 
         private fun likePost(
-            postLikeId: Int,
+            postId: Int,
             isLiked: Boolean,
-            mainPost: Int? = null,
         ) {
             viewModelScope.launch {
                 postRepository
                     .likePost(
-                        postId = postLikeId,
+                        postId = postId,
                         liked = isLiked,
                     ).collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                if (mainPost != null) {
-                                    getPostReplies(mainPost)
-                                } else {
-                                    getPost(postLikeId)
-                                }
                             }
 
                             is Resource.Error ->
                                 Log.e("API call", result.message ?: "Error 400 - Bad Request")
                         }
                     }
+            }
+        }
+
+        fun goToDetail(postId: Int) {
+            viewModelScope.launch {
+                _navigationEvent.emit(postId)
             }
         }
     }

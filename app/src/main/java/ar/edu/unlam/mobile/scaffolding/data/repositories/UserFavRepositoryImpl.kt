@@ -23,7 +23,7 @@ class UserFavRepositoryImpl
             userFavDao.deleteAllUserFavByOwner(emailLogged)
         }
 
-        override suspend fun insertFavUser(
+        override suspend fun followUser(
             userFavEntity: UserFavEntity,
             emailLogged: String,
         ) {
@@ -31,8 +31,12 @@ class UserFavRepositoryImpl
             if (userExist != null) {
                 deleteUserFav(userExist)
             } else {
-                userFavDao.insertUserFav(userFavEntity)
+                insertUserFav(userFavEntity)
             }
+        }
+
+        private suspend fun insertUserFav(userFavEntity: UserFavEntity) {
+            userFavDao.insertUserFav(userFavEntity)
         }
 
         override fun getAllNameUserFav(emailLogged: String): Flow<List<String>> = userFavDao.getNameUserFav(emailLogged)

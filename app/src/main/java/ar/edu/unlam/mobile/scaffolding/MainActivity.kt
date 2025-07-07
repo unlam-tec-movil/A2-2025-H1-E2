@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.ui.FeedScreenTest
 import ar.edu.unlam.mobile.scaffolding.ui.components.AddPostFloatingButton
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
@@ -136,6 +137,9 @@ fun MainScreen() {
             }
             composable("userFavScreen") {
                 UserFavScreen(navController = controller)
+            }
+            composable("test") {
+                FeedScreenTest()
             }
         }
     }

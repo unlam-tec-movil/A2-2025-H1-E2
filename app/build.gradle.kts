@@ -85,6 +85,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.room.common.jvm)
     implementation(libs.androidx.room.runtime.android)
+    implementation(libs.androidx.paging.common.android)
+    implementation(libs.androidx.paging.compose.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
