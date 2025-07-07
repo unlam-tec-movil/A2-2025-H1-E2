@@ -32,9 +32,8 @@ fun HomeScreen(
         }
 
         true -> {
-            navController.navigate("test") {
-                popUpTo("test") {
-                    // esto quitara a login del stack
+            navController.navigate("feed") {
+                popUpTo("home") {
                     inclusive = true
                 }
             }
