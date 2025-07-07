@@ -35,14 +35,13 @@ fun LoginScreen(
     navController: NavController,
 ) {
     val state by loginViewModel.state.collectAsState()
-    val validation by loginViewModel.validation
-    val showDialog by loginViewModel.showErrorDialog
+    val dialog by loginViewModel.messageDialog
 
-    if (showDialog != null) {
+    if (dialog != null) {
         AlertMessage(
             dismissRequest = { (loginViewModel.dismissRequest()) },
             title = stringResource(R.string.titleDialog),
-            text = showDialog!!,
+            text = dialog!!,
             confirmButton = { (loginViewModel.dismissRequest()) },
             confirmText = stringResource(R.string.acceptDialog),
             cancelButton = {},
@@ -87,8 +86,7 @@ fun LoginScreen(
             ButtonDesign(
                 text = stringResource(R.string.loginButton),
                 onClickButton = {
-                    loginViewModel.submitData()
-                    if (validation) {
+                    if (loginViewModel.submitData()) {
                         loginViewModel.loginUser(state.email, state.password, navController)
                     }
                 },

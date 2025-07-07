@@ -86,10 +86,12 @@ class FeedViewModel
             getUserJob?.cancel()
             getUserJob =
                 viewModelScope.launch {
-                    user.value = userRepository.getUserFromDataBase()
-                    _userName.value = user.value?.name
-//                    _userName.value = userRepository.getNameLogged()
-                    getUserFavName()
+                    val userFromDataBase = userRepository.getUserFromDataBase()
+                    if (userFromDataBase != null) {
+                        user.value = userFromDataBase
+                        _userName.value = user.value?.name
+                        getUserFavName()
+                    }
                 }
         }
 

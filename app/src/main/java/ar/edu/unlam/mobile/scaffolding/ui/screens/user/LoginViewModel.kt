@@ -30,16 +30,12 @@ class LoginViewModel
         private val messageFromApi: MessageFromApi,
     ) : ViewModel() {
         private var loginUserJob: Job? = null
-        private var error: String? = null
 
         private val _state = MutableStateFlow(FormState())
         val state: StateFlow<FormState> = _state
 
-        private val _validation = mutableStateOf(false)
-        val validation = _validation
-
-        private val _showErrorDialog = mutableStateOf<String?>(null)
-        val showErrorDialog = _showErrorDialog
+        private val _messageDialog = mutableStateOf<String?>(null)
+        val messageDialog = _messageDialog
 
         // onChanged
         fun onEmailChanged(email: String) {
@@ -53,19 +49,19 @@ class LoginViewModel
         // onFocusLost
         fun onEmailFocusLost(email: String) {
             if (email.isNotBlank()) {
-                error = validateEmail.validateEmail(email).errorMessage
-                _state.value = _state.value.copy(emailError = error)
+                _state.value =
+                    _state.value.copy(emailError = validateEmail.validateEmail(email).errorMessage)
             }
         }
 
         fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                error = validatePassword.validatePassword(password).errorMessage
-                _state.value = _state.value.copy(passwordError = error)
+                _state.value =
+                    _state.value.copy(passwordError = validatePassword.validatePassword(password).errorMessage)
             }
         }
 
-        fun submitData() {
+        fun submitData(): Boolean {
             val emailResult = validateEmail.validateEmail(_state.value.email)
             val passwordResult = validatePassword.validatePassword(_state.value.password)
 
@@ -81,10 +77,9 @@ class LoginViewModel
                         emailError = emailResult.errorMessage,
                         passwordError = passwordResult.errorMessage,
                     )
-                return
+                return false
             } else {
-                _validation.value = true
-                return
+                return true
             }
         }
 
@@ -118,10 +113,10 @@ class LoginViewModel
         }
 
         fun dismissRequest() {
-            _showErrorDialog.value = null
+            _messageDialog.value = null
         }
 
         private fun errorMessage(message: String) {
-            _showErrorDialog.value = messageFromApi.errorMessage(message)
+            _messageDialog.value = messageFromApi.errorMessage(message)
         }
     }

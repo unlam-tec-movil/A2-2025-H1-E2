@@ -14,9 +14,6 @@ interface UserDao {
     @Query("SELECT email FROM user_table WHERE id = 1")
     suspend fun getEmail(): String
 
-    @Query("SELECT name FROM user_table WHERE id = 1")
-    suspend fun getName(): String
-
     @Insert(onConflict = OnConflictStrategy.Companion.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)
 
