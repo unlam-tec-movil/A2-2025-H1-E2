@@ -1,5 +1,4 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +35,6 @@ fun UserEditScreen(
     navController: NavController,
 ) {
     val state by userEditViewModel.state.collectAsState()
-    val validation by userEditViewModel.validation
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -128,8 +126,7 @@ fun UserEditScreen(
                 text = "Guardar cambios",
                 fontSize = 17,
                 onClickButton = {
-                    userEditViewModel.submitData()
-                    if (validation) {
+                    if (userEditViewModel.submitData()) {
                         userEditViewModel.editUser(state.name, state.password, navController)
                     }
                 },

@@ -26,8 +26,6 @@ fun SignUpScreen(
     navController: NavController,
 ) {
     val state by signUpViewModel.state.collectAsState()
-    val validation by signUpViewModel.validation
-
     val showDialog by signUpViewModel.showErrorDialog
 
     if (showDialog != null) {
@@ -97,8 +95,7 @@ fun SignUpScreen(
         ButtonDesign(
             text = stringResource(R.string.singUp),
             onClickButton = {
-                signUpViewModel.submitData()
-                if (validation) {
+                if (signUpViewModel.submitData()) {
                     signUpViewModel.signUpUser(
                         name = state.name,
                         email = state.email,

@@ -1,9 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
 import android.util.Log
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
@@ -36,13 +34,9 @@ class SignUpViewModel
         private val messageFromApi: MessageFromApi,
     ) : ViewModel() {
         private var userJob: Job? = null
-        private var error: String? = null
 
         private var _state = MutableStateFlow(FormState())
         var state: StateFlow<FormState> = _state
-
-        private val _validation = mutableStateOf(false)
-        val validation = _validation
 
         private val _showErrorDialog = mutableStateOf<String?>(null)
         val showErrorDialog = _showErrorDialog
@@ -68,38 +62,40 @@ class SignUpViewModel
         // onFocusLost
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {
-                error = validateName.validateName(name).errorMessage
-                _state.value = _state.value.copy(nameError = error)
+                _state.value =
+                    _state.value.copy(nameError = validateName.validateName(name).errorMessage)
             }
         }
 
         fun onEmailFocusLost(email: String) {
             if (email.isNotBlank()) {
-                error = validateEmail.validateEmail(email).errorMessage
-                _state.value = _state.value.copy(emailError = error)
+                _state.value =
+                    _state.value.copy(emailError = validateEmail.validateEmail(email).errorMessage)
             }
         }
 
         fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                error = validatePassword.validatePassword(password).errorMessage
-                _state.value = _state.value.copy(passwordError = error)
+                _state.value =
+                    _state.value.copy(passwordError = validatePassword.validatePassword(password).errorMessage)
             }
         }
 
         fun onConfirmPasswordFocusLost(confirmPassword: String) {
             if (confirmPassword.isNotBlank()) {
-                error =
-                    validateConfirmPassword
-                        .validateConfirmPassword(
-                            _state.value.password,
-                            confirmPassword,
-                        ).errorMessage
-                _state.value = _state.value.copy(confirmPasswordError = error)
+                _state.value =
+                    _state.value.copy(
+                        confirmPasswordError =
+                            validateConfirmPassword
+                                .validateConfirmPassword(
+                                    _state.value.password,
+                                    confirmPassword,
+                                ).errorMessage,
+                    )
             }
         }
 
-        fun submitData() {
+        fun submitData(): Boolean {
             val nameResult = validateName.validateName(_state.value.name)
             val emailResult = validateEmail.validateEmail(_state.value.email)
             val passwordResult = validatePassword.validatePassword(_state.value.password)
@@ -125,10 +121,9 @@ class SignUpViewModel
                         passwordError = passwordResult.errorMessage,
                         confirmPasswordError = confirmPassword.errorMessage,
                     )
-                return
+                return false
             } else {
-                _validation.value = true
-                return
+                return true
             }
         }
 

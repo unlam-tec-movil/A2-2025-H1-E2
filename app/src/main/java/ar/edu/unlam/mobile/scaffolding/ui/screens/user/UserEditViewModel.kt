@@ -34,15 +34,11 @@ class UserEditViewModel
         private val _currentUserState = mutableStateOf(UserProfileModel())
         val currentUserState: State<UserProfileModel> = _currentUserState
 
-        private var error: String? = null
         private var editUserJob: Job? = null
         private var getCurrentUserJob: Job? = null
 
         private val _state = MutableStateFlow(FormState())
         val state: StateFlow<FormState> = _state
-
-        private val _validation = mutableStateOf(false)
-        val validation = _validation
 
         // OnChanged
         fun onNameChanged(name: String) {
@@ -62,21 +58,21 @@ class UserEditViewModel
 
         fun onNameFocusLost(name: String) {
             if (name.isNotBlank()) {
-                error = validateName.validateName(name).errorMessage
-                _state.value = _state.value.copy(nameError = error)
+                _state.value =
+                    _state.value.copy(nameError = validateName.validateName(name).errorMessage)
             }
         }
 
         fun onPasswordFocusLost(password: String) {
             if (password.isNotBlank()) {
-                error = validatePassword.validatePassword(password).errorMessage
-                _state.value = _state.value.copy(passwordError = error)
+                _state.value =
+                    _state.value.copy(passwordError = validatePassword.validatePassword(password).errorMessage)
             }
         }
 
         fun onConfirmPasswordFocusLost(confirmPassWord: String) {
             if (confirmPassWord.isNotBlank()) {
-                error =
+                val error =
                     validateConfirmPassword
                         .validateConfirmPassword(
                             _state.value.password,
@@ -86,7 +82,7 @@ class UserEditViewModel
             }
         }
 
-        fun submitData() {
+        fun submitData(): Boolean {
             val nameResult = validateName.validateName(_state.value.name)
             val passwordResult = validatePassword.validatePassword(_state.value.password)
             val confirmPassword =
@@ -109,10 +105,9 @@ class UserEditViewModel
                         passwordError = passwordResult.errorMessage,
                         confirmPasswordError = confirmPassword.errorMessage,
                     )
-                return
+                return false
             } else {
-                _validation.value = true
-                return
+                return true
             }
         }
 
