@@ -52,7 +52,6 @@ class PostDetailViewModel
                 viewModelScope.launch {
                     user.value = userRepository.getUserFromDataBase()
                     _userName.value = user.value?.name
-//                    _userName.value = userRepository.getNameLogged()
                     getUserFavName()
                 }
         }
@@ -121,14 +120,7 @@ class PostDetailViewModel
             postLikeId: Int,
             isLiked: Boolean,
             mainPost: Int? = null,
-        ) {
-            likePost(postLikeId, isLiked, mainPost)
-        }
-
-        private fun likePost(
-            postLikeId: Int,
-            isLiked: Boolean,
-            mainPost: Int? = null,
+            onSuccess: (() -> Unit)? = null,
         ) {
             viewModelScope.launch {
                 postRepository
@@ -142,6 +134,9 @@ class PostDetailViewModel
                                     getPostReplies(mainPost)
                                 } else {
                                     getPost(postLikeId)
+                                }
+                                onSuccess?.let {
+                                    it()
                                 }
                             }
 

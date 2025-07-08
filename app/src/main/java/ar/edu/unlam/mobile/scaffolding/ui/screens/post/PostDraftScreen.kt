@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -87,20 +88,38 @@ fun PostDraftScreen(
 
     Scaffold(
         topBar = { TopBar("Borradores", onNavigateBack = back()) },
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxSize(),
     ) { paddingValues ->
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background)
-                    .padding(paddingValues = paddingValues)
-                    .padding(top = 24.dp),
-        ) {
-            LazyColumn {
-                items(drafts) { draft ->
-                    draftItem(draft)
-                    HorizontalDivider()
+
+        if (drafts.isEmpty()) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues = paddingValues),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    "No hay borradores",
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.offset(y = (-150).dp),
+                )
+            }
+        } else {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(color = MaterialTheme.colorScheme.background)
+                        .padding(paddingValues = paddingValues)
+                        .padding(top = 24.dp),
+            ) {
+                LazyColumn {
+                    items(drafts) { draft ->
+                        draftItem(draft)
+                        HorizontalDivider()
+                    }
                 }
             }
         }

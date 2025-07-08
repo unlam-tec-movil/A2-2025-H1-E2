@@ -142,6 +142,11 @@ fun PostDetailContent(
                         viewModel.isLikePost(
                             postLikeId = post.id,
                             isLiked = post.liked,
+                            onSuccess = {
+                                navController.previousBackStackEntry
+                                    ?.savedStateHandle
+                                    ?.set("update_post", post.id)
+                            },
                         )
                     },
                     onFollowClick = { userFav(post.author, post.avatarUrl) },
@@ -162,7 +167,7 @@ fun PostDetailContent(
 
             PostView(
                 post = reply,
-                isFollowable = post.author != userName,
+                isFollowable = reply.author != userName,
                 follow = follow,
                 modifier = Modifier.scale(scale = 0.9f),
                 onLikeClick = {

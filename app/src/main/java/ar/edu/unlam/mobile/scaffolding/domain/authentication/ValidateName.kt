@@ -6,7 +6,7 @@ class ValidateName
     @Inject
     constructor() {
         private val minLength = 4
-        private val maxLength = 8
+        private val maxLength = 16
 
         fun validateName(name: String): ValidationResult {
             when {
