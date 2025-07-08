@@ -162,7 +162,7 @@ fun PostDetailContent(
 
             PostView(
                 post = reply,
-                isFollowable = post.author != userName,
+                isFollowable = reply.author != userName,
                 follow = follow,
                 modifier = Modifier.scale(scale = 0.9f),
                 onLikeClick = {

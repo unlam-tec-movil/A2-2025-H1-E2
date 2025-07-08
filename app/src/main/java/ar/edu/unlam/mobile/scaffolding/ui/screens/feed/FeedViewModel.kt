@@ -236,13 +236,6 @@ class FeedViewModel
                 }
         }
 
-        fun isLikePost(
-            postId: Int,
-            isLiked: Boolean,
-        ) {
-            likePost(postId, isLiked)
-        }
-
         // Actualiza el estado del like en la UI
         private fun updateLikedPost(
             postId: Int,
@@ -260,7 +253,7 @@ class FeedViewModel
             }
         }
 
-        private fun likePost(
+        fun isLikePost(
             postId: Int,
             isLiked: Boolean,
         ) {

@@ -6,7 +6,7 @@ class ValidatePassword
     @Inject
     constructor() {
         private val minLength = 4
-        private val maxLength = 8
+        private val maxLength = 16
 
         fun validatePassword(password: String): ValidationResult {
             when {

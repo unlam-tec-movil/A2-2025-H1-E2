@@ -52,7 +52,6 @@ class PostDetailViewModel
                 viewModelScope.launch {
                     user.value = userRepository.getUserFromDataBase()
                     _userName.value = user.value?.name
-//                    _userName.value = userRepository.getNameLogged()
                     getUserFavName()
                 }
         }
