@@ -199,7 +199,8 @@ fun PostView(
                     )
                 }
                 Text(
-                    text = if(post.likes > 999) "${post.likes.toString().take(3)}k" else post.likes.toString(),
+                    text =
+                        if (post.likes > 999) "${post.likes.toString().take(3)}k" else post.likes.toString(),
                     fontSize = 16.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
