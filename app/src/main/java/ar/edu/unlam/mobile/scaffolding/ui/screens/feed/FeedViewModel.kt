@@ -72,6 +72,7 @@ class FeedViewModel
         private var getFeedJob: Job? = null
         private var getUserJob: Job? = null
         private var insertJob: Job? = null
+        private var getPostJob: Job? = null
 
         private var page = 1 // Variable para controlar la paginación
 
@@ -242,10 +243,29 @@ class FeedViewModel
             likePost(postId, isLiked)
         }
 
+        // Actualiza el estado del like en la UI
+        private fun updateLikedPost(
+            postId: Int,
+            isLiked: Boolean,
+        ) {
+            _uiState.update { currentState ->
+                val posts = currentState.posts.toMutableList()
+                val index = posts.indexOfFirst { it.id == postId }
+                if (index != -1) {
+                    val post = posts[index]
+                    val newLikes = if (!isLiked) post.likes + 1 else post.likes - 1
+                    posts[index] = post.copy(liked = !isLiked, likes = newLikes)
+                }
+                currentState.copy(posts = posts.toList())
+            }
+        }
+
         private fun likePost(
             postId: Int,
             isLiked: Boolean,
         ) {
+            updateLikedPost(postId, isLiked)
+
             viewModelScope.launch {
                 postRepository
                     .likePost(
@@ -254,7 +274,7 @@ class FeedViewModel
                     ).collect { result ->
                         when (result) {
                             is Resource.Success -> {
-                                fetchPosts()
+                                fetchPost(postId)
                             }
 
                             is Resource.Error ->
@@ -262,6 +282,35 @@ class FeedViewModel
                         }
                     }
             }
+        }
+
+        private fun fetchPost(id: Int) {
+            getPostJob?.cancel()
+
+            getPostJob =
+                viewModelScope.launch {
+                    postRepository.getPost(id).collect { result ->
+                        when (result) {
+                            is Resource.Success -> {
+                                val updatedPosts =
+                                    _uiState.value.posts.map { post ->
+                                        if (post.id == id) {
+                                            result.data ?: post // Actualizar el post si se encuentra
+                                        } else {
+                                            post // De lo contrario, mantener el post original
+                                        }
+                                    }
+                                _uiState.update {
+                                    it.copy(posts = updatedPosts)
+                                }
+                            }
+
+                            is Resource.Error -> {
+                                Log.e("API call", result.message ?: "Error 400 - Bad Request")
+                            }
+                        }
+                    }
+                }
         }
 
         override fun onCleared() {
