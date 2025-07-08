@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import android.text.format.DateUtils
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +69,13 @@ fun PostView(
 
     var isExpanded by remember { mutableStateOf(false) }
     var visualOverflow by remember { mutableStateOf(false) }
+    var pressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(
+        targetValue = if (pressed) 1.2f else 1f,
+        animationSpec = tween(durationMillis = 100),
+        finishedListener = { pressed = false },
+    )
+    val haptic = LocalHapticFeedback.current
 
     Card(
         shape = RoundedCornerShape(9.dp),
@@ -155,8 +167,19 @@ fun PostView(
 
             Row(horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 IconButton(
-                    modifier = Modifier.align(alignment = Alignment.CenterVertically).size(24.dp),
-                    onClick = { onLikeClick() },
+                    modifier =
+                        Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .size(24.dp)
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                            },
+                    onClick = {
+                        pressed = true
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        onLikeClick()
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Favorite,

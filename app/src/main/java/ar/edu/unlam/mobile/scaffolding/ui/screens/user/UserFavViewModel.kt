@@ -52,7 +52,7 @@ class UserFavViewModel
             getFavJob =
                 viewModelScope.launch {
                     userEmail = userRepository.getEmailLogged()
-                    if (userEmail.isBlank()) {
+                    if (userEmail.isNotBlank()) {
                         repository.getAllFavUser(emailLogged = userEmail).collect { result ->
                             _userFavState.value = result
                         }
