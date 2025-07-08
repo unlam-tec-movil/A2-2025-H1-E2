@@ -56,11 +56,21 @@ fun FeedScreen(
         savedStateHandle
             ?.getLiveData<Boolean>("refresh_feed")
             ?.observeAsState()
+    val updatePost =
+        savedStateHandle
+            ?.getLiveData<Int>("update_post")
+            ?.observeAsState()
 
     LaunchedEffect(refreshFeed?.value) {
         if (refreshFeed?.value == true) {
             onRefresh()
             savedStateHandle["refresh_feed"] = false
+        }
+    }
+
+    LaunchedEffect(updatePost?.value) {
+        updatePost?.value?.let { id ->
+            feedViewModel.fetchPost(id = id)
         }
     }
 

@@ -67,8 +67,13 @@ class PostCreateViewModel
         fun setInitialContent(draftId: Long) {
             viewModelScope.launch {
                 this@PostCreateViewModel.draftId = draftId
-                val post = database.getPostDao().getById(draftId)
-                myMessage = post.content
+                try {
+                    val post = database.getPostDao().getById(draftId).copy()
+                    myMessage = post.content
+                    _showDraftsButton.value = false
+                } catch (_: Exception) {
+                    myMessage = ""
+                }
             }
         }
 

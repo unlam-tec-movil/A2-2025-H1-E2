@@ -277,7 +277,7 @@ class FeedViewModel
             }
         }
 
-        private fun fetchPost(id: Int) {
+        fun fetchPost(id: Int) {
             getPostJob?.cancel()
 
             getPostJob =
